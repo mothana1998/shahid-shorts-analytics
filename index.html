@@ -62,6 +62,16 @@
             transition: background-color 0.2s ease-in-out;
             cursor: pointer; /* Indicate clickable rows */
         }
+        /* Styles for the dropdown menu items */
+        .dropdown-menu-item {
+            padding: 0.5rem 1rem; /* py-2 px-4 */
+            cursor: pointer;
+            white-space: nowrap; /* Prevent wrapping */
+            transition: background-color 0.2s ease-in-out;
+        }
+        .dropdown-menu-item:hover {
+            background-color: #f1f5f9; /* slate-100 */
+        }
     </style>
 </head>
 <body class="text-slate-800">
@@ -73,9 +83,26 @@
             <div class="inline-flex bg-slate-100 p-1 rounded-lg text-sm flex-wrap justify-center gap-2 w-full">
                 <button id="juneReportBtn" class="px-4 py-2 rounded-md bg-sky-600 text-white shadow-sm font-semibold report-nav-btn" data-target="june-report-content">June Performance Analysis</button>
                 <button id="julyReportBtn" class="px-4 py-2 rounded-md bg-slate-200 text-slate-800 font-medium report-nav-btn hover:bg-slate-300" data-target="july-report-content">July Performance Analysis</button>
+                
+                <!-- DMCS Views with Hover Dropdown -->
+                <div class="relative group">
+                    <button id="dmcsViewsBtn" class="px-4 py-2 rounded-md bg-slate-200 text-slate-800 font-medium report-nav-btn hover:bg-slate-300" data-target="dmcs-views-content">DMCS Views</button>
+                    <div class="absolute hidden group-hover:block bg-white shadow-lg rounded-md mt-1 z-10 min-w-[120px] overflow-hidden">
+                        <div class="dropdown-menu-item" data-month="june">June</div>
+                        <div class="dropdown-menu-item" data-month="july">July</div>
+                    </div>
+                </div>
+
+                <!-- Third Party Views with Hover Dropdown -->
+                <div class="relative group">
+                    <button id="thirdPartyViewsBtn" class="px-4 py-2 rounded-md bg-slate-200 text-slate-800 font-medium report-nav-btn hover:bg-slate-300" data-target="third-party-views-content">Third Party Views</button>
+                    <div class="absolute hidden group-hover:block bg-white shadow-lg rounded-md mt-1 z-10 min-w-[120px] overflow-hidden">
+                        <div class="dropdown-menu-item" data-month="june">June</div>
+                        <div class="dropdown-menu-item" data-month="july">July</div>
+                    </div>
+                </div>
+
                 <button id="additionalInsightsBtn" class="px-4 py-2 rounded-md bg-slate-200 text-slate-800 font-medium report-nav-btn hover:bg-slate-300" data-target="additional-insights-content">Additional Insights</button>
-                <button id="dmcsViewsBtn" class="px-4 py-2 rounded-md bg-slate-200 text-slate-800 font-medium report-nav-btn hover:bg-slate-300" data-target="dmcs-views-content">DMCS Views</button>
-                <button id="thirdPartyViewsBtn" class="px-4 py-2 rounded-md bg-slate-200 text-slate-800 font-medium report-nav-btn hover:bg-slate-300" data-target="third-party-views-content">Third Party Views</button>
             </div>
         </nav>
 
@@ -292,22 +319,16 @@
                     <p class="text-slate-600 text-lg font-medium">Coming Soon!</p>
                 </div>
             </section>
-            <section id="additional-insights-content" class="report-content-section hidden">
-                <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12 text-center">
-                    <h2 class="text-2xl font-semibold text-slate-900 mb-4">Additional Insights</h2>
-                    <p class="text-slate-600">Content for additional insights will go here.</p>
-                </div>
-            </section>
             <section id="dmcs-views-content" class="report-content-section hidden">
                 <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12 text-center">
                     <h2 class="text-2xl font-semibold text-slate-900 mb-4">DMCS Views</h2>
-                    <p class="text-slate-600">Content specific to DMCS views will go here.</p>
+                    <p class="text-slate-600">Content specific to DMCS views will go here, updated based on month selection.</p>
                 </div>
             </section>
             <section id="third-party-views-content" class="report-content-section hidden">
                 <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12 text-center">
-                    <h2 class="text-2xl font-semibold text-slate-900 mb-4">Third Party Views</h2>
-                    <p class="text-slate-600">Content related to third-party views will go here.</p>
+                    <h2 class="2xl font-semibold text-slate-900 mb-4">Third Party Views</h2>
+                    <p class="text-slate-600">Content related to third-party views will go here, updated based on month selection.</p>
                 </div>
             </section>
         </div> <!-- End of june-report-content -->
@@ -888,6 +909,38 @@
                     document.getElementById(targetSectionId).classList.remove('hidden');
                 });
             });
+
+            // Add event listeners for the new dropdown menu items
+            document.querySelectorAll('.dropdown-menu-item').forEach(item => {
+                item.addEventListener('click', (event) => {
+                    const selectedMonth = event.target.dataset.month;
+                    const parentButton = event.target.closest('.group').querySelector('.report-nav-btn');
+                    const targetSectionId = parentButton.dataset.target;
+
+                    // This part is similar to the main tab logic, ensuring the correct content section is shown
+                    reportNavButtons.forEach(btn => {
+                        btn.classList.remove('bg-sky-600', 'text-white', 'shadow-sm', 'font-semibold');
+                        btn.classList.add('bg-slate-200', 'text-slate-800', 'font-medium', 'hover:bg-slate-300');
+                    });
+                    parentButton.classList.add('bg-sky-600', 'text-white', 'shadow-sm', 'font-semibold');
+                    parentButton.classList.remove('bg-slate-200', 'text-slate-800', 'font-medium', 'hover:bg-slate-300');
+
+                    reportContentSections.forEach(section => {
+                        section.classList.add('hidden');
+                    });
+                    document.getElementById(targetSectionId).classList.remove('hidden');
+
+                    // Here you would add logic to update the content based on `selectedMonth`
+                    console.log(`Selected month for ${parentButton.textContent.trim()}: ${selectedMonth}`);
+                    // For example:
+                    // if (targetSectionId === 'dmcs-views-content') {
+                    //     updateDMCSContent(selectedMonth);
+                    // } else if (targetSectionId === 'third-party-views-content') {
+                    //     updateThirdPartyContent(selectedMonth);
+                    // }
+                });
+            });
+
 
             // Initial updates
             updateKPIs(fullDailyData);
