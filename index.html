@@ -10,8 +10,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Warm Neutrals -->
-    <!-- Application Structure Plan: The SPA uses a dashboard structure for immediate clarity and engagement. It starts with high-level KPI cards for a quick summary. The core is an interactive chart area with tabs to switch between 'Average Performance' and 'Volatility Analysis', preventing UI clutter. This allows users to focus on one aspect at a time. Below, strategic recommendations are presented in an interactive accordion, linking directly to the chart data. Clicking a day on a chart highlights the relevant recommendation. This structure was chosen to guide the user from a broad overview to specific details and actionable insights in an intuitive, non-linear way, which is more effective for data exploration than a static, linear presentation. -->
-    <!-- Visualization & Content Choices: 1. KPI Cards (Highest/Lowest/Avg Views): Goal: Inform. Method: Styled HTML/Tailwind. Interaction: Static. Justification: Provides immediate, high-level context. 2. Average Views: Goal: Compare. Method: Bar Chart. Interaction: Hover tooltips, click to highlight recommendation. Justification: Best for comparing discrete categories (days). Library: Chart.js. 3. Viewership Volatility: Goal: Show Range. Method: Floating Bar Chart (data as [min, max]). Interaction: Hover tooltips, click to highlight. Justification: Clearly visualizes data spread and volatility for each day in a single view. Library: Chart.js. 4. Recommendations: Goal: Advise. Method: HTML/JS Accordion. Interaction: Click to expand/collapse. Justification: Organizes detailed text, reduces cognitive load, and links interactively to charts. -->
+    <!-- Application Structure Plan: The SPA now uses a tabbed navigation system at the very top to switch between major content views: "Monthly Highlights" (containing KPIs, Daily Viewership, and Overall Analysis, and Strategic Recommendations), "Top 10 Titles", and "Recommendation Titles". This approach maintains the single-page constraint while simulating "page" navigation. Each major view is a distinct HTML section that is shown or hidden via JavaScript. This enhances user flow by allowing them to jump directly to specific report areas. -->
+    <!-- Visualization & Content Choices: 1. KPI Cards (Highest/Lowest/Avg Views): Goal: Inform. Method: Styled HTML/Tailwind. Interaction: Static. Justification: Provides immediate, high-level context. 2. Average Views (Overall): Goal: Compare. Method: Bar Chart. Interaction: Hover tooltips, click to highlight recommendation. Justification: Best for comparing discrete categories (days) across the entire dataset. Library: Chart.js. 3. Viewership Volatility (Overall): Goal: Show Range. Method: Floating Bar Chart. Interaction: Hover tooltips, click to highlight. Justification: Clearly visualizes data spread and volatility for each day across the entire dataset. Library: Chart.js. 4. Daily Views by Week: Goal: Track Change/Inform. Method: Bar Chart. Interaction: Weekly tabs to filter data, hover tooltips, click to highlight. Justification: Allows granular daily inspection within specific weekly contexts. Chart is initially hidden and appears on tab click. Library: Chart.js. 5. Recommendations: Goal: Advise. Method: HTML/JS Accordion. Interaction: Click to expand/collapse. Justification: Organizes detailed text, reduces cognitive load, and links interactively to charts. 6. Top 10 Titles Views Chart: Goal: Compare. Method: Bar Chart. Interaction: Hover tooltips, click to filter from table. Justification: Visually compares viewership across top titles and allows drill-down. Library: Chart.js. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
@@ -50,6 +50,18 @@
             overflow: hidden;
             transition: max-height 0.3s ease-in-out;
         }
+        .accordion-header {
+            transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        /* Custom styling for table rows */
+        #topTitlesTableBody tr:nth-child(odd) {
+            background-color: #f8fafc; /* slate-50 */
+        }
+        #topTitlesTableBody tr:hover {
+            background-color: #f1f5f9; /* slate-100 */
+            transition: background-color 0.2s ease-in-out;
+            cursor: pointer; /* Indicate clickable rows */
+        }
     </style>
 </head>
 <body class="text-slate-800">
@@ -61,96 +73,201 @@
             <p class="mt-2 text-lg text-slate-600">Uncovering Key Trends & Strategic Opportunities</p>
         </header>
 
+        <!-- Top-level Navigation Tabs -->
+        <nav class="mb-8 md:mb-12">
+            <div class="inline-flex bg-slate-100 p-1 rounded-lg text-sm flex-wrap justify-center gap-2 w-full">
+                <button id="dashboardTabBtn" class="px-4 py-2 rounded-md bg-white text-sky-600 shadow-sm font-semibold main-tab-btn" data-target="dashboard-section">Monthly Highlights</button>
+                <button id="topTitlesTabBtn" class="px-4 py-2 rounded-md text-slate-600 font-medium main-tab-btn" data-target="top-titles-section">Top 10 Titles Views</button>
+                <button id="recommendationTitlesTabBtn" class="px-4 py-2 rounded-md text-slate-600 font-medium main-tab-btn" data-target="recommendation-titles-section">Recommendation Titles</button>
+            </div>
+        </nav>
+
         <main>
-            <!-- Key Metrics Section -->
-            <section id="kpis" class="mb-8 md:mb-12">
-                <h2 class="text-2xl font-semibold text-slate-900 mb-4 text-center">Monthly Highlights</h2>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 text-center">
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                        <p class="text-sm font-medium text-slate-500">Highest Viewership</p>
-                        <p class="text-3xl font-bold text-sky-600 mt-1">859K</p>
-                        <p class="text-xs text-slate-400">on a Friday</p>
+            <!-- Dashboard Section (Default View) -->
+            <section id="dashboard-section" class="main-content-section">
+                <!-- Key Metrics Section -->
+                <section id="kpis" class="mb-8 md:mb-12">
+                    <h2 class="text-2xl font-semibold text-slate-900 mb-4 text-center">Monthly Highlights</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 text-center">
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                            <p class="text-sm font-medium text-slate-500">Highest Viewership</p>
+                            <p id="kpiHighest" class="text-3xl font-bold text-sky-600 mt-1">859K</p>
+                            <p id="kpiHighestDay" class="text-xs text-slate-400">on a Friday</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                            <p class="text-sm font-medium text-slate-500">Lowest Viewership</p>
+                            <p id="kpiLowest" class="text-3xl font-bold text-amber-600 mt-1">433K</p>
+                            <p id="kpiLowestDay" class="text-xs text-slate-400">on a Sunday</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                            <p class="text-sm font-medium text-slate-500">Avg. Mid-Week Views</p>
+                            <p id="kpiMidWeekAvg" class="text-3xl font-bold text-slate-700 mt-1">771K</p>
+                            <p class="text-xs text-slate-400">(Tue-Thu)</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                            <p class="text-sm font-medium text-slate-500">Avg. Weekend Views</p>
+                            <p id="kpiWeekendAvg" class="text-3xl font-bold text-slate-700 mt-1">663K</p>
+                            <p class="text-xs text-slate-400">(Sat-Sun)</p>
+                        </div>
                     </div>
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                        <p class="text-sm font-medium text-slate-500">Lowest Viewership</p>
-                        <p class="text-3xl font-bold text-amber-600 mt-1">433K</p>
-                        <p class="text-xs text-slate-400">on a Sunday</p>
+                </section>
+
+                <!-- Daily Viewership by Week Section -->
+                <section id="weeklyDailyViewsSection" class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12">
+                    <div class="text-center mb-6">
+                        <h2 class="text-2xl font-semibold text-slate-900">Daily Viewership by Week</h2>
+                        <p class="text-slate-600 mt-1">Click a week to see daily view trends for that period.</p>
+                        <div class="mt-4 inline-flex bg-slate-100 p-1 rounded-lg text-sm flex-wrap justify-center gap-2">
+                            <button id="week1DailyBtn" class="px-4 py-1.5 rounded-md text-slate-600 font-medium weekly-daily-btn">Week 1</button>
+                            <button id="week2DailyBtn" class="px-4 py-1.5 rounded-md text-slate-600 font-medium weekly-daily-btn">Week 2</button>
+                            <button id="week3DailyBtn" class="px-4 py-1.5 rounded-md text-slate-600 font-medium weekly-daily-btn">Week 3</button>
+                            <button id="week4DailyBtn" class="px-4 py-1.5 rounded-md text-slate-600 font-medium weekly-daily-btn">Week 4</button>
+                        </div>
                     </div>
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                        <p class="text-sm font-medium text-slate-500">Avg. Mid-Week Views</p>
-                        <p class="text-3xl font-bold text-slate-700 mt-1">771K</p>
-                        <p class="text-xs text-slate-400">(Tue-Thu)</p>
+                    <div id="dailyChartContainer" class="chart-container hidden">
+                        <canvas id="dailyViewsChart"></canvas>
                     </div>
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                        <p class="text-sm font-medium text-slate-500">Avg. Weekend Views</p>
-                        <p class="text-3xl font-bold text-slate-700 mt-1">663K</p>
-                        <p class="text-xs text-slate-400">(Sat-Sun)</p>
+                </section>
+
+                <!-- Overall Interactive Chart Section -->
+                <section id="charts" class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12">
+                    <div class="text-center mb-6">
+                        <h2 class="text-2xl font-semibold text-slate-900">Overall Weekly Performance Analysis</h2>
+                        <p class="text-slate-600 mt-1">Compare average performance and volatility across the entire month.</p>
+                        <div class="mt-4 inline-flex bg-slate-100 p-1 rounded-lg text-sm">
+                            <button id="avgBtn" class="px-4 py-1.5 rounded-md bg-white text-sky-600 shadow-sm font-semibold chart-type-btn">Average Performance</button>
+                            <button id="rangeBtn" class="px-4 py-1.5 rounded-md text-slate-600 font-medium chart-type-btn">Volatility Analysis</button>
+                        </div>
+                    </div>
+
+                    <div id="avgChartContainer" class="chart-container">
+                        <canvas id="averageViewsChart"></canvas>
+                    </div>
+                    <div id="rangeChartContainer" class="chart-container hidden">
+                        <canvas id="rangeViewsChart"></canvas>
+                    </div>
+                </section>
+
+                <!-- Strategic Recommendations Section (Now part of Monthly Highlights) -->
+                <section id="recommendations">
+                    <h2 class="text-2xl font-semibold text-slate-900 mb-4 text-center">Strategic Recommendations</h2>
+                    <div class="space-y-3 max-w-4xl mx-auto">
+                        <div class="accordion-item bg-white rounded-xl shadow-sm border border-slate-200" data-day="Thursday,Tuesday,Wednesday">
+                            <button class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-slate-800 hover:bg-slate-50 hover:shadow-md">
+                                Leverage Mid-Week Dominance
+                                <span class="transform transition-transform duration-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                                </span>
+                            </button>
+                            <div class="accordion-content">
+                                <div class="p-4 pt-0 text-slate-600">
+                                    <ul class="list-disc pl-5 space-y-1">
+                                        <li>Prioritize high-impact content and major announcements on these days.</li>
+                                        <li>Schedule primary marketing pushes to align with peak mid-week engagement.</li>
+                                        <li>Maximize reach and viewership by focusing efforts where the audience is most active.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item bg-white rounded-xl shadow-sm border border-slate-200" data-day="Saturday,Sunday">
+                            <button class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-slate-800 hover:bg-slate-50 hover:shadow-md">
+                                Optimize Weekend Strategy
+                                <span class="transform transition-transform duration-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                                </span>
+                            </button>
+                            <div class="accordion-content">
+                                 <div class="p-4 pt-0 text-slate-600">
+                                    <ul class="list-disc pl-5 space-y-1">
+                                        <li>Experiment with different content formats or themes, such as "evergreen" or "lean-back" content.</li>
+                                        <li>Align content with typical weekend audience behavior (e.g., relaxation, entertainment).</li>
+                                        <li>Consider A/B testing post times to find optimal engagement windows on weekends.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item bg-white rounded-xl shadow-sm border border-slate-200" data-day="Friday">
+                            <button class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-slate-800 hover:bg-slate-50 hover:shadow-md">
+                                Decipher Friday's Volatility
+                                 <span class="transform transition-transform duration-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                                </span>
+                            </button>
+                             <div class="accordion-content">
+                                <div class="p-4 pt-0 text-slate-600">
+                                    <ul class="list-disc pl-5 space-y-1">
+                                        <li>Conduct a deep dive into factors that drove the $859K$ peak on a Friday.</li>
+                                        <li>Identify specific content, promotional strategies, or external events contributing to success.</li>
+                                        <li>Develop strategies to replicate high performance and mitigate low-performing Fridays.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Top 10 Titles Section (Initially Hidden) -->
+            <section id="top-titles-section" class="main-content-section hidden">
+                <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12">
+                    <h2 class="text-2xl font-semibold text-slate-900 mb-4 text-center">Top 10 Titles Views (June)</h2>
+                    <p class="text-slate-600 mb-6 text-center">Here are the top 10 performing titles based on viewership data for June:</p>
+                    <div class="overflow-x-auto mb-8"> <!-- Added mb-8 for space -->
+                        <table class="min-w-full rounded-lg overflow-hidden shadow-sm border border-slate-200">
+                            <thead class="bg-slate-100 border-b border-slate-200">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Rank</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Title Name</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Total Views</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Total Likes</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Avg. Views Per Clip</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topTitlesTableBody" class="divide-y divide-slate-200 text-sm text-slate-700">
+                                <!-- Data will be inserted here by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="topTitlesViewsChart"></canvas>
+                    </div>
+                    <div class="text-center mt-4">
+                        <button id="showAllTitlesBtn" class="px-4 py-2 rounded-md bg-sky-600 text-white shadow-sm font-semibold hover:bg-sky-700 transition-colors duration-200">Show All Titles</button>
                     </div>
                 </div>
             </section>
 
-            <!-- Interactive Chart Section -->
-            <section id="charts" class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12">
-                <div class="text-center mb-6">
-                    <h2 class="text-2xl font-semibold text-slate-900">Interactive Weekly Analysis</h2>
-                    <p class="text-slate-600 mt-1">Toggle between views. Click a day on the chart to see related recommendations.</p>
-                    <div class="mt-4 inline-flex bg-slate-100 p-1 rounded-lg text-sm">
-                        <button id="avgBtn" class="px-4 py-1.5 rounded-md bg-white text-sky-600 shadow-sm font-semibold">Average Performance</button>
-                        <button id="rangeBtn" class="px-4 py-1.5 rounded-md text-slate-600 font-medium">Volatility Analysis</button>
-                    </div>
-                </div>
-
-                <div id="avgChartContainer" class="chart-container">
-                    <canvas id="averageViewsChart"></canvas>
-                </div>
-                <div id="rangeChartContainer" class="chart-container hidden">
-                    <canvas id="rangeViewsChart"></canvas>
-                </div>
-            </section>
-
-            <!-- Recommendations Section -->
-            <section id="recommendations">
-                <h2 class="text-2xl font-semibold text-slate-900 mb-4 text-center">Strategic Recommendations</h2>
-                <div class="space-y-3 max-w-4xl mx-auto">
-                    <div class="accordion-item bg-white rounded-xl shadow-sm border border-slate-200" data-day="Thursday,Tuesday,Wednesday">
-                        <button class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-slate-800">
-                            Leverage Mid-Week Dominance
-                            <span class="transform transition-transform duration-300">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                            </span>
-                        </button>
-                        <div class="accordion-content">
-                            <div class="p-4 pt-0 text-slate-600">
-                                <p>Tuesdays, Wednesdays, and especially Thursdays show the highest and most consistent engagement. Prioritize your high-impact content, major announcements, and primary marketing pushes on these days to maximize reach and viewership.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="accordion-item bg-white rounded-xl shadow-sm border border-slate-200" data-day="Saturday,Sunday">
-                        <button class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-slate-800">
-                            Optimize Weekend Strategy
-                            <span class="transform transition-transform duration-300">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                            </span>
-                        </button>
-                        <div class="accordion-content">
-                             <div class="p-4 pt-0 text-slate-600">
-                                <p>Saturdays and Sundays see a noticeable dip in views. Experiment with different content formats or themes, such as "evergreen" or more "lean-back" content that aligns with typical weekend audience behavior. Consider A/B testing post times to find sweet spots.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="accordion-item bg-white rounded-xl shadow-sm border border-slate-200" data-day="Friday">
-                        <button class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-slate-800">
-                            Decipher Friday's Volatility
-                             <span class="transform transition-transform duration-300">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                            </span>
-                        </button>
-                         <div class="accordion-content">
-                            <div class="p-4 pt-0 text-slate-600">
-                                <p>Friday has both the highest single-day peak (859K) and significant dips, making it highly unpredictable. Conduct a deep dive into what drove the outlier performance. Was it a specific topic, a viral event, or a campaign? Understanding this is key to replicating that success and mitigating low-performing Fridays.</p>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Recommendation Titles Section (Initially Hidden) -->
+            <section id="recommendation-titles-section" class="main-content-section hidden">
+                <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12">
+                    <h2 class="text-2xl font-semibold text-slate-900 mb-4 text-center">Recommendation Titles for July</h2>
+                    <p class="text-slate-600 mb-6 text-center">Based on June's viewership trends and average performance, here are some recommended title categories or themes to focus on for July to potentially maximize engagement.</p>
+                    <ul class="list-disc pl-8 space-y-3 text-slate-700">
+                        <li>**Mid-Week Boosters:** Content designed for high engagement on Tuesdays, Wednesdays, and Thursdays.
+                            <ul class="list-circle pl-5 text-slate-600">
+                                <li>*Example:* "Deep Dive: Advanced Analytics Strategies" (for a Tuesday release)</li>
+                                <li>*Example:* "Webinar Series: Mastering Digital Marketing" (for a Wednesday slot)</li>
+                            </ul>
+                        </li>
+                        <li>**Weekend Engagement:** Lighter, more evergreen, or community-focused content for Saturdays and Sundays.
+                            <ul class="list-circle pl-5 text-slate-600">
+                                <li>*Example:* "Behind the Scenes: Our Creative Process" (Sunday feature)</li>
+                                <li>*Example:* "Community Spotlight: User Success Stories" (Saturday share)</li>
+                            </ul>
+                        </li>
+                        <li>**Friday Potential:** High-impact, potentially viral content to capture the variable but high-peak Friday audience.
+                            <ul class="list-circle pl-5 text-slate-600">
+                                <li>*Example:* "Exclusive Interview: Industry Leader Insights" (Friday morning drop)</li>
+                                <li>*Example:* "Flash Sale Announcement: Limited Time Offer" (if applicable)</li>
+                            </ul>
+                        </li>
+                        <li>**Trending Topics:** Titles that capitalize on current events or popular searches (requires ongoing research).
+                            <ul class="list-circle pl-5 text-slate-600">
+                                <li>*Example:* "Impact of AI on [Specific Industry]"</li>
+                                <li>*Example:* "Decoding the Latest [Tech/Market] Trends"</li>
+                            </ul>
+                        </li>
+                    </ul>
                 </div>
             </section>
         </main>
@@ -162,30 +279,160 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const reportData = {
-                labels: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-                avgData: [659, 723, 763.25, 764.25, 785.5, 719, 666.75],
-                rangeData: [
-                    [433, 788], [596, 825], [641, 823], 
-                    [655, 839], [731, 834], [553, 859], [542, 759]
-                ]
+            const fullDailyData = [
+                { date: 'Jun 1', day: 'Sunday', views: 433 },
+                { date: 'Jun 2', day: 'Monday', views: 596 },
+                { date: 'Jun 3', day: 'Tuesday', views: 641 },
+                { date: 'Jun 4', day: 'Wednesday', views: 655 },
+                { date: 'Jun 5', day: 'Thursday', views: 825 },
+                { date: 'Jun 6', day: 'Friday', views: 553 },
+                { date: 'Jun 7', day: 'Saturday', views: 542 },
+                // Week 2
+                { date: 'Jun 8', day: 'Sunday', views: 639 },
+                { date: 'Jun 9', day: 'Monday', views: 725 },
+                { date: 'Jun 10', day: 'Tuesday', views: 823 },
+                { date: 'Jun 11', day: 'Wednesday', views: 811 },
+                { date: 'Jun 12', day: 'Thursday', views: 752 },
+                { date: 'Jun 13', day: 'Friday', views: 738 },
+                { date: 'Jun 14', day: 'Saturday', views: 685 },
+                // Week 3
+                { date: 'Jun 15', day: 'Sunday', views: 788 },
+                { date: 'Jun 16', day: 'Monday', views: 825 },
+                { date: 'Jun 17', day: 'Tuesday', views: 795 },
+                { date: 'Jun 18', day: 'Wednesday', views: 752 },
+                { date: 'Jun 19', day: 'Thursday', views: 731 },
+                { date: 'Jun 20', day: 'Friday', views: 726 },
+                { date: 'Jun 21', day: 'Saturday', views: 759 },
+                // Week 4
+                { date: 'Jun 22', day: 'Sunday', views: 743 },
+                { date: 'Jun 23', day: 'Monday', views: 752 },
+                { date: 'Jun 24', day: 'Tuesday', views: 794 },
+                { date: 'Jun 25', day: 'Wednesday', views: 839 },
+                { date: 'Jun 26', day: 'Thursday', views: 834 },
+                { date: 'Jun 27', day: 'Friday', views: 859 },
+                { date: 'Jun 28', day: 'Saturday', views: 681 },
+                // Week 5 (partial, not explicitly a 'Week 5' tab, but included in 'All Weeks')
+                { date: 'Jun 29', day: 'Sunday', views: 692 },
+                { date: 'Jun 30', day: 'Monday', views: 717 }
+            ];
+
+            const top10TitlesData = [
+                { rank: 1, title: "AL Madeena Al Ba'eeda", views: "5.93M", likes: "15095", avgViewsPerClip: "28353" },
+                { rank: 2, title: "Ommi", views: "2.85M", likes: "10211", avgViewsPerClip: "13527" },
+                { rank: 3, title: "FIFA Club World Cup 2025", views: "1.9M", likes: "5586", avgViewsPerClip: "8885" },
+                { rank: 4, title: "Fondooq Al Ahlam", views: "1.54M", likes: "4731", avgViewsPerClip: "29657" },
+                { rank: 5, title: "Leyla", views: "0.93M", likes: "2265", avgViewsPerClip: "11876" },
+                { rank: 6, title: "Aser", views: "0.67M", likes: "1906", avgViewsPerClip: "4258" },
+                { rank: 7, title: "Fareed Season 3", views: "0.41M", likes: "825", avgViewsPerClip: "5392" },
+                { rank: 8, title: "Laylet El Eid", views: "0.28M", likes: "465", avgViewsPerClip: "16519" },
+                { rank: 9, title: "Harb El Gibali", views: "0.25M", likes: "594", avgViewsPerClip: "3400" },
+                { rank: 10, title: "Ghayeb Fi Bilad Al Ajayeb", views: "0.24M", likes: "414", avgViewsPerClip: "2837" }
+            ];
+
+
+            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+            let averageViewsChart;
+            let rangeViewsChart;
+            let dailyViewsChart;
+            let topTitlesViewsChart; // New chart instance
+
+            const processOverallData = (data) => {
+                const viewsByDay = {};
+                data.forEach(d => {
+                    if (!viewsByDay[d.day]) {
+                        viewsByDay[d.day] = [];
+                    }
+                    viewsByDay[d.day].push(d.views);
+                });
+
+                const avgData = dayNames.map(day => {
+                    const views = viewsByDay[day] || [];
+                    return views.length > 0 ? views.reduce((sum, v) => sum + v, 0) / views.length : 0;
+                });
+
+                const rangeData = dayNames.map(day => {
+                    const views = viewsByDay[day] || [];
+                    if (views.length === 0) return [0, 0];
+                    return [Math.min(...views), Math.max(...views)];
+                });
+
+                return { labels: dayNames, avgData, rangeData };
             };
 
-            const dayMapping = {
-                'Sunday': 'Sunday', 'Monday': 'Monday', 'Tuesday': 'Tuesday', 'Wednesday': 'Wednesday',
-                'Thursday': 'Thursday', 'Friday': 'Friday', 'Saturday': 'Saturday'
+            const processDailyDataForWeek = (weekNumber) => {
+                let dataSubset = [];
+                if (weekNumber === 'all') { // This case is now for internal data processing if needed
+                    dataSubset = fullDailyData;
+                } else {
+                    const startIndex = (weekNumber - 1) * 7;
+                    dataSubset = fullDailyData.slice(startIndex, startIndex + 7);
+                }
+                const labels = dataSubset.map(d => `${d.date} (${d.day.substring(0, 3)})`);
+                const views = dataSubset.map(d => d.views);
+                return { labels, views, rawData: dataSubset };
+            };
+
+            const updateKPIs = (data) => {
+                if (data.length === 0) {
+                    document.getElementById('kpiHighest').textContent = 'N/A';
+                    document.getElementById('kpiHighestDay').textContent = '';
+                    document.getElementById('kpiLowest').textContent = 'N/A';
+                    document.getElementById('kpiLowestDay').textContent = '';
+                    document.getElementById('kpiMidWeekAvg').textContent = 'N/A';
+                    document.getElementById('kpiWeekendAvg').textContent = 'N/A';
+                    return;
+                }
+
+                let highestView = 0;
+                let highestDay = '';
+                let lowestView = Infinity;
+                let lowestDay = '';
+
+                data.forEach(d => {
+                    if (d.views > highestView) {
+                        highestView = d.views;
+                        highestDay = `${d.date} (${d.day})`;
+                    }
+                    if (d.views < lowestView) {
+                        lowestView = d.views;
+                        lowestDay = `${d.date} (${d.day})`;
+                    }
+                });
+
+                const midWeekViews = data.filter(d => ['Tuesday', 'Wednesday', 'Thursday'].includes(d.day)).map(d => d.views);
+                const weekendViews = data.filter(d => ['Saturday', 'Sunday'].includes(d.day)).map(d => d.views);
+
+                const avgMidWeek = midWeekViews.length > 0 ? midWeekViews.reduce((sum, v) => sum + v, 0) / midWeekViews.length : 0;
+                const avgWeekend = weekendViews.length > 0 ? weekendViews.reduce((sum, v) => sum + v, 0) / weekendViews.length : 0;
+
+                document.getElementById('kpiHighest').textContent = `${highestView}K`;
+                document.getElementById('kpiHighestDay').textContent = `on ${highestDay}`;
+                document.getElementById('kpiLowest').textContent = `${lowestView}K`;
+                document.getElementById('kpiLowestDay').textContent = `on ${lowestDay}`;
+                document.getElementById('kpiMidWeekAvg').textContent = `${avgMidWeek.toFixed(0)}K`;
+                document.getElementById('kpiWeekendAvg').textContent = `${avgWeekend.toFixed(0)}K`;
             };
 
             const chartClickHandler = (evt, elements, chart) => {
                 if (elements.length > 0) {
                     const dataIndex = elements[0].index;
-                    const day = chart.data.labels[dataIndex];
-                    const targetDay = dayMapping[day];
+                    const clickedLabel = chart.data.labels[dataIndex];
+                    let targetDayFull;
 
+                    if (clickedLabel.includes('(') && clickedLabel.includes(')')) {
+                        // Format: "Jun 1 (Sun)"
+                        const dayAbbr = clickedLabel.match(/\((.*?)\)/)[1];
+                        targetDayFull = dayNames.find(d => d.startsWith(dayAbbr));
+                    } else {
+                        // Format: "Sunday"
+                        targetDayFull = clickedLabel;
+                    }
+                    
                     const recommendations = document.querySelectorAll('.accordion-item');
                     recommendations.forEach(rec => {
                         const recDays = rec.dataset.day.split(',');
-                        if (recDays.includes(targetDay)) {
+                        if (recDays.includes(targetDayFull)) {
                             rec.scrollIntoView({ behavior: 'smooth', block: 'center' });
                             rec.classList.add('highlight');
                             const accordionHeader = rec.querySelector('.accordion-header');
@@ -253,7 +500,9 @@
                 }
             };
 
-            // Average Views Chart (Bar)
+            // Initialize Overall Charts (Average and Range)
+            const overallData = processOverallData(fullDailyData);
+
             const avgCtx = document.getElementById('averageViewsChart').getContext('2d');
             const avgChartOptions = {
                 ...baseOptions,
@@ -270,11 +519,11 @@
                     }
                 }
             };
-            const averageViewsChart = createChart(avgCtx, 'bar', {
-                labels: reportData.labels,
+            averageViewsChart = createChart(avgCtx, 'bar', {
+                labels: overallData.labels,
                 datasets: [{
                     label: 'Average Views',
-                    data: reportData.avgData,
+                    data: overallData.avgData,
                     backgroundColor: 'rgba(14, 165, 233, 0.6)', // sky-500
                     borderColor: 'rgba(14, 165, 233, 1)',
                     borderWidth: 2,
@@ -282,7 +531,6 @@
                 }]
             }, avgChartOptions);
 
-            // Range Views Chart (Floating Bar)
             const rangeCtx = document.getElementById('rangeViewsChart').getContext('2d');
             const rangeChartOptions = {
                  ...baseOptions,
@@ -291,7 +539,7 @@
                     ...baseOptions.scales,
                     y: {
                         ...baseOptions.scales.y,
-                        beginAtZero: false // Important for floating bars
+                        beginAtZero: false
                     }
                 },
                 plugins: {
@@ -307,11 +555,11 @@
                     }
                 }
             };
-            const rangeViewsChart = createChart(rangeCtx, 'bar', {
-                labels: reportData.labels,
+            rangeViewsChart = createChart(rangeCtx, 'bar', {
+                labels: overallData.labels,
                 datasets: [{
                     label: 'Viewership Range',
-                    data: reportData.rangeData,
+                    data: overallData.rangeData,
                     backgroundColor: 'rgba(245, 158, 11, 0.6)', // amber-500
                     borderColor: 'rgba(245, 158, 11, 1)',
                     borderWidth: 2,
@@ -320,7 +568,138 @@
                 }]
             }, rangeChartOptions);
 
-            // Tab functionality
+            // Initialize Daily Views Chart
+            const dailyCtx = document.getElementById('dailyViewsChart').getContext('2d');
+            const dailyChartOptions = {
+                ...baseOptions,
+                onClick: chartClickHandler,
+                plugins: {
+                    ...baseOptions.plugins,
+                    tooltip: {
+                        ...baseOptions.plugins.tooltip,
+                        callbacks: {
+                            label: function(context) {
+                                return `Daily Views: ${context.parsed.y.toFixed(0)}K`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    ...baseOptions.scales,
+                    x: {
+                        ...baseOptions.scales.x,
+                        ticks: {
+                            color: '#64748b',
+                            maxRotation: 45,
+                            minRotation: 45
+                        }
+                    }
+                }
+            };
+            dailyViewsChart = createChart(dailyCtx, 'bar', {
+                labels: [],
+                datasets: [{
+                    label: 'Daily Views',
+                    data: [],
+                    backgroundColor: 'rgba(16, 185, 129, 0.6)', // emerald-500
+                    borderColor: 'rgba(16, 185, 129, 1)',
+                    borderWidth: 2,
+                    borderRadius: 4,
+                }]
+            }, dailyChartOptions);
+
+            // Initial data for Top Titles Chart
+            const initialTopTitlesLabels = top10TitlesData.map(item => item.title);
+            const initialTopTitlesViews = top10TitlesData.map(item => parseFloat(item.views.replace('M', '')) * 1000000);
+
+            // Initialize Top Titles Views Chart
+            const topTitlesCtx = document.getElementById('topTitlesViewsChart').getContext('2d');
+            const topTitlesChartOptions = {
+                ...baseOptions,
+                indexAxis: 'y', // Make it a horizontal bar chart
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: {
+                            color: '#e2e8f0'
+                        },
+                        ticks: {
+                            color: '#64748b',
+                            callback: function(value) {
+                                // Convert to millions for display
+                                return (value / 1000000) + 'M';
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Total Views',
+                            color: '#475569',
+                            font: {
+                                weight: 'semibold'
+                            }
+                        }
+                    },
+                    y: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#64748b'
+                        }
+                    }
+                },
+                plugins: {
+                    ...baseOptions.plugins,
+                    tooltip: {
+                        ...baseOptions.plugins.tooltip,
+                        callbacks: {
+                            label: function(context) {
+                                return `Total Views: ${context.parsed.x / 1000000}M`;
+                            }
+                        }
+                    }
+                },
+                // Added options for bar thickness
+                barThickness: 30, // Fixed thickness for bars
+                categoryPercentage: 0.8, // Adjust space between bars
+                barPercentage: 0.9 // Adjust width of the bar itself
+            };
+
+            topTitlesViewsChart = createChart(topTitlesCtx, 'bar', {
+                labels: initialTopTitlesLabels,
+                datasets: [{
+                    label: 'Total Views',
+                    data: initialTopTitlesViews,
+                    backgroundColor: 'rgba(79, 70, 229, 0.6)', // indigo-500
+                    borderColor: 'rgba(79, 70, 229, 1)',
+                    borderWidth: 2,
+                    borderRadius: 4,
+                }]
+            }, topTitlesChartOptions);
+
+            // Function to update Top Titles Chart for a single title
+            const displaySingleTitleOnChart = (title, views) => {
+                topTitlesViewsChart.data.labels = [title];
+                topTitlesViewsChart.data.datasets[0].data = [parseFloat(views.replace('M', '')) * 1000000];
+                topTitlesViewsChart.update();
+            };
+
+            // Function to display all titles on the chart
+            const displayAllTitlesOnChart = () => {
+                topTitlesViewsChart.data.labels = initialTopTitlesLabels;
+                topTitlesViewsChart.data.datasets[0].data = initialTopTitlesViews;
+                topTitlesViewsChart.update();
+            };
+
+
+            const updateDailyViewsChart = (weekNumber) => {
+                const processedDailyData = processDailyDataForWeek(weekNumber);
+                dailyViewsChart.data.labels = processedDailyData.labels;
+                dailyViewsChart.data.datasets[0].data = processedDailyData.views;
+                dailyViewsChart.update();
+            };
+
+            // Tab functionality for Overall Chart Type (Average vs. Range)
             const avgBtn = document.getElementById('avgBtn');
             const rangeBtn = document.getElementById('rangeBtn');
             const avgChartContainer = document.getElementById('avgChartContainer');
@@ -344,6 +723,55 @@
                 avgBtn.classList.add('text-slate-600', 'font-medium');
             });
             
+            // Tab functionality for Weekly Daily Data
+            const weeklyDailyButtons = document.querySelectorAll('.weekly-daily-btn');
+            const dailyChartSection = document.getElementById('dailyChartContainer'); // Get the chart container
+
+            weeklyDailyButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    weeklyDailyButtons.forEach(btn => {
+                        btn.classList.remove('bg-white', 'text-sky-600', 'shadow-sm', 'font-semibold');
+                        btn.classList.add('text-slate-600', 'font-medium');
+                    });
+                    button.classList.add('bg-white', 'text-sky-600', 'shadow-sm', 'font-semibold');
+                    button.classList.remove('text-slate-600', 'font-medium');
+
+                    let selectedWeek = parseInt(button.id.replace('week', '').replace('DailyBtn', ''));
+                    
+                    // Show the chart container when a button is clicked
+                    dailyChartSection.classList.remove('hidden');
+                    updateDailyViewsChart(selectedWeek);
+                });
+            });
+
+            // Top-level Main Tab functionality
+            const mainTabButtons = document.querySelectorAll('.main-tab-btn');
+            const mainContentSections = document.querySelectorAll('.main-content-section');
+
+            mainTabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Deactivate all main tab buttons
+                    mainTabButtons.forEach(btn => {
+                        btn.classList.remove('bg-white', 'text-sky-600', 'shadow-sm', 'font-semibold');
+                        btn.classList.add('text-slate-600', 'font-medium');
+                    });
+
+                    // Activate clicked button
+                    button.classList.add('bg-white', 'text-sky-600', 'shadow-sm', 'font-semibold');
+                    button.classList.remove('text-slate-600', 'font-medium');
+
+                    // Hide all content sections
+                    mainContentSections.forEach(section => {
+                        section.classList.add('hidden');
+                    });
+
+                    // Show the target section
+                    const targetSectionId = button.dataset.target;
+                    document.getElementById(targetSectionId).classList.remove('hidden');
+                });
+            });
+
+
             // Accordion functionality
             document.querySelectorAll('.accordion-header').forEach(header => {
                 header.addEventListener('click', () => {
@@ -368,6 +796,36 @@
                     }
                 });
             });
+
+            // Function to populate the Top 10 Titles table
+            const populateTopTitlesTable = () => {
+                const tableBody = document.getElementById('topTitlesTableBody');
+                tableBody.innerHTML = ''; // Clear existing rows
+
+                top10TitlesData.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="px-4 py-2 whitespace-nowrap">${item.rank}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">${item.title}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">${item.views}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">${item.likes}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">${item.avgViewsPerClip}</td>
+                    `;
+                    // Add click listener to each row
+                    row.addEventListener('click', () => {
+                        displaySingleTitleOnChart(item.title, item.views);
+                    });
+                    tableBody.appendChild(row);
+                });
+            };
+
+            // Event listener for "Show All Titles" button
+            document.getElementById('showAllTitlesBtn').addEventListener('click', displayAllTitlesOnChart);
+
+            // Initial updates
+            updateKPIs(fullDailyData);
+            populateTopTitlesTable(); // Populate the table on load
+            // Do NOT call updateDailyViewsChart('all') here, as we want it hidden initially.
         });
     </script>
 </body>
