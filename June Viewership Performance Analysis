@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>June Viewership Insights Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: The SPA uses a dashboard structure for immediate clarity and engagement. It starts with high-level KPI cards for a quick summary. The core is an interactive chart area with tabs to switch between 'Average Performance' and 'Volatility Analysis', preventing UI clutter. This allows users to focus on one aspect at a time. Below, strategic recommendations are presented in an interactive accordion, linking directly to the chart data. Clicking a day on a chart highlights the relevant recommendation. This structure was chosen to guide the user from a broad overview to specific details and actionable insights in an intuitive, non-linear way, which is more effective for data exploration than a static, linear presentation. -->
+    <!-- Visualization & Content Choices: 1. KPI Cards (Highest/Lowest/Avg Views): Goal: Inform. Method: Styled HTML/Tailwind. Interaction: Static. Justification: Provides immediate, high-level context. 2. Average Views: Goal: Compare. Method: Bar Chart. Interaction: Hover tooltips, click to highlight recommendation. Justification: Best for comparing discrete categories (days). Library: Chart.js. 3. Viewership Volatility: Goal: Show Range. Method: Floating Bar Chart (data as [min, max]). Interaction: Hover tooltips, click to highlight. Justification: Clearly visualizes data spread and volatility for each day in a single view. Library: Chart.js. 4. Recommendations: Goal: Advise. Method: HTML/JS Accordion. Interaction: Click to expand/collapse. Justification: Organizes detailed text, reduces cognitive load, and links interactively to charts. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        @media (max-width: 640px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+        .highlight {
+            transition: all 0.3s ease-in-out;
+            animation: pulse 1.5s ease-in-out;
+        }
+        @keyframes pulse {
+            0% { background-color: #e0f2fe; transform: scale(1); } /* sky-100 */
+            50% { background-color: #e0f2fe; transform: scale(1.01); }
+            100% { background-color: transparent; transform: scale(1); }
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+
+        <header class="text-center mb-8 md:mb-12">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900">June Viewership Performance Analysis</h1>
+            <p class="mt-2 text-lg text-slate-600">Uncovering Key Trends & Strategic Opportunities</p>
+        </header>
+
+        <main>
+            <!-- Key Metrics Section -->
+            <section id="kpis" class="mb-8 md:mb-12">
+                <h2 class="text-2xl font-semibold text-slate-900 mb-4 text-center">Monthly Highlights</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 text-center">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                        <p class="text-sm font-medium text-slate-500">Highest Viewership</p>
+                        <p class="text-3xl font-bold text-sky-600 mt-1">859K</p>
+                        <p class="text-xs text-slate-400">on a Friday</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                        <p class="text-sm font-medium text-slate-500">Lowest Viewership</p>
+                        <p class="text-3xl font-bold text-amber-600 mt-1">433K</p>
+                        <p class="text-xs text-slate-400">on a Sunday</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                        <p class="text-sm font-medium text-slate-500">Avg. Mid-Week Views</p>
+                        <p class="text-3xl font-bold text-slate-700 mt-1">771K</p>
+                        <p class="text-xs text-slate-400">(Tue-Thu)</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                        <p class="text-sm font-medium text-slate-500">Avg. Weekend Views</p>
+                        <p class="text-3xl font-bold text-slate-700 mt-1">663K</p>
+                        <p class="text-xs text-slate-400">(Sat-Sun)</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Interactive Chart Section -->
+            <section id="charts" class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-semibold text-slate-900">Interactive Weekly Analysis</h2>
+                    <p class="text-slate-600 mt-1">Toggle between views. Click a day on the chart to see related recommendations.</p>
+                    <div class="mt-4 inline-flex bg-slate-100 p-1 rounded-lg text-sm">
+                        <button id="avgBtn" class="px-4 py-1.5 rounded-md bg-white text-sky-600 shadow-sm font-semibold">Average Performance</button>
+                        <button id="rangeBtn" class="px-4 py-1.5 rounded-md text-slate-600 font-medium">Volatility Analysis</button>
+                    </div>
+                </div>
+
+                <div id="avgChartContainer" class="chart-container">
+                    <canvas id="averageViewsChart"></canvas>
+                </div>
+                <div id="rangeChartContainer" class="chart-container hidden">
+                    <canvas id="rangeViewsChart"></canvas>
+                </div>
+            </section>
+
+            <!-- Recommendations Section -->
+            <section id="recommendations">
+                <h2 class="text-2xl font-semibold text-slate-900 mb-4 text-center">Strategic Recommendations</h2>
+                <div class="space-y-3 max-w-4xl mx-auto">
+                    <div class="accordion-item bg-white rounded-xl shadow-sm border border-slate-200" data-day="Thursday,Tuesday,Wednesday">
+                        <button class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-slate-800">
+                            Leverage Mid-Week Dominance
+                            <span class="transform transition-transform duration-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                            </span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="p-4 pt-0 text-slate-600">
+                                <p>Tuesdays, Wednesdays, and especially Thursdays show the highest and most consistent engagement. Prioritize your high-impact content, major announcements, and primary marketing pushes on these days to maximize reach and viewership.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item bg-white rounded-xl shadow-sm border border-slate-200" data-day="Saturday,Sunday">
+                        <button class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-slate-800">
+                            Optimize Weekend Strategy
+                            <span class="transform transition-transform duration-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                            </span>
+                        </button>
+                        <div class="accordion-content">
+                             <div class="p-4 pt-0 text-slate-600">
+                                <p>Saturdays and Sundays see a noticeable dip in views. Experiment with different content formats or themes, such as "evergreen" or more "lean-back" content that aligns with typical weekend audience behavior. Consider A/B testing post times to find sweet spots.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item bg-white rounded-xl shadow-sm border border-slate-200" data-day="Friday">
+                        <button class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-slate-800">
+                            Decipher Friday's Volatility
+                             <span class="transform transition-transform duration-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                            </span>
+                        </button>
+                         <div class="accordion-content">
+                            <div class="p-4 pt-0 text-slate-600">
+                                <p>Friday has both the highest single-day peak (859K) and significant dips, making it highly unpredictable. Conduct a deep dive into what drove the outlier performance. Was it a specific topic, a viral event, or a campaign? Understanding this is key to replicating that success and mitigating low-performing Fridays.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="text-center mt-12 text-slate-500 text-sm">
+            <p>Report Generated: July 8, 2025</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const reportData = {
+                labels: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+                avgData: [659, 723, 763.25, 764.25, 785.5, 719, 666.75],
+                rangeData: [
+                    [433, 788], [596, 825], [641, 823], 
+                    [655, 839], [731, 834], [553, 859], [542, 759]
+                ]
+            };
+
+            const dayMapping = {
+                'Sunday': 'Sunday', 'Monday': 'Monday', 'Tuesday': 'Tuesday', 'Wednesday': 'Wednesday',
+                'Thursday': 'Thursday', 'Friday': 'Friday', 'Saturday': 'Saturday'
+            };
+
+            const chartClickHandler = (evt, elements, chart) => {
+                if (elements.length > 0) {
+                    const dataIndex = elements[0].index;
+                    const day = chart.data.labels[dataIndex];
+                    const targetDay = dayMapping[day];
+
+                    const recommendations = document.querySelectorAll('.accordion-item');
+                    recommendations.forEach(rec => {
+                        const recDays = rec.dataset.day.split(',');
+                        if (recDays.includes(targetDay)) {
+                            rec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            rec.classList.add('highlight');
+                            const accordionHeader = rec.querySelector('.accordion-header');
+                            const accordionContent = rec.querySelector('.accordion-content');
+                            if (accordionContent.style.maxHeight) {
+                                // Already open, just highlight
+                            } else {
+                                accordionHeader.click();
+                            }
+                            setTimeout(() => rec.classList.remove('highlight'), 1500);
+                        }
+                    });
+                }
+            };
+
+            const createChart = (ctx, type, data, options) => {
+                return new Chart(ctx, { type, data, options });
+            };
+
+            const baseOptions = {
+                maintainAspectRatio: false,
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: '#0f172a', // slate-900
+                        titleFont: { weight: 'bold' },
+                        bodyFont: { size: 14 },
+                        padding: 12,
+                        cornerRadius: 8,
+                        displayColors: false,
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: '#e2e8f0' // slate-200
+                        },
+                        ticks: {
+                            color: '#64748b', // slate-500
+                            callback: function(value) {
+                                return value + 'K';
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Views (in Thousands)',
+                            color: '#475569', // slate-600
+                            font: {
+                                weight: 'semibold'
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                             color: '#64748b' // slate-500
+                        }
+                    }
+                }
+            };
+
+            // Average Views Chart (Bar)
+            const avgCtx = document.getElementById('averageViewsChart').getContext('2d');
+            const avgChartOptions = {
+                ...baseOptions,
+                onClick: chartClickHandler,
+                plugins: {
+                    ...baseOptions.plugins,
+                    tooltip: {
+                        ...baseOptions.plugins.tooltip,
+                        callbacks: {
+                            label: function(context) {
+                                return `Avg. Views: ${context.parsed.y.toFixed(0)}K`;
+                            }
+                        }
+                    }
+                }
+            };
+            const averageViewsChart = createChart(avgCtx, 'bar', {
+                labels: reportData.labels,
+                datasets: [{
+                    label: 'Average Views',
+                    data: reportData.avgData,
+                    backgroundColor: 'rgba(14, 165, 233, 0.6)', // sky-500
+                    borderColor: 'rgba(14, 165, 233, 1)',
+                    borderWidth: 2,
+                    borderRadius: 4,
+                }]
+            }, avgChartOptions);
+
+            // Range Views Chart (Floating Bar)
+            const rangeCtx = document.getElementById('rangeViewsChart').getContext('2d');
+            const rangeChartOptions = {
+                 ...baseOptions,
+                onClick: chartClickHandler,
+                scales: {
+                    ...baseOptions.scales,
+                    y: {
+                        ...baseOptions.scales.y,
+                        beginAtZero: false // Important for floating bars
+                    }
+                },
+                plugins: {
+                     ...baseOptions.plugins,
+                    tooltip: {
+                         ...baseOptions.plugins.tooltip,
+                         callbacks: {
+                            label: function(context) {
+                                const range = context.raw;
+                                return `Views Range: ${range[0]}K - ${range[1]}K`;
+                            }
+                        }
+                    }
+                }
+            };
+            const rangeViewsChart = createChart(rangeCtx, 'bar', {
+                labels: reportData.labels,
+                datasets: [{
+                    label: 'Viewership Range',
+                    data: reportData.rangeData,
+                    backgroundColor: 'rgba(245, 158, 11, 0.6)', // amber-500
+                    borderColor: 'rgba(245, 158, 11, 1)',
+                    borderWidth: 2,
+                    borderRadius: 4,
+                    borderSkipped: false,
+                }]
+            }, rangeChartOptions);
+
+            // Tab functionality
+            const avgBtn = document.getElementById('avgBtn');
+            const rangeBtn = document.getElementById('rangeBtn');
+            const avgChartContainer = document.getElementById('avgChartContainer');
+            const rangeChartContainer = document.getElementById('rangeChartContainer');
+
+            avgBtn.addEventListener('click', () => {
+                avgChartContainer.classList.remove('hidden');
+                rangeChartContainer.classList.add('hidden');
+                avgBtn.classList.add('bg-white', 'text-sky-600', 'shadow-sm', 'font-semibold');
+                avgBtn.classList.remove('text-slate-600', 'font-medium');
+                rangeBtn.classList.remove('bg-white', 'text-sky-600', 'shadow-sm', 'font-semibold');
+                rangeBtn.classList.add('text-slate-600', 'font-medium');
+            });
+
+            rangeBtn.addEventListener('click', () => {
+                rangeChartContainer.classList.remove('hidden');
+                avgChartContainer.classList.add('hidden');
+                rangeBtn.classList.add('bg-white', 'text-sky-600', 'shadow-sm', 'font-semibold');
+                rangeBtn.classList.remove('text-slate-600', 'font-medium');
+                avgBtn.classList.remove('bg-white', 'text-sky-600', 'shadow-sm', 'font-semibold');
+                avgBtn.classList.add('text-slate-600', 'font-medium');
+            });
+            
+            // Accordion functionality
+            document.querySelectorAll('.accordion-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    const content = header.nextElementSibling;
+                    const icon = header.querySelector('span');
+
+                    // Close all others
+                    document.querySelectorAll('.accordion-content').forEach(c => {
+                        if (c !== content) {
+                            c.style.maxHeight = null;
+                            c.previousElementSibling.querySelector('span').classList.remove('rotate-180');
+                        }
+                    });
+
+                    // Toggle current
+                    if (content.style.maxHeight) {
+                        content.style.maxHeight = null;
+                        icon.classList.remove('rotate-180');
+                    } else {
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                        icon.classList.add('rotate-180');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
