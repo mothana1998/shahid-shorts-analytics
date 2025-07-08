@@ -68,147 +68,161 @@
 
     <div class="container mx-auto p-4 md:p-8 max-w-7xl">
 
-        <header class="text-center mb-8 md:mb-12">
-            <h1 class="text-3xl md:text-4xl font-bold text-slate-900">June Viewership Performance Analysis</h1>
-            <p class="mt-2 text-lg text-slate-600">Uncovering Key Trends & Strategic Opportunities</p>
-        </header>
-
-        <!-- Top-level Navigation Tabs -->
+        <!-- New Top-Level Report Navigation -->
         <nav class="mb-8 md:mb-12">
             <div class="inline-flex bg-slate-100 p-1 rounded-lg text-sm flex-wrap justify-center gap-2 w-full">
-                <button id="dashboardTabBtn" class="px-4 py-2 rounded-md bg-white text-sky-600 shadow-sm font-semibold main-tab-btn" data-target="dashboard-section">Monthly Highlights</button>
-                <button id="topTitlesTabBtn" class="px-4 py-2 rounded-md text-slate-600 font-medium main-tab-btn" data-target="top-titles-section">Top 10 Titles Views</button>
-                <button id="recommendationTitlesTabBtn" class="px-4 py-2 rounded-md text-slate-600 font-medium main-tab-btn" data-target="recommendation-titles-section">Recommendation Titles</button>
+                <button id="juneReportBtn" class="px-4 py-2 rounded-md bg-sky-600 text-white shadow-sm font-semibold report-nav-btn" data-target="june-report-content">June Performance Analysis</button>
+                <button id="julyReportBtn" class="px-4 py-2 rounded-md bg-slate-200 text-slate-800 font-medium report-nav-btn hover:bg-slate-300" data-target="july-report-content">July Performance Analysis</button>
+                <button id="additionalInsightsBtn" class="px-4 py-2 rounded-md bg-slate-200 text-slate-800 font-medium report-nav-btn hover:bg-slate-300" data-target="additional-insights-content">Additional Insights</button>
+                <button id="dmcsViewsBtn" class="px-4 py-2 rounded-md bg-slate-200 text-slate-800 font-medium report-nav-btn hover:bg-slate-300" data-target="dmcs-views-content">DMCS Views</button>
+                <button id="thirdPartyViewsBtn" class="px-4 py-2 rounded-md bg-slate-200 text-slate-800 font-medium report-nav-btn hover:bg-slate-300" data-target="third-party-views-content">Third Party Views</button>
             </div>
         </nav>
 
-        <main>
-            <!-- Dashboard Section (Default View) -->
-            <section id="dashboard-section" class="main-content-section">
-                <!-- Key Metrics Section -->
-                <section id="kpis" class="mb-8 md:mb-12">
-                    <h2 class="text-2xl font-semibold text-slate-900 mb-4 text-center">Monthly Highlights</h2>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 text-center">
-                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                            <p class="text-sm font-medium text-slate-500">Highest Viewership</p>
-                            <p id="kpiHighest" class="text-3xl font-bold text-sky-600 mt-1">859K</p>
-                            <p id="kpiHighestDay" class="text-xs text-slate-400">on a Friday</p>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                            <p class="text-sm font-medium text-slate-500">Lowest Viewership</p>
-                            <p id="kpiLowest" class="text-3xl font-bold text-amber-600 mt-1">433K</p>
-                            <p id="kpiLowestDay" class="text-xs text-slate-400">on a Sunday</p>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                            <p class="text-sm font-medium text-slate-500">Avg. Mid-Week Views</p>
-                            <p id="kpiMidWeekAvg" class="text-3xl font-bold text-slate-700 mt-1">771K</p>
-                            <p class="text-xs text-slate-400">(Tue-Thu)</p>
-                        </div>
-                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                            <p class="text-sm font-medium text-slate-500">Avg. Weekend Views</p>
-                            <p id="kpiWeekendAvg" class="text-3xl font-bold text-slate-700 mt-1">663K</p>
-                            <p class="text-xs text-slate-400">(Sat-Sun)</p>
-                        </div>
-                    </div>
-                </section>
+        <!-- Main Content Area - Each section corresponds to a top-level nav button -->
+        <div id="june-report-content" class="report-content-section">
+            <header class="text-center mb-8 md:mb-12">
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-900">June Viewership Performance Analysis</h1>
+                <p class="mt-2 text-lg text-slate-600">Uncovering Key Trends & Strategic Opportunities</p>
+            </header>
 
-                <!-- Daily Viewership by Week Section -->
-                <section id="weeklyDailyViewsSection" class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12">
-                    <div class="text-center mb-6">
-                        <h2 class="text-2xl font-semibold text-slate-900">Daily Viewership by Week</h2>
-                        <p class="text-slate-600 mt-1">Click a week to see daily view trends for that period.</p>
-                        <div class="mt-4 inline-flex bg-slate-100 p-1 rounded-lg text-sm flex-wrap justify-center gap-2">
-                            <button id="week1DailyBtn" class="px-4 py-1.5 rounded-md text-slate-600 font-medium weekly-daily-btn">Week 1</button>
-                            <button id="week2DailyBtn" class="px-4 py-1.5 rounded-md text-slate-600 font-medium weekly-daily-btn">Week 2</button>
-                            <button id="week3DailyBtn" class="px-4 py-1.5 rounded-md text-slate-600 font-medium weekly-daily-btn">Week 3</button>
-                            <button id="week4DailyBtn" class="px-4 py-1.5 rounded-md text-slate-600 font-medium weekly-daily-btn">Week 4</button>
+            <!-- Top-level Navigation Tabs (Dashboard, Top 10 Titles, Recommendation Titles) -->
+            <nav class="mb-8 md:mb-12">
+                <div class="inline-flex bg-slate-100 p-1 rounded-lg text-sm flex-wrap justify-center gap-2 w-full">
+                    <button id="dashboardTabBtn" class="px-4 py-2 rounded-md bg-white text-sky-600 shadow-sm font-semibold main-tab-btn" data-target="dashboard-section">Monthly Highlights</button>
+                    <button id="topTitlesTabBtn" class="px-4 py-2 rounded-md text-slate-600 font-medium main-tab-btn" data-target="top-titles-section">Top 10 Titles Views</button>
+                    <button id="recommendationTitlesTabBtn" class="px-4 py-2 rounded-md text-slate-600 font-medium main-tab-btn" data-target="recommendation-titles-section">Recommendation Titles</button>
+                </div>
+            </nav>
+
+            <main>
+                <!-- Dashboard Section (Default View) -->
+                <section id="dashboard-section" class="main-content-section">
+                    <!-- Key Metrics Section -->
+                    <section id="kpis" class="mb-8 md:mb-12">
+                        <h2 class="text-2xl font-semibold text-slate-900 mb-4 text-center">Monthly Highlights</h2>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 text-center">
+                            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                                <p class="text-sm font-medium text-slate-500">Highest Viewership</p>
+                                <p id="kpiHighest" class="text-3xl font-bold text-sky-600 mt-1">859K</p>
+                                <p id="kpiHighestDay" class="text-xs text-slate-400">on a Friday</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                                <p class="text-sm font-medium text-slate-500">Lowest Viewership</p>
+                                <p id="kpiLowest" class="text-3xl font-bold text-amber-600 mt-1">433K</p>
+                                <p id="kpiLowestDay" class="text-xs text-slate-400">on a Sunday</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                                <p class="text-sm font-medium text-slate-500">Avg. Mid-Week Views</p>
+                                <p id="kpiMidWeekAvg" class="text-3xl font-bold text-slate-700 mt-1">771K</p>
+                                <p class="text-xs text-slate-400">(Tue-Thu)</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                                <p class="text-sm font-medium text-slate-500">Avg. Weekend Views</p>
+                                <p id="kpiWeekendAvg" class="text-3xl font-bold text-slate-700 mt-1">663K</p>
+                                <p class="text-xs text-slate-400">(Sat-Sun)</p>
+                            </div>
                         </div>
-                    </div>
-                    <div id="dailyChartContainer" class="chart-container hidden">
-                        <canvas id="dailyViewsChart"></canvas>
-                    </div>
-                </section>
+                    </section>
 
-                <!-- Overall Interactive Chart Section -->
-                <section id="charts" class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12">
-                    <div class="text-center mb-6">
-                        <h2 class="text-2xl font-semibold text-slate-900">Overall Weekly Performance Analysis</h2>
-                        <p class="text-slate-600 mt-1">Compare average performance and volatility across the entire month.</p>
-                        <div class="mt-4 inline-flex bg-slate-100 p-1 rounded-lg text-sm">
-                            <button id="avgBtn" class="px-4 py-1.5 rounded-md bg-white text-sky-600 shadow-sm font-semibold chart-type-btn">Average Performance</button>
-                            <button id="rangeBtn" class="px-4 py-1.5 rounded-md text-slate-600 font-medium chart-type-btn">Volatility Analysis</button>
+                    <!-- Daily Viewership by Week Section -->
+                    <section id="weeklyDailyViewsSection" class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12">
+                        <div class="text-center mb-6">
+                            <h2 class="text-2xl font-semibold text-slate-900">Daily Viewership by Week</h2>
+                            <p class="text-slate-600 mt-1">Click a week to see daily view trends for that period.</p>
+                            <div class="mt-4 inline-flex bg-slate-100 p-1 rounded-lg text-sm flex-wrap justify-center gap-2">
+                                <button id="week1DailyBtn" class="px-4 py-1.5 rounded-md text-slate-600 font-medium weekly-daily-btn">Week 1</button>
+                                <button id="week2DailyBtn" class="px-4 py-1.5 rounded-md text-slate-600 font-medium weekly-daily-btn">Week 2</button>
+                                <button id="week3DailyBtn" class="px-4 py-1.5 rounded-md text-slate-600 font-medium weekly-daily-btn">Week 3</button>
+                                <button id="week4DailyBtn" class="px-4 py-1.5 rounded-md text-slate-600 font-medium weekly-daily-btn">Week 4</button>
+                            </div>
                         </div>
-                    </div>
+                        <div id="dailyChartContainer" class="chart-container hidden">
+                            <canvas id="dailyViewsChart"></canvas>
+                        </div>
+                    </section>
 
-                    <div id="avgChartContainer" class="chart-container">
-                        <canvas id="averageViewsChart"></canvas>
-                    </div>
-                    <div id="rangeChartContainer" class="chart-container hidden">
-                        <canvas id="rangeViewsChart"></canvas>
-                    </div>
-                </section>
+                    <!-- Overall Interactive Chart Section -->
+                    <section id="charts" class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12">
+                        <div class="text-center mb-6">
+                            <h2 class="text-2xl font-semibold text-slate-900">Overall Weekly Performance Analysis</h2>
+                            <p class="text-slate-600 mt-1">Compare average performance and volatility across the entire month.</p>
+                            <div class="mt-4 inline-flex bg-slate-100 p-1 rounded-lg text-sm">
+                                <button id="avgBtn" class="px-4 py-1.5 rounded-md bg-white text-sky-600 shadow-sm font-semibold chart-type-btn">Average Performance</button>
+                                <button id="rangeBtn" class="px-4 py-1.5 rounded-md text-slate-600 font-medium chart-type-btn">Volatility Analysis</button>
+                            </div>
+                        </div>
 
-                <!-- Strategic Recommendations Section (Now part of Monthly Highlights) -->
-                <section id="recommendations">
-                    <h2 class="text-2xl font-semibold text-slate-900 mb-4 text-center">Strategic Recommendations</h2>
-                    <div class="space-y-3 max-w-4xl mx-auto">
-                        <div class="accordion-item bg-white rounded-xl shadow-sm border border-slate-200" data-day="Thursday,Tuesday,Wednesday">
-                            <button class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-slate-800 hover:bg-slate-50 hover:shadow-md">
-                                Leverage Mid-Week Dominance
-                                <span class="transform transition-transform duration-300">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                                </span>
-                            </button>
-                            <div class="accordion-content">
-                                <div class="p-4 pt-0 text-slate-600">
-                                    <ul class="list-disc pl-5 space-y-1">
-                                        <li>Prioritize high-impact content and major announcements on these days.</li>
-                                        <li>Schedule primary marketing pushes to align with peak mid-week engagement.</li>
-                                        <li>Maximize reach and viewership by focusing efforts where the audience is most active.</li>
-                                    </ul>
+                        <div id="avgChartContainer" class="chart-container">
+                            <canvas id="averageViewsChart"></canvas>
+                        </div>
+                        <div id="rangeChartContainer" class="chart-container hidden">
+                            <canvas id="rangeViewsChart"></canvas>
+                        </div>
+                    </section>
+
+                    <!-- Strategic Recommendations Section (Now part of Monthly Highlights) -->
+                    <section id="recommendations">
+                        <h2 class="text-2xl font-semibold text-slate-900 mb-4 text-center">Strategic Recommendations</h2>
+                        <div class="space-y-3 max-w-4xl mx-auto">
+                            <div class="accordion-item bg-white rounded-xl shadow-sm border border-slate-200" data-day="Thursday,Tuesday,Wednesday">
+                                <button class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-slate-800 hover:bg-slate-50 hover:shadow-md">
+                                    Leverage Mid-Week Dominance
+                                    <span class="transform transition-transform duration-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                                    </span>
+                                </button>
+                                <div class="accordion-content">
+                                    <div class="p-4 pt-0 text-slate-600">
+                                        <ul class="list-disc pl-5 space-y-1">
+                                            <li>Prioritize high-impact content and major announcements on these days.</li>
+                                            <li>Schedule primary marketing pushes to align with peak mid-week engagement.</li>
+                                            <li>Maximize reach and viewership by focusing efforts where the audience is most active.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item bg-white rounded-xl shadow-sm border border-slate-200" data-day="Saturday,Sunday">
+                                <button class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-slate-800 hover:bg-slate-50 hover:shadow-md">
+                                    Optimize Weekend Strategy
+                                    <span class="transform transition-transform duration-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                                    </span>
+                                </button>
+                                <div class="accordion-content">
+                                     <div class="p-4 pt-0 text-slate-600">
+                                        <ul class="list-disc pl-5 space-y-1">
+                                            <li>Experiment with different content formats or themes, such as "evergreen" or "lean-back" content.</li>
+                                            <li>Align content with typical weekend audience behavior (e.g., relaxation, entertainment).</li>
+                                            <li>Consider A/B testing post times to find optimal engagement windows on weekends.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item bg-white rounded-xl shadow-sm border border-slate-200" data-day="Friday">
+                                <button class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-slate-800 hover:bg-slate-50 hover:shadow-md">
+                                    Decipher Friday's Volatility
+                                     <span class="transform transition-transform duration-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                                    </span>
+                                </button>
+                                 <div class="accordion-content">
+                                    <div class="p-4 pt-0 text-slate-600">
+                                        <ul class="list-disc pl-5 space-y-1">
+                                            <li>Conduct a deep dive into factors that drove the $859K$ peak on a Friday.</li>
+                                            <li>Identify specific content, promotional strategies, or external events contributing to success.</li>
+                                            <li>Develop strategies to replicate high performance and mitigate low-performing Fridays.</li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="accordion-item bg-white rounded-xl shadow-sm border border-slate-200" data-day="Saturday,Sunday">
-                            <button class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-slate-800 hover:bg-slate-50 hover:shadow-md">
-                                Optimize Weekend Strategy
-                                <span class="transform transition-transform duration-300">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                                </span>
-                            </button>
-                            <div class="accordion-content">
-                                 <div class="p-4 pt-0 text-slate-600">
-                                    <ul class="list-disc pl-5 space-y-1">
-                                        <li>Experiment with different content formats or themes, such as "evergreen" or "lean-back" content.</li>
-                                        <li>Align content with typical weekend audience behavior (e.g., relaxation, entertainment).</li>
-                                        <li>Consider A/B testing post times to find optimal engagement windows on weekends.</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item bg-white rounded-xl shadow-sm border border-slate-200" data-day="Friday">
-                            <button class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-slate-800 hover:bg-slate-50 hover:shadow-md">
-                                Decipher Friday's Volatility
-                                 <span class="transform transition-transform duration-300">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                                </span>
-                            </button>
-                             <div class="accordion-content">
-                                <div class="p-4 pt-0 text-slate-600">
-                                    <ul class="list-disc pl-5 space-y-1">
-                                        <li>Conduct a deep dive into factors that drove the $859K$ peak on a Friday.</li>
-                                        <li>Identify specific content, promotional strategies, or external events contributing to success.</li>
-                                        <li>Develop strategies to replicate high performance and mitigate low-performing Fridays.</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </section>
+                    </section>
+                </main>
+            </div>
 
             <!-- Top 10 Titles Section (Initially Hidden) -->
-            <section id="top-titles-section" class="main-content-section hidden">
+            <section id="top-titles-section" class="report-content-section hidden">
                 <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12">
                     <h2 class="text-2xl font-semibold text-slate-900 mb-4 text-center">Top 10 Titles Views (June)</h2>
                     <p class="text-slate-600 mb-6 text-center">Here are the top 10 performing titles based on viewership data for June:</p>
@@ -238,7 +252,7 @@
             </section>
 
             <!-- Recommendation Titles Section (Initially Hidden) -->
-            <section id="recommendation-titles-section" class="main-content-section hidden">
+            <section id="recommendation-titles-section" class="report-content-section hidden">
                 <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12">
                     <h2 class="text-2xl font-semibold text-slate-900 mb-4 text-center">Recommendation Titles for July</h2>
                     <p class="text-slate-600 mb-6 text-center">Based on June's viewership trends and average performance, here are some recommended title categories or themes to focus on for July to potentially maximize engagement.</p>
@@ -270,7 +284,33 @@
                     </ul>
                 </div>
             </section>
-        </main>
+
+            <!-- Placeholder sections for other top-level reports -->
+            <section id="july-report-content" class="report-content-section hidden">
+                <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12 text-center">
+                    <h2 class="text-2xl font-semibold text-slate-900 mb-4">July Performance Analysis</h2>
+                    <p class="text-slate-600 text-lg font-medium">Coming Soon!</p>
+                </div>
+            </section>
+            <section id="additional-insights-content" class="report-content-section hidden">
+                <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12 text-center">
+                    <h2 class="text-2xl font-semibold text-slate-900 mb-4">Additional Insights</h2>
+                    <p class="text-slate-600">Content for additional insights will go here.</p>
+                </div>
+            </section>
+            <section id="dmcs-views-content" class="report-content-section hidden">
+                <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12 text-center">
+                    <h2 class="text-2xl font-semibold text-slate-900 mb-4">DMCS Views</h2>
+                    <p class="text-slate-600">Content specific to DMCS views will go here.</p>
+                </div>
+            </section>
+            <section id="third-party-views-content" class="report-content-section hidden">
+                <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12 text-center">
+                    <h2 class="text-2xl font-semibold text-slate-900 mb-4">Third Party Views</h2>
+                    <p class="text-slate-600">Content related to third-party views will go here.</p>
+                </div>
+            </section>
+        </div> <!-- End of june-report-content -->
 
         <footer class="text-center mt-12 text-slate-500 text-sm">
             <p>Report Generated: July 8, 2025</p>
@@ -821,6 +861,33 @@
 
             // Event listener for "Show All Titles" button
             document.getElementById('showAllTitlesBtn').addEventListener('click', displayAllTitlesOnChart);
+
+            // New Top-Level Report Navigation Logic
+            const reportNavButtons = document.querySelectorAll('.report-nav-btn');
+            const reportContentSections = document.querySelectorAll('.report-content-section');
+
+            reportNavButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Deactivate all report nav buttons
+                    reportNavButtons.forEach(btn => {
+                        btn.classList.remove('bg-sky-600', 'text-white', 'shadow-sm', 'font-semibold');
+                        btn.classList.add('bg-slate-200', 'text-slate-800', 'font-medium', 'hover:bg-slate-300');
+                    });
+
+                    // Activate clicked button
+                    button.classList.add('bg-sky-600', 'text-white', 'shadow-sm', 'font-semibold');
+                    button.classList.remove('bg-slate-200', 'text-slate-800', 'font-medium', 'hover:bg-slate-300');
+
+                    // Hide all report content sections
+                    reportContentSections.forEach(section => {
+                        section.classList.add('hidden');
+                    });
+
+                    // Show the target report content section
+                    const targetSectionId = button.dataset.target;
+                    document.getElementById(targetSectionId).classList.remove('hidden');
+                });
+            });
 
             // Initial updates
             updateKPIs(fullDailyData);
