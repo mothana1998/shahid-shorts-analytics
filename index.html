@@ -525,19 +525,10 @@
 
                     <section id="recommendations" class="mt-16">
                         <h2 class="clip-performance-section-title">Key Insights & Strategic Recommendations</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <div class="recommendation-card blue-border">
-                                <h3 class="font-bold text-lg mb-2 text-[#005f73]">Emulate High-Efficiency Profiles</h3>
-                                <p class="text-gray-600">Analyze the content themes, formats, and promotion strategies of profiles like 'Al Ameel (Icerde) S1' that excel in average views. Their success provides a blueprint for creating highly engaging clips that resonate strongly with viewers.</p>
-                            </div>
-                            <div class="recommendation-card yellow-border">
-                                <h3 class="font-bold text-lg mb-2 text-[#005f73]">Optimize High-Reach Channels</h3>
-                                <p class="text-gray-600">For profiles with high total views but lower average views, investigate which specific clips are underperforming. Consider optimizing or re-evaluating this content to lift the overall average and improve consistency.</p>
-                            </div>
-                            <div class="recommendation-card red-border">
-                                <h3 class="font-bold text-lg mb-2 text-[#005f73]">Quality Over Quantity</h3>
-                                <p class="text-gray-600">The data clearly indicates that a large volume of clips does not guarantee high engagement. Focus resources on creating high-quality, impactful content rather than just increasing output volume.
-                                </p>
+                        <div id="dynamic-recommendations" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Recommendations will be dynamically inserted here -->
+                            <div class="col-span-full text-center text-gray-500 py-8" id="recommendations-loading">
+                                Generating insights...
                             </div>
                         </div>
                     </section>
@@ -1202,9 +1193,10 @@
                     const sectionToShow = document.getElementById(targetSectionId);
                     if (sectionToShow) {
                         sectionToShow.classList.remove('hidden');
-                        // If it's the third-party-july-content, initialize its charts
+                        // If it's the third-party-july-content, initialize its charts and generate recommendations
                         if (targetSectionId === 'third-party-july-content') {
                             initializeThirdPartyJulyCharts();
+                            generateRecommendations();
                         }
                     }
                 });
@@ -1256,9 +1248,10 @@
                     const sectionToShow = document.getElementById(targetSectionId);
                     if (sectionToShow) {
                         sectionToShow.classList.remove('hidden');
-                        // If it's the third-party-july-content, initialize its charts
+                        // If it's the third-party-july-content, initialize its charts and generate recommendations
                         if (targetSectionId === 'third-party-july-content') {
                             initializeThirdPartyJulyCharts();
+                            generateRecommendations();
                         }
                     }
                 });
@@ -1293,6 +1286,12 @@
 
             // Function to initialize charts for Third Party Views - July
             function initializeThirdPartyJulyCharts() {
+                // Destroy existing chart instances if they exist to prevent duplicates
+                if (window.totalViewsChartInstance) window.totalViewsChartInstance.destroy();
+                if (window.avgViewsChartInstance) window.avgViewsChartInstance.destroy();
+                if (window.scatterTotalViewsChartInstance) window.scatterTotalViewsChartInstance.destroy();
+                if (window.scatterAvgViewsChartInstance) window.scatterAvgViewsChartInstance.destroy();
+
                 // Ensure canvases exist before trying to get context
                 const totalViewsCtx = document.getElementById('totalViewsChart');
                 const avgViewsCtx = document.getElementById('avgViewsChart');
@@ -1340,7 +1339,7 @@
                 };
 
                 const sortedByTotalViews = [...thirdPartyJulyProfileData].sort((a, b) => b.totalViews - a.totalViews).slice(0, 10);
-                new Chart(totalViewsCtx.getContext('2d'), {
+                window.totalViewsChartInstance = new Chart(totalViewsCtx.getContext('2d'), {
                     type: 'bar',
                     data: {
                         labels: sortedByTotalViews.map(p => formatClipLabel(p.name, 20)),
@@ -1368,7 +1367,7 @@
                 });
                 
                 const sortedByAvgViews = [...thirdPartyJulyProfileData].sort((a, b) => b.avgViews - a.avgViews).slice(0, 10);
-                new Chart(avgViewsCtx.getContext('2d'), {
+                window.avgViewsChartInstance = new Chart(avgViewsCtx.getContext('2d'), {
                     type: 'bar',
                     data: {
                         labels: sortedByAvgViews.map(p => formatClipLabel(p.name, 20)),
@@ -1402,7 +1401,7 @@
                         backgroundColor: clipPerformancePalette.blueMid
                     }]
                 };
-                new Chart(scatterTotalViewsCtx.getContext('2d'), {
+                window.scatterTotalViewsChartInstance = new Chart(scatterTotalViewsCtx.getContext('2d'), {
                     type: 'scatter',
                     data: scatterTotalData,
                     options: { ...clipSharedTooltipConfig,
@@ -1435,7 +1434,7 @@
                         backgroundColor: clipPerformancePalette.yellowMid
                     }]
                 };
-                new Chart(scatterAvgViewsCtx.getContext('2d'), {
+                window.scatterAvgViewsChartInstance = new Chart(scatterAvgViewsCtx.getContext('2d'), {
                     type: 'scatter',
                     data: scatterAvgData,
                     options: { ...clipSharedTooltipConfig,
@@ -1460,6 +1459,90 @@
                         }
                     }
                 });
+            }
+
+            // Function to generate recommendations using LLM
+            async function generateRecommendations() {
+                const dynamicRecommendationsDiv = document.getElementById('dynamic-recommendations');
+                const loadingIndicator = document.getElementById('recommendations-loading');
+
+                if (!dynamicRecommendationsDiv || !loadingIndicator) {
+                    console.error("Dynamic recommendations container or loading indicator not found.");
+                    return;
+                }
+
+                loadingIndicator.classList.remove('hidden');
+                dynamicRecommendationsDiv.innerHTML = `<div class="col-span-full text-center text-gray-500 py-8" id="recommendations-loading">Generating insights...</div>`;
+
+                const prompt = `Based on the following clip performance data, provide three strategic recommendations. Focus on "Emulate High-Efficiency Profiles", "Optimize High-Reach Channels", and "Quality Over Quantity". For each recommendation, provide a concise title and a detailed description as a list of bullet points (each point as a separate string in an array).
+
+                Data: ${JSON.stringify(thirdPartyJulyProfileData)}
+
+                Provide the response as a JSON array of objects, where each object has 'title' (string) and 'description' (array of strings) properties.`;
+
+                try {
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                    const payload = {
+                        contents: chatHistory,
+                        generationConfig: {
+                            responseMimeType: "application/json",
+                            responseSchema: {
+                                type: "ARRAY",
+                                items: {
+                                    type: "OBJECT",
+                                    properties: {
+                                        "title": { "type": "STRING" },
+                                        "description": {
+                                            type: "ARRAY",
+                                            items: { "type": "STRING" }
+                                        }
+                                    },
+                                    "propertyOrdering": ["title", "description"]
+                                }
+                            }
+                        }
+                    };
+                    const apiKey = ""; // If you want to use models other than gemini-2.0-flash or imagen-3.0-generate-002, provide an API key here. Otherwise, leave this as-is.
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const json = result.candidates[0].content.parts[0].text;
+                        const parsedJson = JSON.parse(json);
+
+                        dynamicRecommendationsDiv.innerHTML = ''; // Clear loading
+                        parsedJson.forEach((rec, index) => {
+                            let borderColorClass = '';
+                            if (index === 0) borderColorClass = 'blue-border';
+                            else if (index === 1) borderColorClass = 'yellow-border';
+                            else if (index === 2) borderColorClass = 'red-border';
+
+                            const recCard = document.createElement('div');
+                            recCard.className = `recommendation-card ${borderColorClass}`;
+                            recCard.innerHTML = `
+                                <h3 class="font-bold text-lg mb-2 text-[#005f73]">${rec.title}</h3>
+                                <ul class="list-disc pl-5 text-gray-600 space-y-1">
+                                    ${rec.description.map(point => `<li>${point}</li>`).join('')}
+                                </ul>
+                            `;
+                            dynamicRecommendationsDiv.appendChild(recCard);
+                        });
+                    } else {
+                        dynamicRecommendationsDiv.innerHTML = `<div class="col-span-full text-center text-red-500 py-8">Failed to generate recommendations. Please try again.</div>`;
+                        console.error("LLM response structure unexpected or content missing:", result);
+                    }
+                } catch (error) {
+                    dynamicRecommendationsDiv.innerHTML = `<div class="col-span-full text-center text-red-500 py-8">Error generating recommendations: ${error.message}</div>`;
+                    console.error("Error calling LLM API:", error);
+                }
             }
 
 
