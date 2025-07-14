@@ -1195,8 +1195,10 @@
                         sectionToShow.classList.remove('hidden');
                         // If it's the third-party-july-content, initialize its charts and generate recommendations
                         if (targetSectionId === 'third-party-july-content') {
-                            initializeThirdPartyJulyCharts();
-                            generateRecommendations();
+                            setTimeout(() => { // Defer execution to ensure DOM is ready
+                                initializeThirdPartyJulyCharts();
+                                generateRecommendations();
+                            }, 0);
                         }
                     }
                 });
@@ -1250,8 +1252,10 @@
                         sectionToShow.classList.remove('hidden');
                         // If it's the third-party-july-content, initialize its charts and generate recommendations
                         if (targetSectionId === 'third-party-july-content') {
-                            initializeThirdPartyJulyCharts();
-                            generateRecommendations();
+                            setTimeout(() => { // Defer execution to ensure DOM is ready
+                                initializeThirdPartyJulyCharts();
+                                generateRecommendations();
+                            }, 0);
                         }
                     }
                 });
@@ -1468,6 +1472,12 @@
 
                 if (!dynamicRecommendationsDiv || !loadingIndicator) {
                     console.error("Dynamic recommendations container or loading indicator not found.");
+                    return;
+                }
+
+                // Only generate if the div is empty (i.e., not already populated)
+                if (dynamicRecommendationsDiv.children.length > 0 && dynamicRecommendationsDiv.children[0].id !== 'recommendations-loading') {
+                    // Already has content, or loading indicator is already there from a previous call
                     return;
                 }
 
