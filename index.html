@@ -526,9 +526,30 @@
                     <section id="recommendations" class="mt-16">
                         <h2 class="clip-performance-section-title">Key Insights & Strategic Recommendations</h2>
                         <div id="dynamic-recommendations" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <!-- Recommendations will be dynamically inserted here -->
-                            <div class="col-span-full text-center text-gray-500 py-8" id="recommendations-loading">
-                                
+                            <!-- Default, static recommendations to appear directly -->
+                            <div class="recommendation-card blue-border">
+                                <h3 class="font-bold text-lg mb-2 text-[#005f73]">Emulate High-Efficiency Profiles</h3>
+                                <ul class="list-disc pl-5 text-gray-600 space-y-1">
+                                    <li>Analyze content strategies of profiles with high average views per clip (e.g., 'Al Ameel (Icerde) S1').</li>
+                                    <li>Identify common themes, lengths, or engagement tactics that contribute to their per-clip effectiveness.</li>
+                                    <li>Apply these insights to new content creation to maximize engagement even with fewer clips.</li>
+                                </ul>
+                            </div>
+                            <div class="recommendation-card yellow-border">
+                                <h3 class="font-bold text-lg mb-2 text-[#005f73]">Optimize High-Reach Channels</h3>
+                                <ul class="list-disc pl-5 text-gray-600 space-y-1">
+                                    <li>Invest further in content production and promotion for profiles with high total views (e.g., 'Al Atawla S1').</li>
+                                    <li>Explore cross-promotion opportunities between high-reach and high-efficiency content.</li>
+                                    <li>Leverage these popular channels to introduce new content or drive specific audience actions.</li>
+                                </ul>
+                            </div>
+                            <div class="recommendation-card red-border">
+                                <h3 class="font-bold text-lg mb-2 text-[#005f73]">Prioritize Quality Over Quantity</h3>
+                                <ul class="list-disc pl-5 text-gray-600 space-y-1">
+                                    <li>Focus on creating compelling, high-quality clips rather than simply increasing clip count.</li>
+                                    <li>The scatter plots indicate that more clips do not necessarily translate to higher average engagement.</li>
+                                    <li>Allocate resources to enhance the production value and narrative strength of each clip.</li>
+                                </ul>
                             </div>
                         </div>
                     </section>
@@ -1366,7 +1387,7 @@
                             title: { display: true, text: 'Top 10 Profiles by Total Views', font: { size: 16 }, color: clipPerformancePalette.blueDark }
                         },
                         scales: {
-                            x: { title: { display: true, text: 'Total Views' }, grid: { color: '#e5e7eb' } },
+                            x: { title: { display: true, text: 'Total Views' } },
                             y: { grid: { display: false } }
                         }
                     }
@@ -1470,21 +1491,24 @@
             // Function to generate recommendations using LLM
             async function generateRecommendations() {
                 const dynamicRecommendationsDiv = document.getElementById('dynamic-recommendations');
-                const loadingIndicator = document.getElementById('recommendations-loading');
+                // The loadingIndicator element is no longer strictly needed for display,
+                // but we keep the ID for consistency if any other part of the code
+                // were to reference it. Its content is now empty.
+                const loadingIndicator = document.getElementById('recommendations-loading'); 
 
-                if (!dynamicRecommendationsDiv || !loadingIndicator) {
-                    console.error("Dynamic recommendations container or loading indicator not found.");
+                if (!dynamicRecommendationsDiv) {
+                    console.error("Dynamic recommendations container not found.");
                     return;
                 }
 
-                // Only generate if the div is empty (i.e., not already populated)
-                if (dynamicRecommendationsDiv.children.length > 0 && dynamicRecommendationsDiv.children[0].id !== 'recommendations-loading') {
-                    // Already has content, or loading indicator is already there from a previous call
-                    return;
+                // Check if the dynamic content has already been loaded.
+                // We assume if the first child is NOT the loading indicator, content is already there.
+                if (dynamicRecommendationsDiv.children.length > 0 && dynamicRecommendationsDiv.children[0].className.includes('recommendation-card')) {
+                    return; // Content already loaded, do nothing
                 }
 
-                // Removed the line that explicitly sets "Generating insights..."
-                dynamicRecommendationsDiv.innerHTML = `<div class="col-span-full text-center text-gray-500 py-8" id="recommendations-loading"></div>`;
+                // Clear any existing content (including the static placeholders) before fetching new ones
+                dynamicRecommendationsDiv.innerHTML = '';
 
 
                 const prompt = `Based on the following clip performance data, provide three strategic recommendations. Focus on "Emulate High-Efficiency Profiles", "Optimize High-Reach Channels", and "Quality Over Quantity". For each recommendation, provide a concise title and a detailed description as a list of bullet points (each point as a separate string in an array).
@@ -1531,7 +1555,7 @@
                         const json = result.candidates[0].content.parts[0].text;
                         const parsedJson = JSON.parse(json);
 
-                        dynamicRecommendationsDiv.innerHTML = ''; // Clear loading
+                        dynamicRecommendationsDiv.innerHTML = ''; // Clear existing static content
                         parsedJson.forEach((rec, index) => {
                             let borderColorClass = '';
                             if (index === 0) borderColorClass = 'blue-border';
@@ -1549,12 +1573,64 @@
                             dynamicRecommendationsDiv.appendChild(recCard);
                         });
                     } else {
-                        dynamicRecommendationsDiv.innerHTML = `<div class="col-span-full text-center text-red-500 py-8">Failed to generate recommendations. Please try again.</div>`;
-                        console.error("LLM response structure unexpected or content missing:", result);
+                        // Fallback to static content if LLM fails
+                        dynamicRecommendationsDiv.innerHTML = `
+                            <div class="recommendation-card blue-border">
+                                <h3 class="font-bold text-lg mb-2 text-[#005f73]">Emulate High-Efficiency Profiles</h3>
+                                <ul class="list-disc pl-5 text-gray-600 space-y-1">
+                                    <li>Analyze content strategies of profiles with high average views per clip (e.g., 'Al Ameel (Icerde) S1').</li>
+                                    <li>Identify common themes, lengths, or engagement tactics that contribute to their per-clip effectiveness.</li>
+                                    <li>Apply these insights to new content creation to maximize engagement even with fewer clips.</li>
+                                </ul>
+                            </div>
+                            <div class="recommendation-card yellow-border">
+                                <h3 class="font-bold text-lg mb-2 text-[#005f73]">Optimize High-Reach Channels</h3>
+                                <ul class="list-disc pl-5 text-gray-600 space-y-1">
+                                    <li>Invest further in content production and promotion for profiles with high total views (e.g., 'Al Atawla S1').</li>
+                                    <li>Explore cross-promotion opportunities between high-reach and high-efficiency content.</li>
+                                    <li>Leverage these popular channels to introduce new content or drive specific audience actions.</li>
+                                </ul>
+                            </div>
+                            <div class="recommendation-card red-border">
+                                <h3 class="font-bold text-lg mb-2 text-[#005f73]">Prioritize Quality Over Quantity</h3>
+                                <ul class="list-disc pl-5 text-gray-600 space-y-1">
+                                    <li>Focus on creating compelling, high-quality clips rather than simply increasing clip count.</li>
+                                    <li>The scatter plots indicate that more clips do not necessarily translate to higher average engagement.</li>
+                                    <li>Allocate resources to enhance the production value and narrative strength of each clip.</li>
+                                </ul>
+                            </div>
+                        `;
+                        console.error("LLM response structure unexpected or content missing, falling back to static:", result);
                     }
                 } catch (error) {
-                    dynamicRecommendationsDiv.innerHTML = `<div class="col-span-full text-center text-red-500 py-8">Error generating recommendations: ${error.message}</div>`;
-                    console.error("Error calling LLM API:", error);
+                    // Fallback to static content if API call fails
+                    dynamicRecommendationsDiv.innerHTML = `
+                        <div class="recommendation-card blue-border">
+                            <h3 class="font-bold text-lg mb-2 text-[#005f73]">Emulate High-Efficiency Profiles</h3>
+                            <ul class="list-disc pl-5 text-gray-600 space-y-1">
+                                <li>Analyze content strategies of profiles with high average views per clip (e.g., 'Al Ameel (Icerde) S1').</li>
+                                <li>Identify common themes, lengths, or engagement tactics that contribute to their per-clip effectiveness.</li>
+                                <li>Apply these insights to new content creation to maximize engagement even with fewer clips.</li>
+                            </ul>
+                        </div>
+                        <div class="recommendation-card yellow-border">
+                            <h3 class="font-bold text-lg mb-2 text-[#005f73]">Optimize High-Reach Channels</h3>
+                            <ul class="list-disc pl-5 text-gray-600 space-y-1">
+                                <li>Invest further in content production and promotion for profiles with high total views (e.g., 'Al Atawla S1').</li>
+                                <li>Explore cross-promotion opportunities between high-reach and high-efficiency content.</li>
+                                <li>Leverage these popular channels to introduce new content or drive specific audience actions.</li>
+                            </ul>
+                        </div>
+                        <div class="recommendation-card red-border">
+                            <h3 class="font-bold text-lg mb-2 text-[#005f73]">Prioritize Quality Over Quantity</h3>
+                            <ul class="list-disc pl-5 text-gray-600 space-y-1">
+                                <li>Focus on creating compelling, high-quality clips rather than simply increasing clip count.</li>
+                                <li>The scatter plots indicate that more clips do not necessarily translate to higher average engagement.</li>
+                                <li>Allocate resources to enhance the production value and narrative strength of each clip.</li>
+                            </ul>
+                        </div>
+                    `;
+                    console.error("Error calling LLM API, falling back to static:", error);
                 }
             }
 
