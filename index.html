@@ -426,8 +426,8 @@
                     <p class="text-lg text-slate-600 mb-6">Select a month to view detailed third-party viewership data.</p>
                     
                     <div class="flex flex-col sm:flex-row justify-center gap-4 mb-8">
-                        <button class="inline-block px-8 py-3 bg-sky-600 text-white rounded-md shadow-md hover:bg-sky-700 transition-colors duration-200 text-lg font-semibold third-party-month-btn" data-target-section="third-party-june-content">View June Data</button>
                         <button class="inline-block px-8 py-3 bg-sky-600 text-white rounded-md shadow-md hover:bg-sky-700 transition-colors duration-200 text-lg font-semibold third-party-month-btn" data-target-section="third-party-july-content">View July Data</button>
+                        <button class="inline-block px-8 py-3 bg-sky-600 text-white rounded-md shadow-md hover:bg-sky-700 transition-colors duration-200 text-lg font-semibold third-party-month-btn" data-target-section="third-party-june-content">View June Data</button>
                     </div>
 
                     <button class="mt-6 inline-block px-6 py-2 bg-slate-200 text-slate-800 rounded-md shadow-sm hover:bg-slate-300 transition-colors duration-200 back-to-main-dashboard">Back to Dashboard</button>
@@ -467,7 +467,7 @@
                                 <p>Total Clips</p>
                             </div>
                             <div class="kpi-card total-views">
-                                <p id="total-views">4.6M+</p>
+                                <p id="total-views">1.38M+</p>
                                 <p>Total Clip Views</p>
                             </div>
                         </div>
@@ -499,26 +499,27 @@
                         </div>
                     </section>
 
-                    <section id="relationship-analysis" class="mt-16">
-                        <h2 class="clip-performance-section-title">Quantity vs. Quality Analysis</h2>
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                            <div>
-                                <div class="chart-container" style="height: 400px;">
-                                    <canvas id="scatterTotalViews"></canvas>
-                                </div>
-                                <div class="mt-4 px-2">
-                                    <h3 class="text-xl font-bold text-center text-[#005f73] mb-2">Clip Count vs. Total Views</h3>
-                                    <p class="text-gray-600 text-center text-sm">This scatter plot explores if publishing more clips leads to higher overall viewership. A general upward trend suggests a positive correlation, but outliers show that some profiles achieve high reach with fewer clips.</p>
-                                </div>
+                    <section id="low-performing-titles-section" class="mt-16">
+                        <h2 class="clip-performance-section-title">Low 5 Titles Performance Analysis (by Average Views)</h2>
+                        <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12">
+                            <div class="chart-container">
+                                <canvas id="lowAvgViewsChart"></canvas>
                             </div>
-                            <div>
-                                <div class="chart-container" style="height: 400px;">
-                                    <canvas id="scatterAvgViews"></canvas>
-                                </div>
-                                <div class="mt-4 px-2">
-                                    <h3 class="text-xl font-bold text-center text-[#005f73] mb-2">Clip Count vs. Average Views</h3>
-                                    <p class="text-gray-600 text-center text-sm">Does a higher clip count dilute engagement? This plot shows no clear correlation, suggesting that content quality, not quantity, is the primary driver of high average views per clip.</p>
-                                </div>
+                            <div class="overflow-x-auto mt-8">
+                                <table class="min-w-full rounded-lg overflow-hidden shadow-sm border border-slate-200">
+                                    <thead class="bg-slate-100 border-b border-slate-200">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Profile Name</th>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Number of Clips</th>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Total Views</th>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Avg. Views Per Clip</th>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Why Stop Working on This Title?</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="lowTitlesTableBody" class="divide-y divide-slate-200 text-sm text-slate-700">
+                                        <!-- Data will be inserted here by JavaScript -->
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </section>
@@ -629,50 +630,67 @@
             let rangeViewsChart;
             let dailyViewsChart;
             let topTitlesViewsChart; // New chart instance
+            let lowAvgViewsChart; // New chart for low performing titles
 
             // Data for the Clip Performance Analysis (Third Party Views - July)
             const thirdPartyJulyProfileData = [
-                { name: "Al Atawla S1", clips: 18, totalViews: 455536, avgViews: 25307.6 },
-                { name: "Al Ameel (Icerde) S1", clips: 13, totalViews: 398501, avgViews: 30653.9 },
-                { name: "AL Kha'en S1", clips: 16, totalViews: 306194, avgViews: 19137.1 },
-                { name: "Al Le'ba: Level Al Wahsh S2", clips: 19, totalViews: 289259, avgViews: 15224.2 },
-                { name: "Awdat Khalati S1", clips: 22, totalViews: 240506, avgViews: 10932.1 },
-                { name: "Al Qadar S1", clips: 17, totalViews: 233008, avgViews: 13706.4 },
-                { name: "Al Khotta Baa S1", clips: 13, totalViews: 226633, avgViews: 17433.3 },
-                { name: "Amr Ikhlaa S3 S3", clips: 17, totalViews: 208699, avgViews: 12276.4 },
-                { name: "Al Hayba S1", clips: 7, totalViews: 151103, avgViews: 21586.1 },
-                { name: "El Hashashin S1", clips: 19, totalViews: 143297, avgViews: 7541.95 },
-                { name: "Banat Al Thanawi S2", clips: 14, totalViews: 132519, avgViews: 9465.64 },
-                { name: "Big Time Podcast S1", clips: 16, totalViews: 129700, avgViews: 8106.25 },
-                { name: "Beyt Al Ankaboot S1", clips: 14, totalViews: 125612, avgViews: 8972.29 },
-                { name: "Gaafar El Omda S1", clips: 20, totalViews: 122417, avgViews: 6120.85 },
-                { name: "El Kebeer Awi_TV S7", clips: 16, totalViews: 112981, avgViews: 7061.31 },
-                { name: "Fareed S3 S3", clips: 17, totalViews: 111876, avgViews: 6580.94 },
-                { name: "Al -Meerath S3", clips: 21, totalViews: 109706, avgViews: 5224.1 },
-                { name: "Bab Al Hara S3", clips: 9, totalViews: 91926, avgViews: 10214 },
-                { name: "Leyla (Leyla: Hayat Ask Adalet) S1", clips: 17, totalViews: 81986, avgViews: 4822.71 },
-                { name: "Kolna Eyal Qarya S1", clips: 16, totalViews: 81910, avgViews: 5119.38 },
-                { name: "Lil Mawt S1", clips: 18, totalViews: 81886, avgViews: 4549.22 },
-                { name: "Shatti Ya Beirut S1", clips: 20, totalViews: 67169, avgViews: 3358.45 },
-                { name: "Moftaraq Toroq S1", clips: 17, totalViews: 64770, avgViews: 3810 },
-                { name: "Melh Wa Samra S1", clips: 15, totalViews: 62338, avgViews: 4155.87 },
-                { name: "Horouj S1", clips: 11, totalViews: 62096, avgViews: 5645.09 },
-                { name: "Min Share' Al Haram Ela... S1", clips: 15, totalViews: 59444, avgViews: 3962.93 },
-                { name: "Kermal Al Walad S1", clips: 11, totalViews: 59035, avgViews: 5366.82 },
-                { name: "Salon Zahra S2", clips: 16, totalViews: 56179, avgViews: 3511.19 },
-                { name: "Ragel We Set Settat S1", clips: 14, totalViews: 50932, avgViews: 3638 },
-                { name: "Sikkat Safar S1", clips: 15, totalViews: 48271, avgViews: 3218.07 },
-                { name: "Wlad Badee'a S1", clips: 14, totalViews: 41489, avgViews: 2963.5 },
-                { name: "Mathaf Yaddi S1", clips: 8, totalViews: 34587, avgViews: 4323.38 },
-                { name: "Ahla Ma Tash S1", clips: 17, totalViews: 30354, avgViews: 1785.53 },
-                { name: "Bait & So'al 2025", clips: 3, totalViews: 29520, avgViews: 9840 },
-                { name: "Gamgoum Wa Bimbim: Al Sharika Al Almaniya Li Mokafahat Al Khawareq S1", clips: 5, totalViews: 28808, avgViews: 5761.6 },
-                { name: "Tash (Al Awda) S1", clips: 9, totalViews: 28283, avgViews: 3142.56 },
-                { name: "Mama Ghaneema S1", clips: 4, totalViews: 17601, avgViews: 4400.25 },
-                { name: "Top Chef S8", clips: 4, totalViews: 12313, avgViews: 3078.25 },
-                { name: "Zawja Waheda La Takfi S1", clips: 4, totalViews: 11555, avgViews: 2888.75 },
-                { name: "Motorshow Docuseries S1", clips: 3, totalViews: 11141, avgViews: 3713.67 }
+                { name: "Ahla Ma Tash", clips: 17, totalViews: 20108, avgViews: 1182.8 },
+                { name: "Al -Meerath S3", clips: 19, totalViews: 74744, avgViews: 3933.9 },
+                { name: "Al Ameel (Icerde)", clips: 13, totalViews: 80892, avgViews: 6222.5 },
+                { name: "Al Atawla S1", clips: 18, totalViews: 25965, avgViews: 1442.5 },
+                { name: "Al Hayba S1", clips: 7, totalViews: 4128, avgViews: 589.7 },
+                { name: "AL Kha'en S1", clips: 18, totalViews: 22756, avgViews: 1264.2 },
+                { name: "Al Khotta Baa S1", clips: 13, totalViews: 32906, avgViews: 2531.2 },
+                { name: "Al Le'ba: Level Al Wahsh S2", clips: 19, totalViews: 16008, avgViews: 842.5 },
+                { name: "Al Qadar S1", clips: 17, totalViews: 31890, avgViews: 1875.9 },
+                { name: "Amr Ikhlaa S3 S3", clips: 13, totalViews: 9791, avgViews: 753.2 },
+                { name: "Awdat Khalati S1", clips: 22, totalViews: 15415, avgViews: 700.7 },
+                { name: "Bab Al Hara S3", clips: 9, totalViews: 2284, avgViews: 253.8 },
+                { name: "Bait & So'al 2025", clips: 3, totalViews: 384, avgViews: 128.0 },
+                { name: "Banat Al Thanawi S2", clips: 14, totalViews: 12794, avgViews: 913.9 },
+                { name: "Beyt Al Ankaboot S1", clips: 14, totalViews: 6516, avgViews: 465.4 },
+                { name: "Big Time Podcast S1", clips: 16, totalViews: 42104, avgViews: 2631.5 },
+                { name: "El Hashashin S1", clips: 19, totalViews: 16982, avgViews: 893.8 },
+                { name: "El Kebeer Awi_TV S7", clips: 16, totalViews: 641, avgViews: 40.1 },
+                { name: "Fareed S3 S3", clips: 17, totalViews: 58541, avgViews: 3443.6 },
+                { name: "Gaafar El Omda S1", clips: 20, totalViews: 16428, avgViews: 821.4 },
+                { name: "Gamgoum Wa Bimbim: Al Sharika Al Almaniya Li Mokafahat Al Khawareq S1", clips: 5, totalViews: 4058, avgViews: 811.6 },
+                { name: "Horouj S1", clips: 11, totalViews: 6366, avgViews: 578.7 },
+                { name: "Kermal Al Walad S1", clips: 11, totalViews: 24738, avgViews: 2248.9 },
+                { name: "Kolna Eyal Qarya S1", clips: 16, totalViews: 46253, avgViews: 2890.8 },
+                { name: "Leyla", clips: 20, totalViews: 260383, avgViews: 13019.2 },
+                { name: "Lil Mawt", clips: 18, totalViews: 36625, avgViews: 2034.7 },
+                { name: "Mama Ghaneema Season 1", clips: 4, totalViews: 23300, avgViews: 5825.0 },
+                { name: "Melh Wa Samra Season 1", clips: 12, totalViews: 8942, avgViews: 745.2 },
+                { name: "Min Share’ Al Haram Ela... Season 1", clips: 15, totalViews: 46274, avgViews: 3084.9 },
+                { name: "Moftaraq Toroq Season 1", clips: 18, totalViews: 22002, avgViews: 1222.3 },
+                { name: "MotorShow DocuSeries", clips: 3, totalViews: 17013, avgViews: 5671.0 },
+                { name: "My Grandfather's Museum Season 1", clips: 7, totalViews: 13704, avgViews: 1957.7 },
+                { name: "Ragel We Set Settat Season 1", clips: 14, totalViews: 9993, avgViews: 713.8 },
+                { name: "Salon Zahra Season 2", clips: 16, totalViews: 21699, avgViews: 1356.2 },
+                { name: "Shatti Ya Beirut", clips: 20, totalViews: 40995, avgViews: 2049.8 },
+                { name: "Sikkat Safar Season 1", clips: 17, totalViews: 19481, avgViews: 1145.9 },
+                { name: "Tash: Al Awda Season 19", clips: 10, totalViews: 493, avgViews: 49.3 },
+                { name: "Top Chef Season 8", clips: 5, totalViews: 10073, avgViews: 2014.6 },
+                { name: "Wlad Badee'a Season 1", clips: 21, totalViews: 7268, avgViews: 346.1 },
+                { name: "Zawja Waheda La Takfi Season 1", clips: 4, totalViews: 30797, avgViews: 7699.2 }
             ];
+
+            const updatedTotalProfiles = 40;
+            const updatedTotalClips = 544;
+            const updatedTotalViews = 1383994; // Corrected total views
+
+
+            // Helper function to format large numbers
+            function formatViews(views) {
+                if (views >= 1000000) {
+                    return (views / 1000000).toFixed(2) + 'M+';
+                } else if (views >= 1000) {
+                    return (views / 1000).toFixed(1) + 'K+';
+                }
+                return views.toLocaleString();
+            }
+
 
             const clipPerformancePalette = {
                 blueDark: '#005f73',
@@ -1216,11 +1234,17 @@
                         sectionToShow.classList.remove('hidden');
                         // If it's the third-party-july-content, initialize its charts and generate recommendations
                         if (targetSectionId === 'third-party-july-content') {
+                            // Update KPIs for Third Party Views - July
+                            document.getElementById('total-profiles').textContent = updatedTotalProfiles;
+                            document.getElementById('total-clips').textContent = updatedTotalClips;
+                            document.getElementById('total-views').textContent = formatViews(updatedTotalViews); // Use the formatViews function
+
                             // Increased timeout to give the browser more time to render elements
                             setTimeout(() => { 
                                 initializeThirdPartyJulyCharts();
+                                populateLowTitlesTable(); // Populate low titles table
                                 generateRecommendations();
-                            }, 100); 
+                            }, 500); // Increased timeout to 500ms
                         }
                     }
                 });
@@ -1274,11 +1298,16 @@
                         sectionToShow.classList.remove('hidden');
                         // If it's the third-party-july-content, initialize its charts and generate recommendations
                         if (targetSectionId === 'third-party-july-content') {
-                            // Increased timeout to give the browser more time to render elements
+                            // Update KPIs for Third Party Views - July
+                            document.getElementById('total-profiles').textContent = updatedTotalProfiles;
+                            document.getElementById('total-clips').textContent = updatedTotalClips;
+                            document.getElementById('total-views').textContent = formatViews(updatedTotalViews); // Use the formatViews function
+
                             setTimeout(() => { 
                                 initializeThirdPartyJulyCharts();
+                                populateLowTitlesTable(); // Populate low titles table
                                 generateRecommendations();
-                            }, 100); 
+                            }, 500); // Increased timeout to 500ms
                         }
                     }
                 });
@@ -1316,17 +1345,19 @@
                 // Destroy existing chart instances if they exist to prevent duplicates
                 if (window.totalViewsChartInstance) window.totalViewsChartInstance.destroy();
                 if (window.avgViewsChartInstance) window.avgViewsChartInstance.destroy();
-                if (window.scatterTotalViewsChartInstance) window.scatterTotalViewsChartInstance.destroy();
-                if (window.scatterAvgViewsChartInstance) window.scatterAvgViewsChartInstance.destroy();
+                if (window.lowAvgViewsChartInstance) window.lowAvgViewsChartInstance.destroy(); // Destroy new chart too
 
-                // Ensure canvases exist before trying to get context
-                const totalViewsCtx = document.getElementById('totalViewsChart');
-                const avgViewsCtx = document.getElementById('avgViewsChart');
-                const scatterTotalViewsCtx = document.getElementById('scatterTotalViews');
-                const scatterAvgViewsCtx = document.getElementById('scatterAvgViews');
+                // Ensure canvases exist and their getContext method is available before trying to get context
+                const totalViewsCanvas = document.getElementById('totalViewsChart');
+                const avgViewsCanvas = document.getElementById('avgViewsChart');
+                const lowAvgViewsCanvas = document.getElementById('lowAvgViewsChart'); // New chart context
 
-                if (!totalViewsCtx || !avgViewsCtx || !scatterTotalViewsCtx || !scatterAvgViewsCtx) {
-                    console.error("One or more chart canvases for Third Party Views - July not found.");
+                const totalViewsCtx = totalViewsCanvas && totalViewsCanvas.getContext ? totalViewsCanvas.getContext('2d') : null;
+                const avgViewsCtx = avgViewsCanvas && avgViewsCanvas.getContext ? avgViewsCanvas.getContext('2d') : null;
+                const lowAvgViewsCtx = lowAvgViewsCanvas && lowAvgViewsCanvas.getContext ? lowAvgViewsCanvas.getContext('2d') : null;
+
+                if (!totalViewsCtx || !avgViewsCtx || !lowAvgViewsCtx) {
+                    console.error("One or more chart canvases for Third Party Views - July not found or not ready.");
                     return;
                 }
 
@@ -1366,7 +1397,7 @@
                 };
 
                 const sortedByTotalViews = [...thirdPartyJulyProfileData].sort((a, b) => b.totalViews - a.totalViews).slice(0, 10);
-                window.totalViewsChartInstance = new Chart(totalViewsCtx.getContext('2d'), {
+                window.totalViewsChartInstance = new Chart(totalViewsCtx, {
                     type: 'bar',
                     data: {
                         labels: sortedByTotalViews.map(p => formatClipLabel(p.name, 20)),
@@ -1387,14 +1418,14 @@
                             title: { display: true, text: 'Top 10 Profiles by Total Views', font: { size: 16 }, color: clipPerformancePalette.blueDark }
                         },
                         scales: {
-                            x: { title: { display: true, text: 'Total Views' } },
+                            x: { title: { display: true, text: 'Total Views' }, grid: { color: '#e5e7eb' } },
                             y: { grid: { display: false } }
                         }
                     }
                 });
                 
                 const sortedByAvgViews = [...thirdPartyJulyProfileData].sort((a, b) => b.avgViews - a.avgViews).slice(0, 10);
-                window.avgViewsChartInstance = new Chart(avgViewsCtx.getContext('2d'), {
+                window.avgViewsChartInstance = new Chart(avgViewsCtx, {
                     type: 'bar',
                     data: {
                         labels: sortedByAvgViews.map(p => formatClipLabel(p.name, 20)),
@@ -1421,81 +1452,127 @@
                     }
                 });
 
-                const scatterTotalData = {
-                    datasets: [{
-                        label: 'Profile',
-                        data: thirdPartyJulyProfileData.map(p => ({ x: p.clips, y: p.totalViews })),
-                        backgroundColor: clipPerformancePalette.blueMid
-                    }]
-                };
-                window.scatterTotalViewsChartInstance = new Chart(scatterTotalViewsCtx.getContext('2d'), {
-                    type: 'scatter',
-                    data: scatterTotalData,
+                // New chart for Low 5 Titles by Average Views
+                const sortedByAvgViewsAsc = [...thirdPartyJulyProfileData].sort((a, b) => a.avgViews - b.avgViews).slice(0, 5);
+                window.lowAvgViewsChartInstance = new Chart(lowAvgViewsCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: sortedByAvgViewsAsc.map(p => formatClipLabel(p.name, 20)),
+                        datasets: [{
+                            label: 'Average Views per Clip',
+                            data: sortedByAvgViewsAsc.map(p => p.avgViews),
+                            backgroundColor: [clipPerformancePalette.redMid, clipPerformancePalette.orangeDark, clipPerformancePalette.yellowMid, clipPerformancePalette.yellowLight, clipPerformancePalette.blueLight], // A gradient from red to light blue
+                            borderColor: 'rgba(255, 255, 255, 0.2)',
+                            borderWidth: 1
+                        }]
+                    },
                     options: { ...clipSharedTooltipConfig,
+                        indexAxis: 'y',
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: { ...clipSharedTooltipConfig.plugins,
                             legend: { display: false },
-                            tooltip: {
-                                callbacks: {
-                                    title: () => '',
-                                    label: function(context) {
-                                        const index = context.dataIndex;
-                                        const profile = thirdPartyJulyProfileData[index];
-                                        return `${profile.name}: ${profile.clips} clips, ${profile.totalViews.toLocaleString()} views`;
-                                    }
-                                }
-                            }
+                            title: { display: true, text: 'Low 5 Profiles by Average Views per Clip', font: { size: 16 }, color: clipPerformancePalette.blueDark }
                         },
                         scales: {
-                            x: { title: { display: true, text: 'Number of Clips' } },
-                            y: { title: { display: true, text: 'Total Views' } }
-                        }
-                    }
-                });
-
-                const scatterAvgData = {
-                    datasets: [{
-                        label: 'Profile',
-                        data: thirdPartyJulyProfileData.map(p => ({ x: p.clips, y: p.avgViews })),
-                        backgroundColor: clipPerformancePalette.yellowMid
-                    }]
-                };
-                window.scatterAvgViewsChartInstance = new Chart(scatterAvgViewsCtx.getContext('2d'), {
-                    type: 'scatter',
-                    data: scatterAvgData,
-                    options: { ...clipSharedTooltipConfig,
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { ...clipSharedTooltipConfig.plugins,
-                            legend: { display: false },
-                            tooltip: {
-                                callbacks: {
-                                    title: () => '',
-                                    label: function(context) {
-                                        const index = context.dataIndex;
-                                        const profile = thirdPartyJulyProfileData[index];
-                                        return `${profile.name}: ${profile.clips} clips, ${Math.round(profile.avgViews).toLocaleString()} avg views`;
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            x: { title: { display: true, text: 'Number of Clips' } },
-                            y: { title: { display: true, text: 'Average Views per Clip' } }
+                            x: { title: { display: true, text: 'Average Views per Clip' }, grid: { color: '#e5e7eb' } },
+                            y: { grid: { display: false } }
                         }
                     }
                 });
             }
 
+            // Function to populate the Low 5 Titles table
+            async function populateLowTitlesTable() {
+                const tableBody = document.getElementById('lowTitlesTableBody');
+                if (!tableBody) return;
+                tableBody.innerHTML = ''; // Clear existing rows
+
+                const low5Titles = [...thirdPartyJulyProfileData].sort((a, b) => a.avgViews - b.avgViews).slice(0, 5);
+
+                // Create rows with loading indicators for reasons
+                low5Titles.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="px-4 py-2 whitespace-nowrap">${item.name}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">${item.clips}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">${item.totalViews.toLocaleString()}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">${item.avgViews.toFixed(1)}</td>
+                        <td class="px-4 py-2 text-slate-500 italic" id="reason-${item.name.replace(/\s/g, '-')}-low">Loading reasons...</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+                // Fetch reasons from LLM
+                const reasons = await generateLowPerformanceReasons(low5Titles);
+
+                // Update rows with fetched reasons
+                reasons.forEach(reason => {
+                    const reasonCell = document.getElementById(`reason-${reason.title.replace(/\s/g, '-')}-low`);
+                    if (reasonCell) {
+                        reasonCell.textContent = reason.reason;
+                        reasonCell.classList.remove('text-slate-500', 'italic');
+                    }
+                });
+            }
+
+            // Function to generate reasons for low performance using LLM
+            async function generateLowPerformanceReasons(lowTitlesData) {
+                const prompt = `Based on the following low-performing clip data, provide a concise reason why we should consider stopping or re-evaluating work on each of these titles. Focus on low average views and overall low engagement.
+
+                Data: ${JSON.stringify(lowTitlesData)}
+
+                Provide the response as a JSON array of objects, where each object has 'title' (string, matching the profile name) and 'reason' (string) properties.`;
+
+                try {
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                    const payload = {
+                        contents: chatHistory,
+                        generationConfig: {
+                            responseMimeType: "application/json",
+                            responseSchema: {
+                                type: "ARRAY",
+                                items: {
+                                    type: "OBJECT",
+                                    properties: {
+                                        "title": { "type": "STRING" },
+                                        "reason": { "type": "STRING" }
+                                    },
+                                    "propertyOrdering": ["title", "reason"]
+                                }
+                            }
+                        }
+                    };
+                    const apiKey = ""; 
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const json = result.candidates[0].content.parts[0].text;
+                        return JSON.parse(json);
+                    } else {
+                        console.error("LLM response structure unexpected or content missing for low performance reasons:", result);
+                        return lowTitlesData.map(item => ({ title: item.name, reason: "No specific reason generated." }));
+                    }
+                } catch (error) {
+                    console.error("Error calling LLM API for low performance reasons:", error);
+                    return lowTitlesData.map(item => ({ title: item.name, reason: "Failed to generate reason due to API error." }));
+                }
+            }
+
+
             // Function to generate recommendations using LLM
             async function generateRecommendations() {
                 const dynamicRecommendationsDiv = document.getElementById('dynamic-recommendations');
-                // The loadingIndicator element is no longer strictly needed for display,
-                // but we keep the ID for consistency if any other part of the code
-                // were to reference it. Its content is now empty.
-                const loadingIndicator = document.getElementById('recommendations-loading'); 
-
+                
                 if (!dynamicRecommendationsDiv) {
                     console.error("Dynamic recommendations container not found.");
                     return;
