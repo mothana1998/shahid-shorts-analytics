@@ -64,13 +64,112 @@
         }
         /* Styles for the dropdown menu items */
         .dropdown-menu-item {
+            display: block; /* Make links take full width */
             padding: 0.5rem 1rem; /* py-2 px-4 */
             cursor: pointer;
             white-space: nowrap; /* Prevent wrapping */
             transition: background-color 0.2s ease-in-out;
+            text-decoration: none; /* Remove underline from links */
+            color: #1f2937; /* slate-800 equivalent for text */
         }
         .dropdown-menu-item:hover {
             background-color: #f1f5f9; /* slate-100 */
+        }
+
+        /* Styles for the Clip Performance Analysis page */
+        .clip-performance-header {
+            background-color: #005f73;
+            color: white;
+            padding: 3rem 1rem;
+            text-align: center;
+        }
+        .clip-performance-header h1 {
+            font-size: 2.25rem; /* text-4xl */
+            font-weight: 700; /* font-bold */
+        }
+        .clip-performance-header p {
+            margin-top: 1rem;
+            font-size: 1.125rem; /* text-lg */
+            color: #e2e8f0; /* gray-200 */
+        }
+        @media (min-width: 768px) {
+            .clip-performance-header h1 {
+                font-size: 3rem; /* md:text-5xl */
+            }
+            .clip-performance-header p {
+                font-size: 1.25rem; /* md:text-xl */
+            }
+        }
+        .clip-performance-section-title {
+            font-size: 1.875rem; /* text-3xl */
+            font-weight: 700; /* font-bold */
+            text-align: center;
+            color: #005f73;
+            margin-bottom: 2rem;
+        }
+        .kpi-card {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            text-align: center;
+        }
+        .kpi-card p:first-child {
+            font-size: 3rem; /* text-5xl */
+            font-weight: 800; /* font-extrabold */
+        }
+        .kpi-card p:last-child {
+            margin-top: 0.5rem;
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 500; /* font-medium */
+            color: #4b5563; /* gray-600 */
+        }
+        .kpi-card.total-profiles p:first-child { color: #0a9396; }
+        .kpi-card.total-clips p:first-child { color: #ee9b00; }
+        .kpi-card.total-views p:first-child { color: #ae2012; }
+
+        .recommendation-card {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            border-left-width: 4px;
+        }
+        .recommendation-card h3 {
+            font-weight: 700; /* font-bold */
+            font-size: 1.125rem; /* text-lg */
+            margin-bottom: 0.5rem;
+            color: #005f73;
+        }
+        .recommendation-card p {
+            color: #4b5563; /* gray-600 */
+        }
+        .recommendation-card.blue-border { border-left-color: #0a9396; }
+        .recommendation-card.yellow-border { border-left-color: #ee9b00; }
+        .recommendation-card.red-border { border-left-color: #ae2012; }
+
+        .clip-performance-footer {
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 3rem;
+            background-color: #005f73;
+            color: #d1d5db; /* gray-300 */
+        }
+        .clip-performance-footer p {
+            margin-bottom: 0.5rem;
+        }
+        .clip-performance-footer a {
+            margin-top: 1rem;
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background-color: #0ea5e9; /* sky-600 */
+            color: white;
+            border-radius: 0.375rem; /* rounded-md */
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); /* shadow-sm */
+            transition: background-color 0.2s ease-in-out;
+        }
+        .clip-performance-footer a:hover {
+            background-color: #0284c7; /* sky-700 */
         }
     </style>
 </head>
@@ -88,19 +187,13 @@
                 <div class="relative group">
                     <button id="dmcsViewsBtn" class="px-4 py-2 rounded-md bg-slate-200 text-slate-800 font-medium report-nav-btn hover:bg-slate-300" data-target="dmcs-views-content">DMCS Views</button>
                     <div class="absolute hidden group-hover:block bg-white shadow-lg rounded-md mt-1 z-10 min-w-[120px] overflow-hidden">
-                        <div class="dropdown-menu-item" data-month="june">June</div>
-                        <div class="dropdown-menu-item" data-month="july">July</div>
+                        <a href="#" class="dropdown-menu-item" data-target-section="dmcs-june-content">June</a>
+                        <a href="#" class="dropdown-menu-item" data-target-section="dmcs-july-content">July</a>
                     </div>
                 </div>
 
-                <!-- Third Party Views with Hover Dropdown -->
-                <div class="relative group">
-                    <button id="thirdPartyViewsBtn" class="px-4 py-2 rounded-md bg-slate-200 text-slate-800 font-medium report-nav-btn hover:bg-slate-300" data-target="third-party-views-content">Third Party Views</button>
-                    <div class="absolute hidden group-hover:block bg-white shadow-lg rounded-md mt-1 z-10 min-w-[120px] overflow-hidden">
-                        <div class="dropdown-menu-item" data-month="june">June</div>
-                        <div class="dropdown-menu-item" data-month="july">July</div>
-                    </div>
-                </div>
+                <!-- Third Party Views button now navigates to an overview page section -->
+                <button id="thirdPartyViewsBtn" class="px-4 py-2 rounded-md bg-slate-200 text-slate-800 font-medium report-nav-btn hover:bg-slate-300" data-target="third-party-overview-section">Third Party Views</button>
 
                 <button id="additionalInsightsBtn" class="px-4 py-2 rounded-md bg-slate-200 text-slate-800 font-medium report-nav-btn hover:bg-slate-300" data-target="additional-insights-content">Additional Insights</button>
             </div>
@@ -325,13 +418,140 @@
                     <p class="text-slate-600">Content specific to DMCS views will go here, updated based on month selection.</p>
                 </div>
             </section>
-            <section id="third-party-views-content" class="report-content-section hidden">
-                <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12 text-center">
-                    <h2 class="2xl font-semibold text-slate-900 mb-4">Third Party Views</h2>
-                    <p class="text-slate-600">Content related to third-party views will go here, updated based on month selection.</p>
+            
+            <!-- Third Party Views Overview Section (New) -->
+            <section id="third-party-overview-section" class="report-content-section hidden">
+                <div class="bg-white p-8 rounded-xl shadow-lg border border-slate-200 text-center max-w-2xl mx-auto w-full">
+                    <h1 class="text-3xl font-bold text-slate-900 mb-4">Third Party Views Overview</h1>
+                    <p class="text-lg text-slate-600 mb-6">Select a month to view detailed third-party viewership data.</p>
+                    
+                    <div class="flex flex-col sm:flex-row justify-center gap-4 mb-8">
+                        <button class="inline-block px-8 py-3 bg-sky-600 text-white rounded-md shadow-md hover:bg-sky-700 transition-colors duration-200 text-lg font-semibold third-party-month-btn" data-target-section="third-party-june-content">View June Data</button>
+                        <button class="inline-block px-8 py-3 bg-sky-600 text-white rounded-md shadow-md hover:bg-sky-700 transition-colors duration-200 text-lg font-semibold third-party-month-btn" data-target-section="third-party-july-content">View July Data</button>
+                    </div>
+
+                    <button class="mt-6 inline-block px-6 py-2 bg-slate-200 text-slate-800 rounded-md shadow-sm hover:bg-slate-300 transition-colors duration-200 back-to-main-dashboard">Back to Dashboard</button>
                 </div>
             </section>
-        </div> <!-- End of june-report-content -->
+
+            <!-- Third Party Views - June Content (Integrated) -->
+            <section id="third-party-june-content" class="report-content-section hidden">
+                <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12 text-center">
+                    <h2 class="text-2xl font-semibold text-slate-900 mb-4">Third Party Views - June</h2>
+                    <p class="text-slate-600">This page will display detailed Third Party viewership data for June.</p>
+                    <p class="mt-4 text-xl font-semibold text-sky-600">Coming Soon!</p>
+                    <button class="mt-6 inline-block px-6 py-2 bg-sky-600 text-white rounded-md shadow-sm hover:bg-sky-700 transition-colors duration-200 back-to-main-dashboard">Back to Dashboard</button>
+                </div>
+            </section>
+
+            <!-- Third Party Views - July Content (Integrated) -->
+            <section id="third-party-july-content" class="report-content-section hidden">
+                <header class="clip-performance-header">
+                    <div class="max-w-4xl mx-auto">
+                        <h1 class="text-4xl md:text-5xl font-bold">Unlocking Content Performance</h1>
+                        <p class="mt-4 text-lg md:text-xl text-gray-200">A Deep Dive into Clip Views and Engagement Based on Channel Data</p>
+                    </div>
+                </header>
+
+                <main class="max-w-7xl mx-auto p-4 sm:p-6 md:p-8">
+
+                    <section id="overview" class="mb-12">
+                        <h2 class="clip-performance-section-title">Performance at a Glance</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                            <div class="kpi-card total-profiles">
+                                <p id="total-profiles">40</p>
+                                <p>Profiles Analyzed</p>
+                            </div>
+                            <div class="kpi-card total-clips">
+                                <p id="total-clips">544</p>
+                                <p>Total Clips</p>
+                            </div>
+                            <div class="kpi-card total-views">
+                                <p id="total-views">4.6M+</p>
+                                <p>Total Clip Views</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="top-performers" class="space-y-12">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                            <div class="chart-container">
+                                <canvas id="totalViewsChart"></canvas>
+                            </div>
+                            <div class="mt-8 lg:mt-0">
+                                <h3 class="text-2xl font-bold text-[#005f73] mb-4">Champions of Reach: Top 10 by Total Views</h3>
+                                <p class="text-gray-600 leading-relaxed">
+                                    This chart highlights the profiles that have garnered the highest number of total views across all their clips. These are the powerhouses of audience reach, demonstrating a remarkable ability to attract a large volume of viewers. Topping the list, 'Al Atawla S1' and 'Al Ameel (Icerde) S1' show exceptional performance, indicating a strong and broad audience appeal.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                            <div class="mt-8 lg:mt-0 lg:order-2">
+                                <h3 class="text-2xl font-bold text-[#005f73] mb-4">Masters of Efficiency: Top 10 by Average Views</h3>
+                                <p class="text-gray-600 leading-relaxed">
+                                    While total views are important, average views per clip reveal content efficiency and consistent quality. This chart showcases the profiles whose individual clips are the most engaging. 'Al Ameel (Icerde) S1' leads significantly, proving that each piece of their content packs a powerful punch. This metric is key to identifying which content strategies are most effective at capturing and holding audience attention on a per-clip basis.
+                                </p>
+                            </div>
+                            <div class="chart-container lg:order-1">
+                                <canvas id="avgViewsChart"></canvas>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="relationship-analysis" class="mt-16">
+                        <h2 class="clip-performance-section-title">Quantity vs. Quality Analysis</h2>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div>
+                                <div class="chart-container" style="height: 400px;">
+                                    <canvas id="scatterTotalViews"></canvas>
+                                </div>
+                                <div class="mt-4 px-2">
+                                    <h3 class="text-xl font-bold text-center text-[#005f73] mb-2">Clip Count vs. Total Views</h3>
+                                    <p class="text-gray-600 text-center text-sm">This scatter plot explores if publishing more clips leads to higher overall viewership. A general upward trend suggests a positive correlation, but outliers show that some profiles achieve high reach with fewer clips.</p>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="chart-container" style="height: 400px;">
+                                    <canvas id="scatterAvgViews"></canvas>
+                                </div>
+                                <div class="mt-4 px-2">
+                                    <h3 class="text-xl font-bold text-center text-[#005f73] mb-2">Clip Count vs. Average Views</h3>
+                                    <p class="text-gray-600 text-center text-sm">Does a higher clip count dilute engagement? This plot shows no clear correlation, suggesting that content quality, not quantity, is the primary driver of high average views per clip.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="recommendations" class="mt-16">
+                        <h2 class="clip-performance-section-title">Key Insights & Strategic Recommendations</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="recommendation-card blue-border">
+                                <h3 class="font-bold text-lg mb-2 text-[#005f73]">Emulate High-Efficiency Profiles</h3>
+                                <p class="text-gray-600">Analyze the content themes, formats, and promotion strategies of profiles like 'Al Ameel (Icerde) S1' that excel in average views. Their success provides a blueprint for creating highly engaging clips that resonate strongly with viewers.</p>
+                            </div>
+                            <div class="recommendation-card yellow-border">
+                                <h3 class="font-bold text-lg mb-2 text-[#005f73]">Optimize High-Reach Channels</h3>
+                                <p class="text-gray-600">For profiles with high total views but lower average views, investigate which specific clips are underperforming. Consider optimizing or re-evaluating this content to lift the overall average and improve consistency.</p>
+                            </div>
+                            <div class="recommendation-card red-border">
+                                <h3 class="font-bold text-lg mb-2 text-[#005f73]">Quality Over Quantity</h3>
+                                <p class="text-gray-600">The data clearly indicates that a large volume of clips does not guarantee high engagement. Focus resources on creating high-quality, impactful content rather than just increasing output volume.
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                </main>
+
+                <footer class="clip-performance-footer">
+                    <p>Infographic Generated on July 14, 2025.</p>
+                    <p class="text-sm">Data Source: 1_14Jul.xlsx - Sheet3.csv</p>
+                    <button class="mt-4 inline-block px-6 py-2 bg-sky-600 text-white rounded-md shadow-sm hover:bg-sky-700 transition-colors duration-200 back-to-main-dashboard">Back to Dashboard</button>
+                </footer>
+            </section>
+
+        </div> <!-- End of june-report-content container -->
 
         <footer class="text-center mt-12 text-slate-500 text-sm">
             <p>Report Generated: July 8, 2025</p>
@@ -397,6 +617,65 @@
             let rangeViewsChart;
             let dailyViewsChart;
             let topTitlesViewsChart; // New chart instance
+
+            // Data for the Clip Performance Analysis (Third Party Views - July)
+            const thirdPartyJulyProfileData = [
+                { name: "Al Atawla S1", clips: 18, totalViews: 455536, avgViews: 25307.6 },
+                { name: "Al Ameel (Icerde) S1", clips: 13, totalViews: 398501, avgViews: 30653.9 },
+                { name: "AL Kha'en S1", clips: 16, totalViews: 306194, avgViews: 19137.1 },
+                { name: "Al Le'ba: Level Al Wahsh S2", clips: 19, totalViews: 289259, avgViews: 15224.2 },
+                { name: "Awdat Khalati S1", clips: 22, totalViews: 240506, avgViews: 10932.1 },
+                { name: "Al Qadar S1", clips: 17, totalViews: 233008, avgViews: 13706.4 },
+                { name: "Al Khotta Baa S1", clips: 13, totalViews: 226633, avgViews: 17433.3 },
+                { name: "Amr Ikhlaa S3 S3", clips: 17, totalViews: 208699, avgViews: 12276.4 },
+                { name: "Al Hayba S1", clips: 7, totalViews: 151103, avgViews: 21586.1 },
+                { name: "El Hashashin S1", clips: 19, totalViews: 143297, avgViews: 7541.95 },
+                { name: "Banat Al Thanawi S2", clips: 14, totalViews: 132519, avgViews: 9465.64 },
+                { name: "Big Time Podcast S1", clips: 16, totalViews: 129700, avgViews: 8106.25 },
+                { name: "Beyt Al Ankaboot S1", clips: 14, totalViews: 125612, avgViews: 8972.29 },
+                { name: "Gaafar El Omda S1", clips: 20, totalViews: 122417, avgViews: 6120.85 },
+                { name: "El Kebeer Awi_TV S7", clips: 16, totalViews: 112981, avgViews: 7061.31 },
+                { name: "Fareed S3 S3", clips: 17, totalViews: 111876, avgViews: 6580.94 },
+                { name: "Al -Meerath S3", clips: 21, totalViews: 109706, avgViews: 5224.1 },
+                { name: "Bab Al Hara S3", clips: 9, totalViews: 91926, avgViews: 10214 },
+                { name: "Leyla (Leyla: Hayat Ask Adalet) S1", clips: 17, totalViews: 81986, avgViews: 4822.71 },
+                { name: "Kolna Eyal Qarya S1", clips: 16, totalViews: 81910, avgViews: 5119.38 },
+                { name: "Lil Mawt S1", clips: 18, totalViews: 81886, avgViews: 4549.22 },
+                { name: "Shatti Ya Beirut S1", clips: 20, totalViews: 67169, avgViews: 3358.45 },
+                { name: "Moftaraq Toroq S1", clips: 17, totalViews: 64770, avgViews: 3810 },
+                { name: "Melh Wa Samra S1", clips: 15, totalViews: 62338, avgViews: 4155.87 },
+                { name: "Horouj S1", clips: 11, totalViews: 62096, avgViews: 5645.09 },
+                { name: "Min Share' Al Haram Ela... S1", clips: 15, totalViews: 59444, avgViews: 3962.93 },
+                { name: "Kermal Al Walad S1", clips: 11, totalViews: 59035, avgViews: 5366.82 },
+                { name: "Salon Zahra S2", clips: 16, totalViews: 56179, avgViews: 3511.19 },
+                { name: "Ragel We Set Settat S1", clips: 14, totalViews: 50932, avgViews: 3638 },
+                { name: "Sikkat Safar S1", clips: 15, totalViews: 48271, avgViews: 3218.07 },
+                { name: "Wlad Badee'a S1", clips: 14, totalViews: 41489, avgViews: 2963.5 },
+                { name: "Mathaf Yaddi S1", clips: 8, totalViews: 34587, avgViews: 4323.38 },
+                { name: "Ahla Ma Tash S1", clips: 17, totalViews: 30354, avgViews: 1785.53 },
+                { name: "Bait & So'al 2025", clips: 3, totalViews: 29520, avgViews: 9840 },
+                { name: "Gamgoum Wa Bimbim: Al Sharika Al Almaniya Li Mokafahat Al Khawareq S1", clips: 5, totalViews: 28808, avgViews: 5761.6 },
+                { name: "Tash (Al Awda) S1", clips: 9, totalViews: 28283, avgViews: 3142.56 },
+                { name: "Mama Ghaneema S1", clips: 4, totalViews: 17601, avgViews: 4400.25 },
+                { name: "Top Chef S8", clips: 4, totalViews: 12313, avgViews: 3078.25 },
+                { name: "Zawja Waheda La Takfi S1", clips: 4, totalViews: 11555, avgViews: 2888.75 },
+                { name: "Motorshow Docuseries S1", clips: 3, totalViews: 11141, avgViews: 3713.67 }
+            ];
+
+            const clipPerformancePalette = {
+                blueDark: '#005f73',
+                blueMid: '#0a9396',
+                blueLight: '#94d2bd',
+                yellowLight: '#e9d8a6',
+                yellowMid: '#ee9b00',
+                orangeMid: '#ca6702',
+                orangeDark: '#bb3e03',
+                redMid: '#ae2012',
+                redDark: '#9b2226'
+            };
+
+            const clipPerformanceChartColors = [clipPerformancePalette.blueMid, clipPerformancePalette.yellowMid, clipPerformancePalette.orangeMid, clipPerformancePalette.blueLight, clipPerformancePalette.redMid, clipPerformancePalette.blueDark, clipPerformancePalette.orangeDark, clipPerformancePalette.yellowLight, clipPerformancePalette.redDark, clipPerformancePalette.blueMid];
+
 
             const processOverallData = (data) => {
                 const viewsByDay = {};
@@ -562,8 +841,6 @@
             };
 
             // Initialize Overall Charts (Average and Range)
-            const overallData = processOverallData(fullDailyData);
-
             const avgCtx = document.getElementById('averageViewsChart').getContext('2d');
             const avgChartOptions = {
                 ...baseOptions,
@@ -581,10 +858,10 @@
                 }
             };
             averageViewsChart = createChart(avgCtx, 'bar', {
-                labels: overallData.labels,
+                labels: processOverallData(fullDailyData).labels,
                 datasets: [{
                     label: 'Average Views',
-                    data: overallData.avgData,
+                    data: processOverallData(fullDailyData).avgData,
                     backgroundColor: 'rgba(14, 165, 233, 0.6)', // sky-500
                     borderColor: 'rgba(14, 165, 233, 1)',
                     borderWidth: 2,
@@ -617,10 +894,10 @@
                 }
             };
             rangeViewsChart = createChart(rangeCtx, 'bar', {
-                labels: overallData.labels,
+                labels: processOverallData(fullDailyData).labels,
                 datasets: [{
                     label: 'Viewership Range',
-                    data: overallData.rangeData,
+                    data: processOverallData(fullDailyData).rangeData,
                     backgroundColor: 'rgba(245, 158, 11, 0.6)', // amber-500
                     borderColor: 'rgba(245, 158, 11, 1)',
                     borderWidth: 2,
@@ -766,23 +1043,26 @@
             const avgChartContainer = document.getElementById('avgChartContainer');
             const rangeChartContainer = document.getElementById('rangeChartContainer');
 
-            avgBtn.addEventListener('click', () => {
-                avgChartContainer.classList.remove('hidden');
-                rangeChartContainer.classList.add('hidden');
-                avgBtn.classList.add('bg-white', 'text-sky-600', 'shadow-sm', 'font-semibold');
-                avgBtn.classList.remove('text-slate-600', 'font-medium');
-                rangeBtn.classList.remove('bg-white', 'text-sky-600', 'shadow-sm', 'font-semibold');
-                rangeBtn.classList.add('text-slate-600', 'font-medium');
-            });
+            // Check if these elements exist before adding listeners
+            if (avgBtn && rangeBtn && avgChartContainer && rangeChartContainer) {
+                avgBtn.addEventListener('click', () => {
+                    avgChartContainer.classList.remove('hidden');
+                    rangeChartContainer.classList.add('hidden');
+                    avgBtn.classList.add('bg-white', 'text-sky-600', 'shadow-sm', 'font-semibold');
+                    avgBtn.classList.remove('text-slate-600', 'font-medium');
+                    rangeBtn.classList.remove('bg-white', 'text-sky-600', 'shadow-sm', 'font-semibold');
+                    rangeBtn.classList.add('text-slate-600', 'font-medium');
+                });
 
-            rangeBtn.addEventListener('click', () => {
-                rangeChartContainer.classList.remove('hidden');
-                avgChartContainer.classList.add('hidden');
-                rangeBtn.classList.add('bg-white', 'text-sky-600', 'shadow-sm', 'font-semibold');
-                rangeBtn.classList.remove('text-slate-600', 'font-medium');
-                avgBtn.classList.remove('bg-white', 'text-sky-600', 'shadow-sm', 'font-semibold');
-                avgBtn.classList.add('text-slate-600', 'font-medium');
-            });
+                rangeBtn.addEventListener('click', () => {
+                    rangeChartContainer.classList.remove('hidden');
+                    avgChartContainer.classList.add('hidden');
+                    rangeBtn.classList.add('bg-white', 'text-sky-600', 'shadow-sm', 'font-semibold');
+                    rangeBtn.classList.remove('text-slate-600', 'font-medium');
+                    avgBtn.classList.remove('bg-white', 'text-sky-600', 'shadow-sm', 'font-semibold');
+                    avgBtn.classList.add('text-slate-600', 'font-medium');
+                });
+            }
             
             // Tab functionality for Weekly Daily Data
             const weeklyDailyButtons = document.querySelectorAll('.weekly-daily-btn');
@@ -800,12 +1080,14 @@
                     let selectedWeek = parseInt(button.id.replace('week', '').replace('DailyBtn', ''));
                     
                     // Show the chart container when a button is clicked
-                    dailyChartSection.classList.remove('hidden');
+                    if (dailyChartSection) {
+                        dailyChartSection.classList.remove('hidden');
+                    }
                     updateDailyViewsChart(selectedWeek);
                 });
             });
 
-            // Top-level Main Tab functionality
+            // Top-level Main Tab functionality (for Monthly Highlights, Top 10 Titles, Recommendation Titles)
             const mainTabButtons = document.querySelectorAll('.main-tab-btn');
             const mainContentSections = document.querySelectorAll('.main-content-section');
 
@@ -828,7 +1110,10 @@
 
                     // Show the target section
                     const targetSectionId = button.dataset.target;
-                    document.getElementById(targetSectionId).classList.remove('hidden');
+                    const sectionToShow = document.getElementById(targetSectionId);
+                    if (sectionToShow) {
+                        sectionToShow.classList.remove('hidden');
+                    }
                 });
             });
 
@@ -843,7 +1128,10 @@
                     document.querySelectorAll('.accordion-content').forEach(c => {
                         if (c !== content) {
                             c.style.maxHeight = null;
-                            c.previousElementSibling.querySelector('span').classList.remove('rotate-180');
+                            const otherIcon = c.previousElementSibling ? c.previousElementSibling.querySelector('span') : null;
+                            if (otherIcon) {
+                                otherIcon.classList.remove('rotate-180');
+                            }
                         }
                     });
 
@@ -861,6 +1149,7 @@
             // Function to populate the Top 10 Titles table
             const populateTopTitlesTable = () => {
                 const tableBody = document.getElementById('topTitlesTableBody');
+                if (!tableBody) return; // Exit if element not found
                 tableBody.innerHTML = ''; // Clear existing rows
 
                 top10TitlesData.forEach(item => {
@@ -881,21 +1170,26 @@
             };
 
             // Event listener for "Show All Titles" button
-            document.getElementById('showAllTitlesBtn').addEventListener('click', displayAllTitlesOnChart);
+            const showAllTitlesBtn = document.getElementById('showAllTitlesBtn');
+            if (showAllTitlesBtn) {
+                showAllTitlesBtn.addEventListener('click', displayAllTitlesOnChart);
+            }
 
-            // New Top-Level Report Navigation Logic
+            // New Top-Level Report Navigation Logic (for June/July Performance, DMCS, Third Party, Additional Insights)
             const reportNavButtons = document.querySelectorAll('.report-nav-btn');
             const reportContentSections = document.querySelectorAll('.report-content-section');
 
             reportNavButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    // Deactivate all report nav buttons
+                button.addEventListener('click', (event) => {
+                    const targetSectionId = button.dataset.target; // For internal section toggling
+
+                    // Deactivate all report nav buttons that toggle sections
                     reportNavButtons.forEach(btn => {
                         btn.classList.remove('bg-sky-600', 'text-white', 'shadow-sm', 'font-semibold');
                         btn.classList.add('bg-slate-200', 'text-slate-800', 'font-medium', 'hover:bg-slate-300');
                     });
 
-                    // Activate clicked button
+                    // Activate clicked button visually
                     button.classList.add('bg-sky-600', 'text-white', 'shadow-sm', 'font-semibold');
                     button.classList.remove('bg-slate-200', 'text-slate-800', 'font-medium', 'hover:bg-slate-300');
 
@@ -905,41 +1199,268 @@
                     });
 
                     // Show the target report content section
-                    const targetSectionId = button.dataset.target;
-                    document.getElementById(targetSectionId).classList.remove('hidden');
+                    const sectionToShow = document.getElementById(targetSectionId);
+                    if (sectionToShow) {
+                        sectionToShow.classList.remove('hidden');
+                        // If it's the third-party-july-content, initialize its charts
+                        if (targetSectionId === 'third-party-july-content') {
+                            initializeThirdPartyJulyCharts();
+                        }
+                    }
                 });
             });
 
-            // Add event listeners for the new dropdown menu items
+            // Add event listeners for the DMCS dropdown menu items
             document.querySelectorAll('.dropdown-menu-item').forEach(item => {
                 item.addEventListener('click', (event) => {
-                    const selectedMonth = event.target.dataset.month;
-                    const parentButton = event.target.closest('.group').querySelector('.report-nav-btn');
-                    const targetSectionId = parentButton.dataset.target;
+                    event.preventDefault(); // Prevent default link behavior
+                    const targetSectionId = event.target.dataset.targetSection;
 
-                    // This part is similar to the main tab logic, ensuring the correct content section is shown
+                    // Deactivate all report nav buttons
                     reportNavButtons.forEach(btn => {
                         btn.classList.remove('bg-sky-600', 'text-white', 'shadow-sm', 'font-semibold');
                         btn.classList.add('bg-slate-200', 'text-slate-800', 'font-medium', 'hover:bg-slate-300');
                     });
-                    parentButton.classList.add('bg-sky-600', 'text-white', 'shadow-sm', 'font-semibold');
-                    parentButton.classList.remove('bg-slate-200', 'text-slate-800', 'font-medium', 'hover:bg-slate-300');
 
+                    // Activate the DMCS Views button visually
+                    const dmcsViewsBtn = document.getElementById('dmcsViewsBtn');
+                    if (dmcsViewsBtn) {
+                        dmcsViewsBtn.classList.add('bg-sky-600', 'text-white', 'shadow-sm', 'font-semibold');
+                        dmcsViewsBtn.classList.remove('bg-slate-200', 'text-slate-800', 'font-medium', 'hover:bg-slate-300');
+                    }
+
+                    // Hide all report content sections
                     reportContentSections.forEach(section => {
                         section.classList.add('hidden');
                     });
-                    document.getElementById(targetSectionId).classList.remove('hidden');
 
-                    // Here you would add logic to update the content based on `selectedMonth`
-                    console.log(`Selected month for ${parentButton.textContent.trim()}: ${selectedMonth}`);
-                    // For example:
-                    // if (targetSectionId === 'dmcs-views-content') {
-                    //     updateDMCSContent(selectedMonth);
-                    // } else if (targetSectionId === 'third-party-views-content') {
-                    //     updateThirdPartyContent(selectedMonth);
-                    // }
+                    // Show the target DMCS content section
+                    const sectionToShow = document.getElementById(targetSectionId);
+                    if (sectionToShow) {
+                        sectionToShow.classList.remove('hidden');
+                    }
                 });
             });
+
+            // Event listeners for Third Party Overview month buttons
+            document.querySelectorAll('.third-party-month-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetSectionId = button.dataset.targetSection;
+                    
+                    // Hide all report content sections
+                    reportContentSections.forEach(section => {
+                        section.classList.add('hidden');
+                    });
+
+                    // Show the target section
+                    const sectionToShow = document.getElementById(targetSectionId);
+                    if (sectionToShow) {
+                        sectionToShow.classList.remove('hidden');
+                        // If it's the third-party-july-content, initialize its charts
+                        if (targetSectionId === 'third-party-july-content') {
+                            initializeThirdPartyJulyCharts();
+                        }
+                    }
+                });
+            });
+
+            // Event listeners for "Back to Dashboard" buttons within sections
+            document.querySelectorAll('.back-to-main-dashboard').forEach(button => {
+                button.addEventListener('click', () => {
+                    // Hide all report content sections
+                    reportContentSections.forEach(section => {
+                        section.classList.add('hidden');
+                    });
+                    // Show the main dashboard content (June Performance Analysis)
+                    const juneReportContent = document.getElementById('june-report-content');
+                    if (juneReportContent) {
+                        juneReportContent.classList.remove('hidden');
+                    }
+
+                    // Reset active state for top-level nav buttons
+                    reportNavButtons.forEach(btn => {
+                        btn.classList.remove('bg-sky-600', 'text-white', 'shadow-sm', 'font-semibold');
+                        btn.classList.add('bg-slate-200', 'text-slate-800', 'font-medium', 'hover:bg-slate-300');
+                    });
+                    const juneReportBtn = document.getElementById('juneReportBtn');
+                    if (juneReportBtn) {
+                        juneReportBtn.classList.add('bg-sky-600', 'text-white', 'shadow-sm', 'font-semibold');
+                        juneReportBtn.classList.remove('bg-slate-200', 'text-slate-800', 'font-medium', 'hover:bg-slate-300');
+                    }
+                });
+            });
+
+
+            // Function to initialize charts for Third Party Views - July
+            function initializeThirdPartyJulyCharts() {
+                // Ensure canvases exist before trying to get context
+                const totalViewsCtx = document.getElementById('totalViewsChart');
+                const avgViewsCtx = document.getElementById('avgViewsChart');
+                const scatterTotalViewsCtx = document.getElementById('scatterTotalViews');
+                const scatterAvgViewsCtx = document.getElementById('scatterAvgViews');
+
+                if (!totalViewsCtx || !avgViewsCtx || !scatterTotalViewsCtx || !scatterAvgViewsCtx) {
+                    console.error("One or more chart canvases for Third Party Views - July not found.");
+                    return;
+                }
+
+                const formatClipLabel = (label, charLimit = 16) => {
+                    if (typeof label !== 'string' || label.length <= charLimit) {
+                        return label;
+                    }
+                    const words = label.split(' ');
+                    const lines = [];
+                    let currentLine = '';
+                    for (const word of words) {
+                        if ((currentLine + ' ' + word).length > charLimit) {
+                            lines.push(currentLine.trim());
+                            currentLine = word;
+                        } else {
+                            currentLine += (currentLine ? ' ' : '') + word;
+                        }
+                    }
+                    if (currentLine) {
+                        lines.push(currentLine.trim());
+                    }
+                    return lines;
+                };
+
+                const clipSharedTooltipConfig = {
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const item = tooltipItems[0];
+                                    let label = item.chart.data.labels[item.dataIndex];
+                                    return Array.isArray(label) ? label.join(' ') : label;
+                                }
+                            }
+                        }
+                    }
+                };
+
+                const sortedByTotalViews = [...thirdPartyJulyProfileData].sort((a, b) => b.totalViews - a.totalViews).slice(0, 10);
+                new Chart(totalViewsCtx.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: sortedByTotalViews.map(p => formatClipLabel(p.name, 20)),
+                        datasets: [{
+                            label: 'Total Views',
+                            data: sortedByTotalViews.map(p => p.totalViews),
+                            backgroundColor: clipPerformanceChartColors,
+                            borderColor: 'rgba(255, 255, 255, 0.2)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: { ...clipSharedTooltipConfig,
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { ...clipSharedTooltipConfig.plugins,
+                            legend: { display: false },
+                            title: { display: true, text: 'Top 10 Profiles by Total Views', font: { size: 16 }, color: clipPerformancePalette.blueDark }
+                        },
+                        scales: {
+                            x: { title: { display: true, text: 'Total Views' }, grid: { color: '#e5e7eb' } },
+                            y: { grid: { display: false } }
+                        }
+                    }
+                });
+                
+                const sortedByAvgViews = [...thirdPartyJulyProfileData].sort((a, b) => b.avgViews - a.avgViews).slice(0, 10);
+                new Chart(avgViewsCtx.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: sortedByAvgViews.map(p => formatClipLabel(p.name, 20)),
+                        datasets: [{
+                            label: 'Average Views per Clip',
+                            data: sortedByAvgViews.map(p => p.avgViews),
+                            backgroundColor: clipPerformanceChartColors.slice().reverse(),
+                            borderColor: 'rgba(255, 255, 255, 0.2)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: { ...clipSharedTooltipConfig,
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { ...clipSharedTooltipConfig.plugins,
+                            legend: { display: false },
+                            title: { display: true, text: 'Top 10 Profiles by Average Views per Clip', font: { size: 16 }, color: clipPerformancePalette.blueDark }
+                        },
+                        scales: {
+                            x: { title: { display: true, text: 'Average Views per Clip' }, grid: { color: '#e5e7eb' } },
+                            y: { grid: { display: false } }
+                        }
+                    }
+                });
+
+                const scatterTotalData = {
+                    datasets: [{
+                        label: 'Profile',
+                        data: thirdPartyJulyProfileData.map(p => ({ x: p.clips, y: p.totalViews })),
+                        backgroundColor: clipPerformancePalette.blueMid
+                    }]
+                };
+                new Chart(scatterTotalViewsCtx.getContext('2d'), {
+                    type: 'scatter',
+                    data: scatterTotalData,
+                    options: { ...clipSharedTooltipConfig,
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { ...clipSharedTooltipConfig.plugins,
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    title: () => '',
+                                    label: function(context) {
+                                        const index = context.dataIndex;
+                                        const profile = thirdPartyJulyProfileData[index];
+                                        return `${profile.name}: ${profile.clips} clips, ${profile.totalViews.toLocaleString()} views`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: { title: { display: true, text: 'Number of Clips' } },
+                            y: { title: { display: true, text: 'Total Views' } }
+                        }
+                    }
+                });
+
+                const scatterAvgData = {
+                    datasets: [{
+                        label: 'Profile',
+                        data: thirdPartyJulyProfileData.map(p => ({ x: p.clips, y: p.avgViews })),
+                        backgroundColor: clipPerformancePalette.yellowMid
+                    }]
+                };
+                new Chart(scatterAvgViewsCtx.getContext('2d'), {
+                    type: 'scatter',
+                    data: scatterAvgData,
+                    options: { ...clipSharedTooltipConfig,
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { ...clipSharedTooltipConfig.plugins,
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    title: () => '',
+                                    label: function(context) {
+                                        const index = context.dataIndex;
+                                        const profile = thirdPartyJulyProfileData[index];
+                                        return `${profile.name}: ${profile.clips} clips, ${Math.round(profile.avgViews).toLocaleString()} avg views`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: { title: { display: true, text: 'Number of Clips' } },
+                            y: { title: { display: true, text: 'Average Views per Clip' } }
+                        }
+                    }
+                });
+            }
 
 
             // Initial updates
