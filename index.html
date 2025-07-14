@@ -498,6 +498,7 @@
                                     <tr>
                                         <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Profile Name</th>
                                         <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Number of Clips</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Total Views</th>
                                         <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Avg. Views Per Clip</th>
                                     </tr>
                                 </thead>
@@ -526,7 +527,11 @@
                             <div class="chart-container">
                                 <canvas id="lowAvgViewsChart"></canvas>
                             </div>
-                            <div class="overflow-x-auto mt-8">
+                            <!-- New button for "More Details" for low performing titles -->
+                            <div class="text-center mt-4">
+                                <button id="showLowAvgViewsTableBtn" class="px-4 py-2 rounded-md bg-sky-600 text-white shadow-sm font-semibold hover:bg-sky-700 transition-colors duration-200">More Details</button>
+                            </div>
+                            <div id="lowTitlesTableContainer" class="overflow-x-auto mt-8 hidden">
                                 <table class="min-w-full rounded-lg overflow-hidden shadow-sm border border-slate-200">
                                     <thead class="bg-slate-100 border-b border-slate-200">
                                         <tr>
@@ -1552,19 +1557,30 @@
                     row.innerHTML = `
                         <td class="px-4 py-2 whitespace-nowrap">${item.name}</td>
                         <td class="px-4 py-2 whitespace-nowrap">${item.clips}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">${item.totalViews.toLocaleString()}</td> <!-- Added Total Views -->
                         <td class="px-4 py-2 whitespace-nowrap">${item.avgViews.toFixed(1)}</td>
                     `;
                     tableBody.appendChild(row);
                 });
             }
 
-            // Event listener for the new "More Details" button
+            // Event listener for the new "More Details" button for Top Total Views
             const showTopTotalViewsTableBtn = document.getElementById('showTopTotalViewsTableBtn');
             const topTotalViewsTableContainer = document.getElementById('topTotalViewsTableContainer');
 
             if (showTopTotalViewsTableBtn && topTotalViewsTableContainer) {
                 showTopTotalViewsTableBtn.addEventListener('click', () => {
                     topTotalViewsTableContainer.classList.toggle('hidden');
+                });
+            }
+
+            // Event listener for the new "More Details" button for Low Avg Views
+            const showLowAvgViewsTableBtn = document.getElementById('showLowAvgViewsTableBtn');
+            const lowTitlesTableContainer = document.getElementById('lowTitlesTableContainer');
+
+            if (showLowAvgViewsTableBtn && lowTitlesTableContainer) {
+                showLowAvgViewsTableBtn.addEventListener('click', () => {
+                    lowTitlesTableContainer.classList.toggle('hidden');
                 });
             }
 
