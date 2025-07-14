@@ -312,7 +312,7 @@
                                 <div class="accordion-content">
                                      <div class="p-4 pt-0 text-slate-600">
                                         <ul class="list-disc pl-5 space-y-1">
-                                            <li>Experiment with different content formats or themes, such as "evergreen" or "lean-back" content.</li>
+                                            <li>Experiment with different content formats or themes, suchs as "evergreen" or "lean-back" content.</li>
                                             <li>Align content with typical weekend audience behavior (e.g., relaxation, entertainment).</li>
                                             <li>Consider A/B testing post times to find optimal engagement windows on weekends.</li>
                                         </ul>
@@ -528,7 +528,7 @@
                         <div id="dynamic-recommendations" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             <!-- Recommendations will be dynamically inserted here -->
                             <div class="col-span-full text-center text-gray-500 py-8" id="recommendations-loading">
-                                Generating insights...
+                                
                             </div>
                         </div>
                     </section>
@@ -1195,10 +1195,11 @@
                         sectionToShow.classList.remove('hidden');
                         // If it's the third-party-july-content, initialize its charts and generate recommendations
                         if (targetSectionId === 'third-party-july-content') {
-                            setTimeout(() => { // Defer execution to ensure DOM is ready
+                            // Increased timeout to give the browser more time to render elements
+                            setTimeout(() => { 
                                 initializeThirdPartyJulyCharts();
                                 generateRecommendations();
-                            }, 0);
+                            }, 100); 
                         }
                     }
                 });
@@ -1252,10 +1253,11 @@
                         sectionToShow.classList.remove('hidden');
                         // If it's the third-party-july-content, initialize its charts and generate recommendations
                         if (targetSectionId === 'third-party-july-content') {
-                            setTimeout(() => { // Defer execution to ensure DOM is ready
+                            // Increased timeout to give the browser more time to render elements
+                            setTimeout(() => { 
                                 initializeThirdPartyJulyCharts();
                                 generateRecommendations();
-                            }, 0);
+                            }, 100); 
                         }
                     }
                 });
@@ -1481,8 +1483,9 @@
                     return;
                 }
 
-                loadingIndicator.classList.remove('hidden');
-                dynamicRecommendationsDiv.innerHTML = `<div class="col-span-full text-center text-gray-500 py-8" id="recommendations-loading">Generating insights...</div>`;
+                // Removed the line that explicitly sets "Generating insights..."
+                dynamicRecommendationsDiv.innerHTML = `<div class="col-span-full text-center text-gray-500 py-8" id="recommendations-loading"></div>`;
+
 
                 const prompt = `Based on the following clip performance data, provide three strategic recommendations. Focus on "Emulate High-Efficiency Profiles", "Optimize High-Reach Channels", and "Quality Over Quantity". For each recommendation, provide a concise title and a detailed description as a list of bullet points (each point as a separate string in an array).
 
