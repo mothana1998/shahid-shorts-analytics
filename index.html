@@ -543,7 +543,7 @@
                     
                     <div class="flex flex-col sm:flex-row justify-center gap-4 mb-8">
                         <button class="inline-block px-8 py-3 bg-sky-600 text-white rounded-md shadow-md hover:bg-sky-700 transition-colors duration-200 text-lg font-semibold third-party-month-btn" data-target-section="third-party-july-content">View July Data</button>
-                        <button class="inline-block px-8 py-3 bg-sky-600 text-white rounded-md shadow-md hover:bg-sky-700 transition-colors duration-200 text-lg font-semibold third-party-month-btn" data-target-section="third-party-june-content">View June Data</button>
+                        <button class="inline-block px-8 py-3 bg-sky-600 text-white rounded-md shadow-md hover:bg-700 transition-colors duration-200 text-lg font-semibold third-party-month-btn" data-target-section="third-party-june-content">View June Data</button>
                     </div>
 
                     <button class="mt-6 inline-block px-6 py-2 bg-slate-200 text-slate-800 rounded-md shadow-sm hover:bg-slate-300 transition-colors duration-200 back-to-main-dashboard">Back to Dashboard</button>
@@ -655,7 +655,6 @@
                                             <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Number of Clips</th>
                                             <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Total Views</th>
                                             <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Avg. Views Per Clip</th>
-                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Why Stop Working on This Title?</th>
                                         </tr>
                                     </thead>
                                     <tbody id="lowTitlesTableBody" class="divide-y divide-slate-200 text-sm text-slate-700">
@@ -829,7 +828,7 @@
                     { title: "حادث بالمزبلة", views: 100 }
                 ],
                 "Fareed S3": [
-                    { title: "بده الشك و الامور تتكشف 💥", views: 5074 },
+                    { title: "بده الشك و الامور تتكشف �", views: 5074 },
                     { title: "سيبنان ينفجر من الغضب", views: 3205 },
                     { title: "سيبنان ما راح يهدئ", views: 4019 },
                     { title: "مواجهة سيبنان و سيران ❤️", views: 6582 },
@@ -2089,7 +2088,6 @@
                         <td class="px-4 py-2 whitespace-nowrap">${item.clips}</td>
                         <td class="px-4 py-2 whitespace-nowrap">${item.totalViews.toLocaleString()}</td>
                         <td class="px-4 py-2 whitespace-nowrap">${item.avgViews.toFixed(1)}</td>
-                        <td class="px-4 py-2 text-slate-500 italic">No specific reason generated.</td>
                     `;
                     tableBody.appendChild(row);
                 });
@@ -2202,3 +2200,4 @@
     </script>
 </body>
 </html>
+�
