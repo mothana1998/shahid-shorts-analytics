@@ -522,12 +522,6 @@
             </section>
 
             <!-- Placeholder sections for other top-level reports -->
-            <section id="july-report-content" class="report-content-section hidden">
-                <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12 text-center">
-                    <h2 class="text-2xl font-semibold text-slate-900 mb-4">July Performance Analysis</h2>
-                    <p class="text-slate-600 text-lg font-medium">Coming Soon!</p>
-                </div>
-            </section>
             <section id="dmcs-views-content" class="report-content-section hidden">
                 <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12 text-center">
                     <h2 class="text-2xl font-semibold text-slate-900 mb-4">DMCS Views</h2>
@@ -543,7 +537,7 @@
                     
                     <div class="flex flex-col sm:flex-row justify-center gap-4 mb-8">
                         <button class="inline-block px-8 py-3 bg-sky-600 text-white rounded-md shadow-md hover:bg-sky-700 transition-colors duration-200 text-lg font-semibold third-party-month-btn" data-target-section="third-party-july-content">View July Data</button>
-                        <button class="inline-block px-8 py-3 bg-sky-600 text-white rounded-md shadow-md hover:bg-700 transition-colors duration-200 text-lg font-semibold third-party-month-btn" data-target-section="third-party-june-content">View June Data</button>
+                        <button class="inline-block px-8 py-3 bg-sky-600 text-white rounded-md shadow-md hover:bg-sky-700 transition-colors duration-200 text-lg font-semibold third-party-month-btn" data-target-section="third-party-june-content">View June Data</button>
                     </div>
 
                     <button class="mt-6 inline-block px-6 py-2 bg-slate-200 text-slate-800 rounded-md shadow-sm hover:bg-slate-300 transition-colors duration-200 back-to-main-dashboard">Back to Dashboard</button>
@@ -705,6 +699,193 @@
                 </footer>
             </section>
 
+            <!-- July Performance Analysis Section (Initially Hidden) -->
+            <section id="july-report-content" class="report-content-section hidden">
+                <header class="text-center mb-8 md:mb-12">
+                    <h1 class="text-3xl md:text-4xl font-bold text-slate-900">July Viewership Performance Analysis</h1>
+                    <p class="mt-2 text-lg text-slate-600">Uncovering Key Trends & Strategic Opportunities for July</p>
+                </header>
+
+                <!-- Top-level Navigation Tabs for July (Dashboard, Top 10 Titles, Recommendation Titles) -->
+                <nav class="mb-8 md:mb-12">
+                    <div class="inline-flex bg-slate-100 p-1 rounded-lg text-sm flex-wrap justify-center gap-2 w-full">
+                        <button id="julyDashboardTabBtn" class="px-4 py-2 rounded-md bg-white text-sky-600 shadow-sm font-semibold july-main-tab-btn" data-target="july-dashboard-section">Monthly Highlights (July)</button>
+                        <button id="julyTopTitlesTabBtn" class="px-4 py-2 rounded-md text-slate-600 font-medium july-main-tab-btn" data-target="july-top-titles-section">Top Titles Views (July)</button>
+                        <button id="julyRecommendationTitlesTabBtn" class="px-4 py-2 rounded-md text-slate-600 font-medium july-main-tab-btn" data-target="july-recommendation-titles-section">Recommendation Titles (July)</button>
+                    </div>
+                </nav>
+
+                <main>
+                    <!-- July Dashboard Section (Default View for July) -->
+                    <section id="july-dashboard-section" class="july-content-section">
+                        <!-- July Key Metrics Section -->
+                        <section id="july-kpis" class="mb-8 md:mb-12">
+                            <h2 class="text-2xl font-semibold text-slate-900 mb-4 text-center">July Monthly Highlights</h2>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 text-center">
+                                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                                    <p class="text-sm font-medium text-slate-500">Highest Viewership</p>
+                                    <p id="julyKpiHighest" class="text-3xl font-bold text-sky-600 mt-1">N/A</p>
+                                    <p id="julyKpiHighestDay" class="text-xs text-slate-400"></p>
+                                </div>
+                                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                                    <p class="text-sm font-medium text-slate-500">Lowest Viewership</p>
+                                    <p id="julyKpiLowest" class="text-3xl font-bold text-amber-600 mt-1">N/A</p>
+                                    <p id="julyKpiLowestDay" class="text-xs text-slate-400"></p>
+                                </div>
+                                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                                    <p class="text-sm font-medium text-slate-500">Avg. Mid-Week Views</p>
+                                    <p id="julyKpiMidWeekAvg" class="text-3xl font-bold text-slate-700 mt-1">N/A</p>
+                                    <p class="text-xs text-slate-400">(Tue-Thu)</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                                    <p class="text-sm font-medium text-slate-500">Avg. Weekend Views</p>
+                                    <p id="julyKpiWeekendAvg" class="text-3xl font-bold text-slate-700 mt-1">N/A</p>
+                                    <p class="text-xs text-slate-400">(Sat-Sun)</p>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- July Daily Viewership by Week Section -->
+                        <section id="julyWeeklyDailyViewsSection" class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12">
+                            <div class="text-center mb-6">
+                                <h2 class="text-2xl font-semibold text-slate-900">July Daily Viewership by Week</h2>
+                                <p class="text-slate-600 mt-1">Click a week to see daily view trends for that period.</p>
+                                <div class="mt-4 inline-flex bg-slate-100 p-1 rounded-lg text-sm flex-wrap justify-center gap-2">
+                                    <button id="julyWeek1DailyBtn" class="px-4 py-1.5 rounded-md text-slate-600 font-medium july-weekly-daily-btn">Week 1</button>
+                                    <button id="julyWeek2DailyBtn" class="px-4 py-1.5 rounded-md text-slate-600 font-medium july-weekly-daily-btn">Week 2</button>
+                                    <button id="julyWeek3DailyBtn" class="px-4 py-1.5 rounded-md text-slate-600 font-medium july-weekly-daily-btn">Week 3</button>
+                                    <button id="julyWeek4DailyBtn" class="px-4 py-1.5 rounded-md text-slate-600 font-medium july-weekly-daily-btn">Week 4</button>
+                                </div>
+                            </div>
+                            <div id="julyDailyChartContainer" class="chart-container hidden">
+                                <canvas id="julyDailyViewsChart"></canvas>
+                            </div>
+                        </section>
+
+                        <!-- July Overall Interactive Chart Section -->
+                        <section id="july-charts" class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12">
+                            <div class="text-center mb-6">
+                                <h2 class="text-2xl font-semibold text-slate-900">July Overall Weekly Performance Analysis</h2>
+                                <p class="text-slate-600 mt-1">Compare average performance and volatility across the entire month.</p>
+                                <div class="mt-4 inline-flex bg-slate-100 p-1 rounded-lg text-sm">
+                                    <button id="julyAvgBtn" class="px-4 py-1.5 rounded-md bg-white text-sky-600 shadow-sm font-semibold july-chart-type-btn">Average Performance</button>
+                                    <button id="julyRangeBtn" class="px-4 py-1.5 rounded-md text-slate-600 font-medium july-chart-type-btn">Volatility Analysis</button>
+                                </div>
+                            </div>
+
+                            <div id="julyAvgChartContainer" class="chart-container">
+                                <canvas id="julyAverageViewsChart"></canvas>
+                            </div>
+                            <div id="julyRangeChartContainer" class="chart-container hidden">
+                                <canvas id="julyRangeViewsChart"></canvas>
+                            </div>
+                        </section>
+
+                        <!-- July Strategic Recommendations Section -->
+                        <section id="july-recommendations">
+                            <h2 class="text-2xl font-semibold text-slate-900 mb-4 text-center">July Strategic Recommendations</h2>
+                            <div class="space-y-3 max-w-4xl mx-auto">
+                                <div class="accordion-item bg-white rounded-xl shadow-sm border border-slate-200" data-day="Friday">
+                                    <button class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-slate-800 hover:bg-slate-50 hover:shadow-md">
+                                        Capitalize on Friday Peaks
+                                        <span class="transform transition-transform duration-300">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                                        </span>
+                                    </button>
+                                    <div class="accordion-content">
+                                        <div class="p-4 pt-0 text-slate-600">
+                                            <ul class="list-disc pl-5 space-y-1">
+                                                <li>Focus high-impact content releases on Fridays, especially those with strong viral potential.</li>
+                                                <li>Analyze the content and promotional strategies of the $898K$ peak on July 4th.</li>
+                                                <li>Consider special weekend programming or "Friday Feature" content to consistently capture this peak.</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item bg-white rounded-xl shadow-sm border border-slate-200" data-day="Monday,Sunday">
+                                    <button class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-slate-800 hover:bg-slate-50 hover:shadow-md">
+                                        Boost Monday/Sunday Engagement
+                                        <span class="transform transition-transform duration-300">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                                        </span>
+                                    </button>
+                                    <div class="accordion-content">
+                                        <div class="p-4 pt-0 text-slate-600">
+                                            <ul class="list-disc pl-5 space-y-1">
+                                                <li>Implement "start-of-week" or "end-of-weekend" content strategies to re-engage audiences.</li>
+                                                <li>Promote content suitable for a relaxed viewing experience on Sundays.</li>
+                                                <li>Use Mondays for "catch-up" content or previews for the week ahead.</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item bg-white rounded-xl shadow-sm border border-slate-200" data-day="Tuesday,Wednesday,Thursday,Saturday">
+                                    <button class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-slate-800 hover:bg-slate-50 hover:shadow-md">
+                                        Maintain Mid-Week & Saturday Consistency
+                                        <span class="transform transition-transform duration-300">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                                        </span>
+                                    </button>
+                                    <div class="accordion-content">
+                                        <div class="p-4 pt-0 text-slate-600">
+                                            <ul class="list-disc pl-5 space-y-1">
+                                                <li>Continue to deliver high-quality, expected content during these generally stable days.</li>
+                                                <li>Monitor for any subtle shifts in engagement to proactively adjust.</li>
+                                                <li>Leverage Saturday's moderate performance for community engagement or interactive content.</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </section>
+
+                    <!-- July Top Titles Section (Initially Hidden) -->
+                    <section id="july-top-titles-section" class="july-content-section hidden">
+                        <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12">
+                            <h2 class="text-2xl font-semibold text-slate-900 mb-4 text-center">Top Titles Views (July)</h2>
+                            <p class="text-slate-600 mb-6 text-center">Here are the top performing titles based on viewership data for July so far:</p>
+                            <div class="overflow-x-auto mb-8">
+                                <table class="min-w-full rounded-lg overflow-hidden shadow-sm border border-slate-200">
+                                    <thead class="bg-slate-100 border-b border-slate-200">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Rank</th>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Title Name</th>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Total Views</th>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Total Likes</th>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Avg. Views Per Clip</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="julyTopTitlesTableBody" class="divide-y divide-slate-200 text-sm text-slate-700">
+                                        <!-- Data will be inserted here by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="julyTopTitlesViewsChart"></canvas>
+                            </div>
+                            <div class="text-center mt-4">
+                                <button id="julyShowAllTitlesBtn" class="px-4 py-2 rounded-md bg-sky-600 text-white shadow-sm font-semibold hover:bg-sky-700 transition-colors duration-200">Show All Titles</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- July Recommendation Titles Section (Initially Hidden) -->
+                    <section id="july-recommendation-titles-section" class="july-content-section hidden">
+                        <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12">
+                            <h2 class="text-2xl font-semibold text-slate-900 mb-4 text-center">Recommendation Titles for August</h2>
+                            <p class="text-slate-600 mb-6 text-center">Based on July's viewership trends, here are some recommended title categories or themes to focus on for August to potentially maximize engagement.</p>
+                            <ul class="list-disc pl-8 space-y-3 text-slate-700">
+                                <li>**High-Performer Duplication:** Analyze the content and themes of "Al Madeena Al Ba'eeda" and "Ommi" to understand their success factors and replicate similar content.</li>
+                                <li>**Engagement Boosters:** For titles like "Fondooq Al Ahlam" and "Leyla" with strong average views, consider creating more short-form content or interactive elements to further boost engagement.</li>
+                                <li>**Strategic Placement:** Use the high viewership days (e.g., Fridays and Sundays) for launching new episodes or promoting key content from top-performing titles.</li>
+                                <li>**Audience Deep Dive:** For titles with lower performance, conduct audience surveys or focus groups to understand viewer preferences and identify content gaps.</li>
+                            </ul>
+                        </div>
+                    </section>
+                </main>
+            </section>
+
         </div> <!-- End of june-report-content container -->
 
         <footer class="text-center mt-12 text-slate-500 text-sm">
@@ -828,7 +1009,7 @@
                     { title: "حادث بالمزبلة", views: 100 }
                 ],
                 "Fareed S3": [
-                    { title: "بده الشك و الامور تتكشف �", views: 5074 },
+                    { title: "بده الشك و الامور تتكشف 💥", views: 5074 },
                     { title: "سيبنان ينفجر من الغضب", views: 3205 },
                     { title: "سيبنان ما راح يهدئ", views: 4019 },
                     { title: "مواجهة سيبنان و سيران ❤️", views: 6582 },
@@ -894,7 +1075,7 @@
                     { title: "بلاش المشوار داه !", views: 416 },
                     { title: "الخيانة", views: 409 },
                     { title: "ايش صار ؟", views: 381 },
-                    { title: "وين تقفي؟", views: 326 }
+                    { title: "وين تقفي? ", views: 326 }
                 ],
                 "Big Time Podcast": [
                     { title: "ملكة الاحساس", views: 395 },
@@ -1068,6 +1249,7 @@
                 ]
             };
 
+
             // Combine Leyla's data with the specific data from the image and generic placeholders for others
             const allTitlesShortsData = {
                 "Leyla": leylaShortsData,
@@ -1176,6 +1358,39 @@
             const updatedTotalViews = 1383239; // Updated total views based on user input
 
 
+            // July Daily Data
+            const julyDailyData = [
+                { date: 'Jun 30', day: 'Monday', views: 717 },
+                { date: 'Jul 1', day: 'Tuesday', views: 815 },
+                { date: 'Jul 2', day: 'Wednesday', views: 706 },
+                { date: 'Jul 3', day: 'Thursday', views: 675 },
+                { date: 'Jul 4', day: 'Friday', views: 898 },
+                { date: 'Jul 5', day: 'Saturday', views: 677 },
+                { date: 'Jul 6', day: 'Sunday', views: 651 },
+                { date: 'Jul 7', day: 'Monday', views: 808 },
+                { date: 'Jul 8', day: 'Tuesday', views: 673 },
+                { date: 'Jul 9', day: 'Wednesday', views: 700 },
+                { date: 'Jul 10', day: 'Thursday', views: 780 },
+                { date: 'Jul 11', day: 'Friday', views: 663 },
+                { date: 'Jul 12', day: 'Saturday', views: 655 },
+                { date: 'Jul 13', day: 'Sunday', views: 880 },
+                { date: 'Jul 14', day: 'Monday', views: 543 }
+            ];
+
+            // July Top Titles Data (from image_150e83.png, sorted by Total Views)
+            const julyTopTitlesData = [
+                { rank: 1, title: "Al Madeena Al Ba'eeda", views: 1922450, likes: 4090, avgViewsPerClip: 18480 },
+                { rank: 2, title: "Ommi", views: 1765783, likes: 7732, avgViewsPerClip: 28544 },
+                { rank: 3, title: "Fondooq Al Ahlam", views: 865268, likes: 3654, avgViewsPerClip: 13840 },
+                { rank: 4, title: "FIFA Club World Cup 2025", views: 828945, likes: 3033, avgViewsPerClip: 157 },
+                { rank: 5, title: "Leyla", views: 805161, likes: 2431, avgViewsPerClip: 12739 },
+                { rank: 6, title: "Aser", views: 375921, likes: 1092, avgViewsPerClip: 4882 },
+                { rank: 7, title: "Holm Esref", views: 209697, likes: 1292, avgViewsPerClip: 2542 },
+                { rank: 8, title: "Khareef Al Qalb", views: 42752, likes: 166, avgViewsPerClip: 248 },
+                { rank: 9, title: "Al Qadaa Season 2", views: 6532, likes: 56, avgViewsPerClip: 2 }
+            ];
+
+
             // Helper function to format large numbers
             function formatViews(views) {
                 if (views >= 1000000) {
@@ -1225,27 +1440,34 @@
                 return { labels: dayNames, avgData, rangeData };
             };
 
-            const processDailyDataForWeek = (weekNumber) => {
+            const processDailyDataForWeek = (data, weekNumber) => {
                 let dataSubset = [];
-                if (weekNumber === 'all') { // This case is now for internal data processing if needed
-                    dataSubset = fullDailyData;
-                } else {
-                    const startIndex = (weekNumber - 1) * 7;
-                    dataSubset = fullDailyData.slice(startIndex, startIndex + 7);
+                if (weekNumber === 1) {
+                    dataSubset = data.slice(0, 7);
+                } else if (weekNumber === 2) {
+                    dataSubset = data.slice(7, 14);
+                } else if (weekNumber === 3) {
+                    dataSubset = data.slice(14, 21); // Assuming a full week for calculation
+                } else if (weekNumber === 4) {
+                    dataSubset = data.slice(21, 28); // Assuming a full week for calculation
+                }
+
+                if (dataSubset.length === 0 && (weekNumber === 3 || weekNumber === 4)) {
+                    return { labels: ["Coming soon!"], views: [0], rawData: [] };
                 }
                 const labels = dataSubset.map(d => `${d.date} (${d.day.substring(0, 3)})`);
                 const views = dataSubset.map(d => d.views);
                 return { labels, views, rawData: dataSubset };
             };
 
-            const updateKPIs = (data) => {
+            const updateKPIs = (data, prefix = '') => {
                 if (data.length === 0) {
-                    document.getElementById('kpiHighest').textContent = 'N/A';
-                    document.getElementById('kpiHighestDay').textContent = '';
-                    document.getElementById('kpiLowest').textContent = 'N/A';
-                    document.getElementById('kpiLowestDay').textContent = '';
-                    document.getElementById('kpiMidWeekAvg').textContent = 'N/A';
-                    document.getElementById('kpiWeekendAvg').textContent = 'N/A';
+                    document.getElementById(`${prefix}KpiHighest`).textContent = 'N/A';
+                    document.getElementById(`${prefix}KpiHighestDay`).textContent = '';
+                    document.getElementById(`${prefix}KpiLowest`).textContent = 'N/A';
+                    document.getElementById(`${prefix}KpiLowestDay`).textContent = '';
+                    document.getElementById(`${prefix}KpiMidWeekAvg`).textContent = 'N/A';
+                    document.getElementById(`${prefix}KpiWeekendAvg`).textContent = 'N/A';
                     return;
                 }
 
@@ -1271,12 +1493,12 @@
                 const avgMidWeek = midWeekViews.length > 0 ? midWeekViews.reduce((sum, v) => sum + v, 0) / midWeekViews.length : 0;
                 const avgWeekend = weekendViews.length > 0 ? weekendViews.reduce((sum, v) => sum + v, 0) / weekendViews.length : 0;
 
-                document.getElementById('kpiHighest').textContent = `${highestView}K`;
-                document.getElementById('kpiHighestDay').textContent = `on ${highestDay}`;
-                document.getElementById('kpiLowest').textContent = `${lowestView}K`;
-                document.getElementById('kpiLowestDay').textContent = `on ${lowestDay}`;
-                document.getElementById('kpiMidWeekAvg').textContent = `${avgMidWeek.toFixed(0)}K`;
-                document.getElementById('kpiWeekendAvg').textContent = `${avgWeekend.toFixed(0)}K`;
+                document.getElementById(`${prefix}KpiHighest`).textContent = `${highestView}K`;
+                document.getElementById(`${prefix}KpiHighestDay`).textContent = `on ${highestDay}`;
+                document.getElementById(`${prefix}KpiLowest`).textContent = `${lowestView}K`;
+                document.getElementById(`${prefix}KpiLowestDay`).textContent = `on ${lowestDay}`;
+                document.getElementById(`${prefix}KpiMidWeekAvg`).textContent = `${avgMidWeek.toFixed(0)}K`;
+                document.getElementById(`${prefix}KpiWeekendAvg`).textContent = `${avgWeekend.toFixed(0)}K`;
             };
 
             const chartClickHandler = (evt, elements, chart) => {
@@ -1365,7 +1587,7 @@
                 }
             };
 
-            // Initialize Overall Charts (Average and Range)
+            // Initialize Overall Charts (Average and Range) - June
             const avgCtx = document.getElementById('averageViewsChart').getContext('2d');
             const avgChartOptions = {
                 ...baseOptions,
@@ -1431,7 +1653,7 @@
                 }]
             }, rangeChartOptions);
 
-            // Initialize Daily Views Chart
+            // Initialize Daily Views Chart - June
             const dailyCtx = document.getElementById('dailyViewsChart').getContext('2d');
             const dailyChartOptions = {
                 ...baseOptions,
@@ -1471,11 +1693,11 @@
                 }]
             }, dailyChartOptions);
 
-            // Initial data for Top Titles Chart
+            // Initial data for Top Titles Chart - June
             const initialTopTitlesLabels = top10TitlesData.map(item => item.title);
             const initialTopTitlesViews = top10TitlesData.map(item => parseFloat(item.views.replace('M', '')) * 1000000);
 
-            // Initialize Top Titles Views Chart
+            // Initialize Top Titles Views Chart - June
             const topTitlesCtx = document.getElementById('topTitlesViewsChart').getContext('2d');
             const topTitlesChartOptions = {
                 ...baseOptions,
@@ -1571,14 +1793,14 @@
             };
 
 
-            const updateDailyViewsChart = (weekNumber) => {
-                const processedDailyData = processDailyDataForWeek(weekNumber);
-                dailyViewsChart.data.labels = processedDailyData.labels;
-                dailyViewsChart.data.datasets[0].data = processedDailyData.views;
-                dailyViewsChart.update();
+            const updateDailyViewsChart = (data, chartInstance, weekNumber) => {
+                const processedDailyData = processDailyDataForWeek(data, weekNumber);
+                chartInstance.data.labels = processedDailyData.labels;
+                chartInstance.data.datasets[0].data = processedDailyData.views;
+                chartInstance.update();
             };
 
-            // Tab functionality for Overall Chart Type (Average vs. Range)
+            // Tab functionality for Overall Chart Type (Average vs. Range) - June
             const avgBtn = document.getElementById('avgBtn');
             const rangeBtn = document.getElementById('rangeBtn');
             const avgChartContainer = document.getElementById('avgChartContainer');
@@ -1605,7 +1827,7 @@
                 });
             }
             
-            // Tab functionality for Weekly Daily Data
+            // Tab functionality for Weekly Daily Data - June
             const weeklyDailyButtons = document.querySelectorAll('.weekly-daily-btn');
             const dailyChartSection = document.getElementById('dailyChartContainer'); // Get the chart container
 
@@ -1624,11 +1846,11 @@
                     if (dailyChartSection) {
                         dailyChartSection.classList.remove('hidden');
                     }
-                    updateDailyViewsChart(selectedWeek);
+                    updateDailyViewsChart(fullDailyData, dailyViewsChart, selectedWeek);
                 });
             });
 
-            // Top-level Main Tab functionality (for Monthly Highlights, Top 10 Titles, Recommendation Titles)
+            // Top-level Main Tab functionality (for Monthly Highlights, Top 10 Titles, Recommendation Titles) - June
             const mainTabButtons = document.querySelectorAll('.main-tab-btn');
             const mainContentSections = document.querySelectorAll('.main-content-section');
 
@@ -1702,7 +1924,7 @@
                 });
             });
 
-            // Function to populate the Top 10 Titles table
+            // Function to populate the Top 10 Titles table - June
             const populateTopTitlesTable = () => {
                 const tableBody = document.getElementById('topTitlesTableBody');
                 if (!tableBody) return; // Exit if element not found
@@ -1727,7 +1949,7 @@
                 });
             };
 
-            // Event listener for "Show All Titles" button
+            // Event listener for "Show All Titles" button - June
             const showAllTitlesBtn = document.getElementById('showAllTitlesBtn');
             if (showAllTitlesBtn) {
                 showAllTitlesBtn.addEventListener('click', displayAllTitlesOnChart);
@@ -1774,6 +1996,13 @@
                                 populateLowTitlesTable(); // Populate low titles table
                                 populateTopTotalViewsTable(); // Populate the new table
                             }, 500); // Increased timeout to 500ms
+                        } else if (targetSectionId === 'july-report-content') {
+                            showDebugMessage("Navigated to July Performance Analysis. Initializing July charts.");
+                            // Activate the first tab within the July report by default
+                            const julyDashboardTabBtn = document.getElementById('julyDashboardTabBtn');
+                            if (julyDashboardTabBtn) {
+                                julyDashboardTabBtn.click(); // Simulate click to activate and show dashboard
+                            }
                         } else {
                             showDebugMessage(`Navigated to ${targetSectionId}.`);
                         }
@@ -2191,7 +2420,330 @@
                 }
             });
 
-            // Initial updates
+            // --- July Specific Chart and Table Logic ---
+            let julyAverageViewsChart;
+            let julyRangeViewsChart;
+            let julyDailyViewsChart;
+            let julyTopTitlesViewsChart;
+
+            const initializeJulyCharts = () => {
+                showDebugMessage("Initializing July charts...");
+
+                // Destroy existing July chart instances if they exist
+                if (julyAverageViewsChart) julyAverageViewsChart.destroy();
+                if (julyRangeViewsChart) julyRangeViewsChart.destroy();
+                if (julyDailyViewsChart) julyDailyViewsChart.destroy();
+                if (julyTopTitlesViewsChart) julyTopTitlesViewsChart.destroy();
+
+                // Initialize July Overall Charts (Average and Range)
+                const julyAvgCtx = document.getElementById('julyAverageViewsChart').getContext('2d');
+                const julyAvgChartOptions = {
+                    ...baseOptions,
+                    onClick: chartClickHandler,
+                    plugins: {
+                        ...baseOptions.plugins,
+                        tooltip: {
+                            ...baseOptions.plugins.tooltip,
+                            callbacks: {
+                                label: function(context) {
+                                    return `Avg. Views: ${context.parsed.y.toFixed(0)}K`;
+                                }
+                            }
+                        }
+                    }
+                };
+                julyAverageViewsChart = createChart(julyAvgCtx, 'bar', {
+                    labels: processOverallData(julyDailyData).labels,
+                    datasets: [{
+                        label: 'Average Views',
+                        data: processOverallData(julyDailyData).avgData,
+                        backgroundColor: 'rgba(14, 165, 233, 0.6)',
+                        borderColor: 'rgba(14, 165, 233, 1)',
+                        borderWidth: 2,
+                        borderRadius: 4,
+                    }]
+                }, julyAvgChartOptions);
+
+                const julyRangeCtx = document.getElementById('julyRangeViewsChart').getContext('2d');
+                const julyRangeChartOptions = {
+                    ...baseOptions,
+                    onClick: chartClickHandler,
+                    scales: {
+                        ...baseOptions.scales,
+                        y: {
+                            ...baseOptions.scales.y,
+                            beginAtZero: false
+                        }
+                    },
+                    plugins: {
+                        ...baseOptions.plugins,
+                        tooltip: {
+                            ...baseOptions.plugins.tooltip,
+                            callbacks: {
+                                label: function(context) {
+                                    const range = context.raw;
+                                    return `Views Range: ${range[0]}K - ${range[1]}K`;
+                                }
+                            }
+                        }
+                    }
+                };
+                julyRangeViewsChart = createChart(julyRangeCtx, 'bar', {
+                    labels: processOverallData(julyDailyData).labels,
+                    datasets: [{
+                        label: 'Viewership Range',
+                        data: processOverallData(julyDailyData).rangeData,
+                        backgroundColor: 'rgba(245, 158, 11, 0.6)',
+                        borderColor: 'rgba(245, 158, 11, 1)',
+                        borderWidth: 2,
+                        borderRadius: 4,
+                        borderSkipped: false,
+                    }]
+                }, julyRangeChartOptions);
+
+                // Initialize July Daily Views Chart
+                const julyDailyCtx = document.getElementById('julyDailyViewsChart').getContext('2d');
+                const julyDailyChartOptions = {
+                    ...baseOptions,
+                    onClick: chartClickHandler,
+                    plugins: {
+                        ...baseOptions.plugins,
+                        tooltip: {
+                            ...baseOptions.plugins.tooltip,
+                            callbacks: {
+                                label: function(context) {
+                                    return `Daily Views: ${context.parsed.y.toFixed(0)}K`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        ...baseOptions.scales,
+                        x: {
+                            ...baseOptions.scales.x,
+                            ticks: {
+                                color: '#64748b',
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        }
+                    }
+                };
+                julyDailyViewsChart = createChart(julyDailyCtx, 'bar', {
+                    labels: [],
+                    datasets: [{
+                        label: 'Daily Views',
+                        data: [],
+                        backgroundColor: 'rgba(16, 185, 129, 0.6)',
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        borderWidth: 2,
+                        borderRadius: 4,
+                    }]
+                }, julyDailyChartOptions);
+
+                // Initialize July Top Titles Views Chart
+                const julyTopTitlesCtx = document.getElementById('julyTopTitlesViewsChart').getContext('2d');
+                const julyTopTitlesChartOptions = {
+                    ...baseOptions,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            grid: { color: '#e2e8f0' },
+                            ticks: {
+                                color: '#64748b',
+                                callback: function(value) { return (value / 1000000) + 'M'; }
+                            },
+                            title: { display: true, text: 'Total Views', color: '#475569', font: { weight: 'semibold' } }
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: { color: '#64748b' }
+                        }
+                    },
+                    plugins: {
+                        ...baseOptions.plugins,
+                        tooltip: {
+                            ...baseOptions.plugins.tooltip,
+                            callbacks: {
+                                label: function(context) { return `Total Views: ${context.parsed.x / 1000000}M`; }
+                            }
+                        }
+                    },
+                    barThickness: 30,
+                    categoryPercentage: 0.8,
+                    barPercentage: 0.9,
+                    onClick: (evt, elements) => {
+                        showDebugMessage("Chart click event triggered on July Top Titles Chart.");
+                        if (elements.length > 0) {
+                            const dataIndex = elements[0].index;
+                            const clickedTitle = julyTopTitlesViewsChart.data.labels[dataIndex];
+                            showDebugMessage("Clicked title on July Top Titles Chart: " + clickedTitle);
+                            const titleData = julyTopTitlesData.find(t => t.title === clickedTitle);
+                            if (titleData) {
+                                displaySingleJulyTitleOnChart(titleData.title, titleData.views);
+                            }
+                        } else {
+                            showDebugMessage("No element clicked on July Top Titles Chart.");
+                        }
+                    }
+                };
+
+                julyTopTitlesViewsChart = createChart(julyTopTitlesCtx, 'bar', {
+                    labels: julyTopTitlesData.map(item => item.title),
+                    datasets: [{
+                        label: 'Total Views',
+                        data: julyTopTitlesData.map(item => item.views),
+                        backgroundColor: 'rgba(79, 70, 229, 0.6)',
+                        borderColor: 'rgba(79, 70, 229, 1)',
+                        borderWidth: 2,
+                        borderRadius: 4,
+                    }]
+                }, julyTopTitlesChartOptions);
+
+                showDebugMessage("July charts initialized.");
+            };
+
+            // Function to update July Top Titles Chart for a single title
+            const displaySingleJulyTitleOnChart = (title, views) => {
+                julyTopTitlesViewsChart.data.labels = [title];
+                julyTopTitlesViewsChart.data.datasets[0].data = [views];
+                julyTopTitlesViewsChart.update();
+            };
+
+            // Function to display all July titles on the chart
+            const displayAllJulyTitlesOnChart = () => {
+                julyTopTitlesViewsChart.data.labels = julyTopTitlesData.map(item => item.title);
+                julyTopTitlesViewsChart.data.datasets[0].data = julyTopTitlesData.map(item => item.views);
+                julyTopTitlesViewsChart.update();
+            };
+
+            // Function to populate the Top Titles table - July
+            const populateJulyTopTitlesTable = () => {
+                const tableBody = document.getElementById('julyTopTitlesTableBody');
+                if (!tableBody) return;
+                tableBody.innerHTML = '';
+
+                julyTopTitlesData.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="px-4 py-2 whitespace-nowrap">${item.rank}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">${item.title}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">${item.views.toLocaleString()}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">${item.likes.toLocaleString()}</td>
+                        <td class="px-4 py-2 whitespace-nowrap">${item.avgViewsPerClip.toLocaleString()}</td>
+                    `;
+                    row.addEventListener('click', () => {
+                        showDebugMessage("Table row click event triggered for: " + item.title + " (July Top Titles)");
+                        displaySingleJulyTitleOnChart(item.title, item.views);
+                    });
+                    tableBody.appendChild(row);
+                });
+            };
+
+            // Event listener for "Show All Titles" button - July
+            const julyShowAllTitlesBtn = document.getElementById('julyShowAllTitlesBtn');
+            if (julyShowAllTitlesBtn) {
+                julyShowAllTitlesBtn.addEventListener('click', displayAllJulyTitlesOnChart);
+            }
+
+            // July Tab functionality for Overall Chart Type (Average vs. Range)
+            const julyAvgBtn = document.getElementById('julyAvgBtn');
+            const julyRangeBtn = document.getElementById('julyRangeBtn');
+            const julyAvgChartContainer = document.getElementById('julyAvgChartContainer');
+            const julyRangeChartContainer = document.getElementById('julyRangeChartContainer');
+
+            if (julyAvgBtn && julyRangeBtn && julyAvgChartContainer && julyRangeChartContainer) {
+                julyAvgBtn.addEventListener('click', () => {
+                    julyAvgChartContainer.classList.remove('hidden');
+                    julyRangeChartContainer.classList.add('hidden');
+                    julyAvgBtn.classList.add('bg-white', 'text-sky-600', 'shadow-sm', 'font-semibold');
+                    julyAvgBtn.classList.remove('text-slate-600', 'font-medium');
+                    julyRangeBtn.classList.remove('bg-white', 'text-sky-600', 'shadow-sm', 'font-semibold');
+                    julyRangeBtn.classList.add('text-slate-600', 'font-medium');
+                });
+
+                julyRangeBtn.addEventListener('click', () => {
+                    julyRangeChartContainer.classList.remove('hidden');
+                    julyAvgChartContainer.classList.add('hidden');
+                    julyRangeBtn.classList.add('bg-white', 'text-sky-600', 'shadow-sm', 'font-semibold');
+                    julyRangeBtn.classList.remove('text-slate-600', 'font-medium');
+                    julyAvgBtn.classList.remove('bg-white', 'text-sky-600', 'shadow-sm', 'font-semibold');
+                    julyAvgBtn.classList.add('text-slate-600', 'font-medium');
+                });
+            }
+
+            // July Tab functionality for Weekly Daily Data
+            const julyWeeklyDailyButtons = document.querySelectorAll('.july-weekly-daily-btn');
+            const julyDailyChartSection = document.getElementById('julyDailyChartContainer');
+
+            julyWeeklyDailyButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    julyWeeklyDailyButtons.forEach(btn => {
+                        btn.classList.remove('bg-white', 'text-sky-600', 'shadow-sm', 'font-semibold');
+                        btn.classList.add('text-slate-600', 'font-medium');
+                    });
+                    button.classList.add('bg-white', 'text-sky-600', 'shadow-sm', 'font-semibold');
+                    button.classList.remove('text-slate-600', 'font-medium');
+
+                    let selectedWeek = parseInt(button.id.replace('julyWeek', '').replace('DailyBtn', ''));
+                    
+                    if (julyDailyChartSection) {
+                        julyDailyChartSection.classList.remove('hidden');
+                    }
+
+                    if (selectedWeek === 3 || selectedWeek === 4) {
+                        // For Week 3 and 4, display "Coming soon!"
+                        julyDailyViewsChart.data.labels = ["Coming soon!"];
+                        julyDailyViewsChart.data.datasets[0].data = [0]; // Set data to 0 or null for visual effect
+                        julyDailyViewsChart.update();
+                    } else {
+                        updateDailyViewsChart(julyDailyData, julyDailyViewsChart, selectedWeek);
+                    }
+                });
+            });
+
+            // July Main Tab functionality
+            const julyMainTabButtons = document.querySelectorAll('.july-main-tab-btn');
+            const julyContentSections = document.querySelectorAll('.july-content-section');
+
+            julyMainTabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    julyMainTabButtons.forEach(btn => {
+                        btn.classList.remove('bg-white', 'text-sky-600', 'shadow-sm', 'font-semibold');
+                        btn.classList.add('text-slate-600', 'font-medium');
+                    });
+
+                    button.classList.add('bg-white', 'text-sky-600', 'shadow-sm', 'font-semibold');
+                    button.classList.remove('text-slate-600', 'font-medium');
+
+                    julyContentSections.forEach(section => {
+                        section.classList.add('hidden');
+                    });
+
+                    const targetSectionId = button.dataset.target;
+                    const sectionToShow = document.getElementById(targetSectionId);
+                    if (sectionToShow) {
+                        sectionToShow.classList.remove('hidden');
+                        if (targetSectionId === 'july-dashboard-section') {
+                            updateKPIs(julyDailyData, 'july');
+                            initializeJulyCharts();
+                        } else if (targetSectionId === 'july-top-titles-section') {
+                            populateJulyTopTitlesTable();
+                            // Ensure chart is initialized and updated when visible
+                            setTimeout(() => {
+                                if (julyTopTitlesViewsChart) {
+                                    julyTopTitlesViewsChart.resize();
+                                    julyTopTitlesViewsChart.update();
+                                }
+                            }, 100);
+                        }
+                    }
+                });
+            });
+
+
+            // Initial updates for June
             updateKPIs(fullDailyData);
             populateTopTitlesTable(); // Populate the table on load
             showDebugMessage("Dashboard Initialized!"); // Confirm script execution
@@ -2200,4 +2752,4 @@
     </script>
 </body>
 </html>
-�
+
