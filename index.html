@@ -355,7 +355,7 @@
                                     <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Total Views</th>
                                     <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Total Likes</th>
                                     <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Avg. Views Per Clip</th>
-                                </tr>
+                                    </tr>
                             </thead>
                             <tbody id="topTitlesTableBody" class="divide-y divide-slate-200 text-sm text-slate-700">
                                 <!-- Data will be inserted here by JavaScript -->
@@ -529,7 +529,7 @@
                             </div>
                             <!-- New button for "More Details" for low performing titles -->
                             <div class="text-center mt-4">
-                                <button id="showLowAvgViewsTableBtn" class="px-4 py-2 rounded-md bg-sky-600 text-white shadow-sm font-semibold hover:bg-sky-700 transition-colors duration-200">More Details</button>
+                                <button id="showLowAvgViewsTableBtn" class="px-4 py-2 rounded-md bg-sky-600 text-white shadow-sm font-semibold hover:bg-sky-700 transition-colors duration-200">More Details ✨</button>
                             </div>
                             <div id="lowTitlesTableContainer" class="overflow-x-auto mt-8 hidden">
                                 <table class="min-w-full rounded-lg overflow-hidden shadow-sm border border-slate-200">
@@ -552,8 +552,11 @@
 
                     <section id="recommendations" class="mt-16">
                         <h2 class="clip-performance-section-title">Key Insights & Strategic Recommendations</h2>
+                        <div class="text-center mb-6">
+                            <button id="generateRecommendationsBtn" class="px-6 py-2 rounded-md bg-emerald-600 text-white shadow-sm font-semibold hover:bg-emerald-700 transition-colors duration-200">Generate Strategic Recommendations ✨</button>
+                        </div>
                         <div id="dynamic-recommendations" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <!-- Default, static recommendations to appear directly -->
+                            <!-- Recommendations will be dynamically loaded here -->
                             <div class="recommendation-card blue-border">
                                 <h3 class="font-bold text-lg mb-2 text-[#005f73]">Emulate High-Efficiency Profiles</h3>
                                 <ul class="list-disc pl-5 text-gray-600 space-y-1">
@@ -659,52 +662,58 @@
             let lowAvgViewsChart; // New chart for low performing titles
 
             // Data for the Clip Performance Analysis (Third Party Views - July)
+            // Updated based on user provided accurate data
             const thirdPartyJulyProfileData = [
-                { name: "Ahla Ma Tash", clips: 17, totalViews: 20108, avgViews: 1182.8 },
-                { name: "Al -Meerath S3", clips: 19, totalViews: 74744, avgViews: 3933.9 },
-                { name: "Al Ameel (Icerde)", clips: 13, totalViews: 80892, avgViews: 6222.5 },
-                { name: "Al Atawla S1", clips: 18, totalViews: 25965, avgViews: 1442.5 },
-                { name: "Al Hayba S1", clips: 7, totalViews: 4128, avgViews: 589.7 },
-                { name: "AL Kha'en S1", clips: 18, totalViews: 22756, avgViews: 1264.2 },
-                { name: "Al Khotta Baa S1", clips: 13, totalViews: 32906, avgViews: 2531.2 },
-                { name: "Al Le'ba: Level Al Wahsh S2", clips: 19, totalViews: 16008, avgViews: 842.5 },
-                { name: "Al Qadar S1", clips: 17, totalViews: 31890, avgViews: 1875.9 },
-                { name: "Amr Ikhlaa S3 S3", clips: 13, totalViews: 9791, avgViews: 753.2 },
-                { name: "Awdat Khalati S1", clips: 22, totalViews: 15415, avgViews: 700.7 },
-                { name: "Bab Al Hara S3", clips: 9, totalViews: 2284, avgViews: 253.8 },
-                { name: "Bait & So'al 2025", clips: 3, totalViews: 384, avgViews: 128.0 },
-                { name: "Banat Al Thanawi S2", clips: 14, totalViews: 12794, avgViews: 913.9 },
-                { name: "Beyt Al Ankaboot S1", clips: 14, totalViews: 6516, avgViews: 465.4 },
-                { name: "Big Time Podcast S1", clips: 16, totalViews: 42104, avgViews: 2631.5 },
-                { name: "El Hashashin S1", clips: 19, totalViews: 16982, avgViews: 893.8 },
-                { name: "El Kebeer Awi_TV S7", clips: 16, totalViews: 641, avgViews: 40.1 },
-                { name: "Fareed S3 S3", clips: 17, totalViews: 58541, avgViews: 3443.6 },
-                { name: "Gaafar El Omda S1", clips: 20, totalViews: 16428, avgViews: 821.4 },
-                { name: "Gamgoum Wa Bimbim: Al Sharika Al Almaniya Li Mokafahat Al Khawareq S1", clips: 5, totalViews: 4058, avgViews: 811.6 },
-                { name: "Horouj S1", clips: 11, totalViews: 6366, avgViews: 578.7 },
-                { name: "Kermal Al Walad S1", clips: 11, totalViews: 24738, avgViews: 2248.9 },
-                { name: "Kolna Eyal Qarya S1", clips: 16, totalViews: 46253, avgViews: 2890.8 },
-                { name: "Leyla", clips: 20, totalViews: 260383, avgViews: 13019.2 },
-                { name: "Lil Mawt", clips: 18, totalViews: 36625, avgViews: 2034.7 },
-                { name: "Mama Ghaneema Season 1", clips: 4, totalViews: 23300, avgViews: 5825.0 },
-                { name: "Melh Wa Samra Season 1", clips: 12, totalViews: 8942, avgViews: 745.2 },
-                { name: "Min Share’ Al Haram Ela... Season 1", clips: 15, totalViews: 46274, avgViews: 3084.9 },
-                { name: "Moftaraq Toroq Season 1", clips: 18, totalViews: 22002, avgViews: 1222.3 },
-                { name: "MotorShow DocuSeries", clips: 3, totalViews: 17013, avgViews: 5671.0 },
-                { name: "My Grandfather's Museum Season 1", clips: 7, totalViews: 13704, avgViews: 1957.7 },
-                { name: "Ragel We Set Settat Season 1", clips: 14, totalViews: 9993, avgViews: 713.8 },
-                { name: "Salon Zahra Season 2", clips: 16, totalViews: 21699, avgViews: 1356.2 },
-                { name: "Shatti Ya Beirut", clips: 20, totalViews: 40995, avgViews: 2049.8 },
-                { name: "Sikkat Safar Season 1", clips: 17, totalViews: 19481, avgViews: 1145.9 },
-                { name: "Tash: Al Awda Season 19", clips: 10, totalViews: 493, avgViews: 49.3 },
-                { name: "Top Chef Season 8", clips: 5, totalViews: 10073, avgViews: 2014.6 },
-                { name: "Wlad Badee'a Season 1", clips: 21, totalViews: 7268, avgViews: 346.1 },
-                { name: "Zawja Waheda La Takfi Season 1", clips: 4, totalViews: 30797, avgViews: 7699.2 }
+                { name: "AL Kha'en", clips: 18, totalViews: 24306, avgViews: 0 },
+                { name: "Ahla Ma Tash", clips: 17, totalViews: 30354, avgViews: 0 },
+                { name: "Al -Meerath", clips: 19, totalViews: 109706, avgViews: 0 },
+                { name: "Al Ameel (Icerde)", clips: 13, totalViews: 82875, avgViews: 0 },
+                { name: "Al Atawla", clips: 18, totalViews: 26381, avgViews: 0 },
+                { name: "Al Hayba", clips: 7, totalViews: 4373, avgViews: 0 },
+                { name: "Al Khotta Baa", clips: 13, totalViews: 33551, avgViews: 0 },
+                { name: "Al Le'ba: Level Al Wahsh", clips: 19, totalViews: 19985, avgViews: 0 },
+                { name: "Al Qadar", clips: 17, totalViews: 35918, avgViews: 0 },
+                { name: "Amr Ikhlaa S3", clips: 13, totalViews: 14855, avgViews: 0 },
+                { name: "Awdat Khalati", clips: 22, totalViews: 24148, avgViews: 0 },
+                { name: "Bab Al Hara", clips: 9, totalViews: 2683, avgViews: 0 },
+                { name: "Bait & So'al 2025 EP29 Clip 1", clips: 3, totalViews: 384, avgViews: 0 },
+                { name: "Banat Al Thanawi", clips: 14, totalViews: 20044, avgViews: 0 },
+                { name: "Beyt Al Ankaboot", clips: 14, totalViews: 7178, avgViews: 0 },
+                { name: "Big Time Podcast", clips: 16, totalViews: 44796, avgViews: 0 },
+                { name: "El Hashashin", clips: 19, totalViews: 19483, avgViews: 0 },
+                { name: "El Kebeer Awi_TV", clips: 16, totalViews: 717, avgViews: 0 },
+                { name: "Fareed S3", clips: 17, totalViews: 95585, avgViews: 0 },
+                { name: "Gaafar El Omda", clips: 20, totalViews: 23013, avgViews: 0 },
+                { name: "Gamgoum Wa Bimbim: Al Sharika Al Almaniya Li Mokafahat Al Khawareq", clips: 5, totalViews: 4058, avgViews: 0 },
+                { name: "Horouj", clips: 11, totalViews: 6778, avgViews: 0 },
+                { name: "Kermal Al Walad", clips: 11, totalViews: 27929, avgViews: 0 },
+                { name: "Kolna Eyal Qarya", clips: 16, totalViews: 67047, avgViews: 0 },
+                { name: "Leyla", clips: 20, totalViews: 335596, avgViews: 0 },
+                { name: "Lil Mawt", clips: 18, totalViews: 40959, avgViews: 0 },
+                { name: "Mama Ghaneema Season 1", clips: 4, totalViews: 23299, avgViews: 0 },
+                { name: "Melh Wa Samra Season 1", clips: 12, totalViews: 9616, avgViews: 0 },
+                { name: "Min Share’ Al Haram Ela... Season 1", clips: 15, totalViews: 47750, avgViews: 0 },
+                { name: "Moftaraq Toroq Season 1", clips: 18, totalViews: 22786, avgViews: 0 },
+                { name: "MotorShow DocuSeries", clips: 3, totalViews: 17013, avgViews: 0 },
+                { name: "My Grandfather's Museum Season 1", clips: 7, totalViews: 14174, avgViews: 0 },
+                { name: "Ragel We Set Settat Season 1", clips: 14, totalViews: 10230, avgViews: 0 },
+                { name: "Salon Zahra Season 2", clips: 16, totalViews: 22236, avgViews: 0 },
+                { name: "Shatti Ya Beirut", clips: 20, totalViews: 41951, avgViews: 0 },
+                { name: "Sikkat Safar Season 1", clips: 17, totalViews: 22032, avgViews: 0 },
+                { name: "Tash: Al Awda Season 19", clips: 10, totalViews: 433, avgViews: 0 },
+                { name: "Top Chef Season 8", clips: 5, totalViews: 10073, avgViews: 0 },
+                { name: "Wlad Badee'a Season 1", clips: 21, totalViews: 7647, avgViews: 0 },
+                { name: "Zawja Waheda La Takfi Season 1", clips: 4, totalViews: 31297, avgViews: 0 }
             ];
+
+            // Recalculate avgViews for each entry
+            thirdPartyJulyProfileData.forEach(item => {
+                item.avgViews = item.clips > 0 ? item.totalViews / item.clips : 0;
+            });
 
             const updatedTotalProfiles = 40;
             const updatedTotalClips = 544;
-            const updatedTotalViews = 1383994; // Corrected total views
+            const updatedTotalViews = 1383239; // Updated total views based on user input
 
 
             // Helper function to format large numbers
@@ -1270,7 +1279,7 @@
                                 initializeThirdPartyJulyCharts();
                                 populateLowTitlesTable(); // Populate low titles table
                                 populateTopTotalViewsTable(); // Populate the new table
-                                generateRecommendations();
+                                // Do not call generateRecommendations here, it will be called by the new button
                             }, 500); // Increased timeout to 500ms
                         }
                     }
@@ -1334,7 +1343,7 @@
                                 initializeThirdPartyJulyCharts();
                                 populateLowTitlesTable(); // Populate low titles table
                                 populateTopTotalViewsTable(); // Populate the new table
-                                generateRecommendations();
+                                // Do not call generateRecommendations here, it will be called by the new button
                             }, 500); // Increased timeout to 500ms
                         }
                     }
@@ -1584,6 +1593,12 @@
                 });
             }
 
+            // Event listener for the new "Generate Strategic Recommendations" button
+            const generateRecommendationsBtn = document.getElementById('generateRecommendationsBtn');
+            if (generateRecommendationsBtn) {
+                generateRecommendationsBtn.addEventListener('click', generateRecommendations);
+            }
+
 
             // Function to generate reasons for low performance using LLM
             async function generateLowPerformanceReasons(lowTitlesData) {
@@ -1647,14 +1662,8 @@
                     return;
                 }
 
-                // Check if the dynamic content has already been loaded.
-                // We assume if the first child is NOT the loading indicator, content is already there.
-                if (dynamicRecommendationsDiv.children.length > 0 && dynamicRecommendationsDiv.children[0].className.includes('recommendation-card')) {
-                    return; // Content already loaded, do nothing
-                }
-
                 // Clear any existing content (including the static placeholders) before fetching new ones
-                dynamicRecommendationsDiv.innerHTML = '';
+                dynamicRecommendationsDiv.innerHTML = '<div class="col-span-full text-center text-slate-600">Generating recommendations...</div>';
 
 
                 const prompt = `Based on the following clip performance data, provide three strategic recommendations. Focus on "Emulate High-Efficiency Profiles", "Optimize High-Reach Channels", and "Quality Over Quantity". For each recommendation, provide a concise title and a detailed description as a list of bullet points (each point as a separate string in an array).
