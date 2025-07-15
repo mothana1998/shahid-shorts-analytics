@@ -886,6 +886,56 @@
                 </main>
             </section>
 
+            <!-- Additional Insights Section -->
+            <section id="additional-insights-content" class="report-content-section hidden">
+                <header class="text-center mb-8 md:mb-12">
+                    <h1 class="text-3xl md:text-4xl font-bold text-slate-900">Additional Viewership Insights</h1>
+                    <p class="mt-2 text-lg text-slate-600">Deeper Dives into Performance Metrics</p>
+                </header>
+
+                <main class="max-w-7xl mx-auto p-4 sm:p-6 md:p-8">
+                    <!-- Week-on-Week Performance Comparison (June vs. July) -->
+                    <section id="week-comparison-section" class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12">
+                        <h2 class="text-2xl font-semibold text-slate-900 mb-4 text-center">Week-on-Week Performance Comparison (June vs. July)</h2>
+                        <p class="text-slate-600 mb-6 text-center">Comparing daily viewership and total views for the first two weeks of June and July.</p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                            <div class="bg-slate-50 p-4 rounded-lg shadow-sm border border-slate-200">
+                                <h3 class="text-lg font-semibold text-slate-800 mb-2">June Week 1 (Jun 1 - Jun 7)</h3>
+                                <p class="text-xl font-bold text-sky-700"><span id="juneWeek1TotalViews"></span> Views</p>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-lg shadow-sm border border-slate-200">
+                                <h3 class="text-lg font-semibold text-slate-800 mb-2">June Week 2 (Jun 8 - Jun 14)</h3>
+                                <p class="text-xl font-bold text-sky-700"><span id="juneWeek2TotalViews"></span> Views</p>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-lg shadow-sm border border-slate-200">
+                                <h3 class="text-lg font-semibold text-slate-800 mb-2">July Week 1 (Jun 30 - Jul 6)</h3>
+                                <p class="text-xl font-bold text-emerald-700"><span id="julyWeek1TotalViews"></span> Views</p>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-lg shadow-sm border border-slate-200">
+                                <h3 class="text-lg font-semibold text-slate-800 mb-2">July Week 2 (Jul 7 - Jul 13)</h3>
+                                <p class="text-xl font-bold text-emerald-700"><span id="julyWeek2TotalViews"></span> Views</p>
+                            </div>
+                        </div>
+
+                        <div class="chart-container">
+                            <canvas id="weekComparisonChart"></canvas>
+                        </div>
+
+                        <div class="mt-8 p-4 bg-slate-50 rounded-lg shadow-sm border border-slate-200">
+                            <h3 class="text-lg font-semibold text-slate-800 mb-2">Analysis of Trends:</h3>
+                            <p class="text-slate-700 leading-relaxed">
+                                The comparison between the first two weeks of June and July reveals interesting shifts in viewership patterns.
+                                June's first two weeks show a relatively stable daily viewership, with a slight dip on weekends and a recovery during weekdays.
+                                In contrast, July's first week (starting June 30th) shows a notable peak on Friday, July 4th, indicating a strong one-off event or content release. This peak significantly boosts the total views for July Week 1 compared to June's corresponding period.
+                                July Week 2 exhibits more fluctuation, with a higher Sunday peak (July 13th) compared to June's weekends, suggesting a potential change in audience behavior or content strategy on weekends in July.
+                                Overall, July's initial weeks appear to have higher peak views, particularly on specific days, while June showed more consistent mid-range performance. This could be due to new content launches, seasonal viewing habits, or targeted promotional efforts in July.
+                            </p>
+                        </div>
+                    </section>
+                </main>
+            </section>
+
         </div> <!-- End of june-report-content container -->
 
         <footer class="text-center mt-12 text-slate-500 text-sm">
@@ -1032,7 +1082,7 @@
                     { title: "امير بدل خليل وفريقه على مكان الشحنة الحقيقية 🤯", views: 37140 },
                     { title: "وسام بيعابيها صح", views: 1225 },
                     { title: "مشاعر الحب 🔥", views: 1790 },
-                    { title: "القتل عدداً �", views: 1615 },
+                    { title: "القتل عدداً 😱", views: 1615 },
                     { title: "المعلم هو اللي بيعتني 😔", views: 30465 },
                     { title: "عشاء رومانسي", views: 2219 },
                     { title: "محتار من وين ابلش", views: 1840 },
@@ -1057,7 +1107,7 @@
                     { title: "ابو ضاري يطرد سليم من مكتبه", views: 319 },
                     { title: "سليم يكدب 💔", views: 741 },
                     { title: "الام و اصدقائه 🤣", views: 1759 },
-                    { title: "29,000 ريال 💰", views: 20 },
+                    { title: "29,000 ريال �", views: 20 },
                     { title: "البحث عن وظيفة 🤔", views: 15036 }
                 ],
                 "Min Share’ Al Haram Ela... Season 1": [
@@ -1153,7 +1203,7 @@
                     { title: "صدمة وجود ابوه 😡", views: 6180 },
                     { title: "زيد بيساعد نور و اختها 🤍", views: 1886 },
                     { title: "امير و نور 🤍", views: 3498 },
-                    { title: "تala و طارق", views: 429 }
+                    { title: "تالا و طارق", views: 429 }
                 ],
                 "Al -Meerath": [
                     { title: "تهديد رسمي 😡", views: 274 },
@@ -1302,6 +1352,7 @@
             let dailyViewsChart;
             let topTitlesViewsChart; // New chart instance
             let lowAvgViewsChart; // New chart for low performing titles
+            let weekComparisonChart; // New chart for week-on-week comparison
 
             // Data for the Clip Performance Analysis (Third Party Views - July)
             // Updated based on user provided accurate data
@@ -2016,6 +2067,9 @@
                             if (julyDashboardTabBtn) {
                                 julyDashboardTabBtn.click(); // Simulate click to activate and show dashboard
                             }
+                        } else if (targetSectionId === 'additional-insights-content') {
+                            showDebugMessage("Navigated to Additional Insights. Initializing week comparison chart.");
+                            initializeWeekComparisonChart();
                         } else {
                             showDebugMessage(`Navigated to ${targetSectionId}.`);
                         }
@@ -2754,6 +2808,142 @@
                     }
                 });
             });
+
+            // --- Week Comparison Chart Logic ---
+            const initializeWeekComparisonChart = () => {
+                showDebugMessage("Initializing Week Comparison Chart...");
+                if (weekComparisonChart) {
+                    weekComparisonChart.destroy();
+                }
+
+                // Data for comparison - CORRECTED SLICING
+                const juneWeek1Data = fullDailyData.slice(0, 7); // Jun 1 - Jun 7
+                const juneWeek2Data = fullDailyData.slice(7, 14); // Jun 8 - Jun 14
+                const julyWeek1Data = julyDailyData.slice(0, 7); // Jun 30 - Jul 6
+                const julyWeek2Data = julyDailyData.slice(7, 14); // Jul 7 - Jul 13
+
+                // Calculate total views
+                const calculateTotalViews = (data) => data.reduce((sum, item) => sum + item.views, 0);
+
+                document.getElementById('juneWeek1TotalViews').textContent = calculateTotalViews(juneWeek1Data).toLocaleString();
+                document.getElementById('juneWeek2TotalViews').textContent = calculateTotalViews(juneWeek2Data).toLocaleString();
+                document.getElementById('julyWeek1TotalViews').textContent = calculateTotalViews(julyWeek1Data).toLocaleString();
+                document.getElementById('julyWeek2TotalViews').textContent = calculateTotalViews(julyWeek2Data).toLocaleString();
+
+                // Generate labels based on the actual dates for better clarity
+                const generateLabels = (data) => data.map(d => `${d.date} (${d.day.substring(0, 3)})`);
+
+                const labelsJuneW1 = generateLabels(juneWeek1Data);
+                const labelsJuneW2 = generateLabels(juneWeek2Data);
+                const labelsJulyW1 = generateLabels(julyWeek1Data);
+                const labelsJulyW2 = generateLabels(julyWeek2Data);
+
+                // Combine labels for the x-axis, ensuring they align or are clearly distinguishable
+                // For a single chart, it's better to use generic "Day 1", "Day 2" or ensure date ranges are clear in legend
+                // Let's stick to "Day 1", "Day 2" for simplicity on the x-axis, and rely on dataset labels for clarity.
+                const commonLabels = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'];
+
+
+                const ctx = document.getElementById('weekComparisonChart').getContext('2d');
+                weekComparisonChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: commonLabels, // Use generic labels for alignment
+                        datasets: [
+                            {
+                                label: 'June Week 1 (Jun 1-7)',
+                                data: juneWeek1Data.map(d => d.views),
+                                borderColor: 'rgb(75, 192, 192)',
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                fill: false,
+                                tension: 0.1
+                            },
+                            {
+                                label: 'June Week 2 (Jun 8-14)',
+                                data: juneWeek2Data.map(d => d.views),
+                                borderColor: 'rgb(255, 99, 132)',
+                                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                fill: false,
+                                tension: 0.1
+                            },
+                            {
+                                label: 'July Week 1 (Jun 30-Jul 6)',
+                                data: julyWeek1Data.map(d => d.views),
+                                borderColor: 'rgb(54, 162, 235)',
+                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                fill: false,
+                                tension: 0.1
+                            },
+                            {
+                                label: 'July Week 2 (Jul 7-13)',
+                                data: julyWeek2Data.map(d => d.views),
+                                borderColor: 'rgb(255, 205, 86)',
+                                backgroundColor: 'rgba(255, 205, 86, 0.2)',
+                                fill: false,
+                                tension: 0.1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                labels: {
+                                    font: {
+                                        size: 14
+                                    }
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Daily Viewership: June vs. July (First Two Weeks)',
+                                font: {
+                                    size: 18,
+                                    weight: 'bold'
+                                },
+                                color: '#1f2937'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.dataset.label}: ${context.parsed.y}K views`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Day of Week',
+                                    color: '#475569'
+                                },
+                                ticks: {
+                                    color: '#64748b'
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Views (in Thousands)',
+                                    color: '#475569'
+                                },
+                                ticks: {
+                                    color: '#64748b',
+                                    callback: function(value) {
+                                        return value + 'K';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                showDebugMessage("Week Comparison Chart initialized.");
+            };
 
 
             // Initial updates for June
