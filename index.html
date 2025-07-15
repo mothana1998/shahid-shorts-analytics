@@ -171,6 +171,122 @@
         .clip-performance-footer a:hover {
             background-color: #0284c7; /* sky-700 */
         }
+
+        /* Modal specific styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            width: 90%;
+            max-width: 600px;
+            transform: translateY(-20px);
+            opacity: 0;
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            position: relative; /* For close button positioning */
+        }
+
+        .modal-overlay.show .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #4b5563; /* gray-600 */
+            transition: color 0.2s ease-in-out;
+        }
+
+        .modal-close-btn:hover {
+            color: #1f2937; /* gray-900 */
+        }
+
+        .modal-table-container {
+            max-height: 400px; /* Limit height for scrollability */
+            overflow-y: auto;
+            margin-top: 1rem;
+            border: 1px solid #e2e8f0; /* slate-200 */
+            border-radius: 0.5rem;
+        }
+
+        .modal-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .modal-table th, .modal-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0; /* slate-200 */
+        }
+
+        .modal-table thead {
+            background-color: #f1f5f9; /* slate-100 */
+            position: sticky;
+            top: 0;
+            z-index: 10; /* Ensure header stays on top when scrolling */
+        }
+
+        .modal-table th {
+            font-size: 0.75rem; /* text-xs */
+            font-weight: 600; /* font-semibold */
+            text-transform: uppercase;
+            color: #475569; /* slate-600 */
+        }
+
+        .modal-table tbody tr:nth-child(odd) {
+            background-color: #f8fafc; /* slate-50 */
+        }
+
+        .modal-table tbody tr:hover {
+            background-color: #e2e8f0; /* slate-200 */
+        }
+
+        /* Temporary message style */
+        #debugMessage {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background-color: #fefcbf; /* yellow-100 */
+            color: #854d0c; /* yellow-800 */
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            pointer-events: none; /* Allow clicks to pass through */
+        }
+        #debugMessage.show {
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="text-slate-800">
@@ -529,7 +645,7 @@
                             </div>
                             <!-- New button for "More Details" for low performing titles -->
                             <div class="text-center mt-4">
-                                <button id="showLowAvgViewsTableBtn" class="px-4 py-2 rounded-md bg-sky-600 text-white shadow-sm font-semibold hover:bg-sky-700 transition-colors duration-200">More Details ✨</button>
+                                <button id="showLowAvgViewsTableBtn" class="px-4 py-2 rounded-md bg-sky-600 text-white shadow-sm font-semibold hover:bg-sky-700 transition-colors duration-200">More Details</button>
                             </div>
                             <div id="lowTitlesTableContainer" class="overflow-x-auto mt-8 hidden">
                                 <table class="min-w-full rounded-lg overflow-hidden shadow-sm border border-slate-200">
@@ -552,11 +668,8 @@
 
                     <section id="recommendations" class="mt-16">
                         <h2 class="clip-performance-section-title">Key Insights & Strategic Recommendations</h2>
-                        <div class="text-center mb-6">
-                            <button id="generateRecommendationsBtn" class="px-6 py-2 rounded-md bg-emerald-600 text-white shadow-sm font-semibold hover:bg-emerald-700 transition-colors duration-200">Generate Strategic Recommendations ✨</button>
-                        </div>
                         <div id="dynamic-recommendations" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <!-- Recommendations will be dynamically loaded here -->
+                            <!-- Default, static recommendations to appear directly -->
                             <div class="recommendation-card blue-border">
                                 <h3 class="font-bold text-lg mb-2 text-[#005f73]">Emulate High-Efficiency Profiles</h3>
                                 <ul class="list-disc pl-5 text-gray-600 space-y-1">
@@ -599,6 +712,30 @@
             <p>Report Generated: July 8, 2025</p>
         </footer>
     </div>
+
+    <!-- Modal Structure -->
+    <div id="shortsModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-btn" id="closeModalBtn">&times;</button>
+            <h3 class="text-xl font-bold text-slate-800 mb-4" id="modalTitle">Leyla Shorts Views</h3>
+            <div class="modal-table-container">
+                <table class="modal-table">
+                    <thead>
+                        <tr>
+                            <th>Short Title</th>
+                            <th>Views</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalTableBody">
+                        <!-- Shorts data will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Debug Message Element -->
+    <div id="debugMessage" class="hidden"></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -650,6 +787,30 @@
                 { rank: 8, title: "Laylet El Eid", views: "0.28M", likes: "465", avgViewsPerClip: "16519" },
                 { rank: 9, title: "Harb El Gibali", views: "0.25M", likes: "594", avgViewsPerClip: "3400" },
                 { rank: 10, title: "Ghayeb Fi Bilad Al Ajayeb", views: "0.24M", likes: "414", avgViewsPerClip: "2837" }
+            ];
+
+            // Data for Leyla shorts (extracted from image_25dc93.png)
+            const leylaShortsData = [
+                { title: "خطة ليلي", views: 84579 },
+                { title: "الشغل لسا ما انتهى", views: 57890 },
+                { title: "ليلى وكلام قوي جداً", views: 19239 },
+                { title: "أنا بعرف منيح شو بدها", views: 17080 },
+                { title: "الم الماضي و الحاضر", views: 15537 },
+                { title: "خطة نور المحكمة", views: 14582 },
+                { title: "مشهد رومانسي ❤️", views: 13623 },
+                { title: "عشاء تعارف لخطبة مالي", views: 13380 },
+                { title: "تصعيد قوي جداً", views: 13206 },
+                { title: "الذكريات الحلوة", views: 12049 },
+                { title: "حادث بالمزبلة", views: 11825 },
+                { title: "نور بتحكم في مالي و تتذكر ابنها", views: 11418 },
+                { title: "نور تحاول التقرب من جينو", views: 10530 },
+                { title: "لازم نحل القصة ❌", views: 10270 },
+                { title: "القدر يجمعهم", views: 9832 },
+                { title: "نور بدها تاخد ابنها", views: 9383 },
+                { title: "الام ما بتعود", views: 4117 },
+                { title: "قصة الكازوز", views: 3803 },
+                { title: "موقف محرج جداً", views: 2834 },
+                { title: "نور وقعت بمشكلة ما رح تقدر تخرج منها بسهولة!", views: 419 }
             ];
 
 
@@ -1065,7 +1226,23 @@
                 // Added options for bar thickness
                 barThickness: 30, // Fixed thickness for bars
                 categoryPercentage: 0.8, // Adjust space between bars
-                barPercentage: 0.9 // Adjust width of the bar itself
+                barPercentage: 0.9, // Adjust width of the bar itself
+                onClick: (evt, elements) => { // Custom onClick for topTitlesViewsChart
+                    showDebugMessage("Chart click event triggered on June Top Titles Chart.");
+                    if (elements.length > 0) {
+                        const dataIndex = elements[0].index;
+                        const clickedTitle = topTitlesViewsChart.data.labels[dataIndex];
+                        showDebugMessage("Clicked title on June Top Titles Chart: " + clickedTitle);
+                        // This chart no longer triggers the Leyla modal directly.
+                        // It will just filter the chart to show only the clicked title.
+                        const titleData = top10TitlesData.find(t => t.title === clickedTitle);
+                        if (titleData) {
+                            displaySingleTitleOnChart(titleData.title, titleData.views);
+                        }
+                    } else {
+                        showDebugMessage("No element clicked on June Top Titles Chart.");
+                    }
+                }
             };
 
             topTitlesViewsChart = createChart(topTitlesCtx, 'bar', {
@@ -1178,6 +1355,21 @@
                     const sectionToShow = document.getElementById(targetSectionId);
                     if (sectionToShow) {
                         sectionToShow.classList.remove('hidden');
+
+                        // Specific update for the Top 10 Titles chart when its section becomes visible
+                        if (targetSectionId === 'top-titles-section' && topTitlesViewsChart) {
+                            // Use a small timeout to ensure the canvas is fully visible before resizing
+                            setTimeout(() => {
+                                const canvasElement = topTitlesViewsChart.canvas;
+                                if (canvasElement && canvasElement.offsetParent !== null) { // Check if canvas is visible
+                                    topTitlesViewsChart.resize();
+                                    topTitlesViewsChart.update();
+                                    showDebugMessage("Top Titles Chart resized and updated after tab switch.");
+                                } else {
+                                    showDebugMessage("Top Titles Chart canvas not visible for resize.");
+                                }
+                            }, 100); // Increased delay
+                        }
                     }
                 });
             });
@@ -1228,6 +1420,8 @@
                     `;
                     // Add click listener to each row
                     row.addEventListener('click', () => {
+                        showDebugMessage("Table row click event triggered for: " + item.title + " (June Top Titles)");
+                        // This table row no longer triggers the Leyla modal directly.
                         displaySingleTitleOnChart(item.title, item.views);
                     });
                     tableBody.appendChild(row);
@@ -1269,6 +1463,7 @@
                         sectionToShow.classList.remove('hidden');
                         // If it's the third-party-july-content, initialize its charts and generate recommendations
                         if (targetSectionId === 'third-party-july-content') {
+                            showDebugMessage("Navigated to Third Party Views - July. Initializing charts.");
                             // Update KPIs for Third Party Views - July
                             document.getElementById('total-profiles').textContent = updatedTotalProfiles;
                             document.getElementById('total-clips').textContent = updatedTotalClips;
@@ -1279,8 +1474,9 @@
                                 initializeThirdPartyJulyCharts();
                                 populateLowTitlesTable(); // Populate low titles table
                                 populateTopTotalViewsTable(); // Populate the new table
-                                // Do not call generateRecommendations here, it will be called by the new button
                             }, 500); // Increased timeout to 500ms
+                        } else {
+                            showDebugMessage(`Navigated to ${targetSectionId}.`);
                         }
                     }
                 });
@@ -1291,6 +1487,7 @@
                 item.addEventListener('click', (event) => {
                     event.preventDefault(); // Prevent default link behavior
                     const targetSectionId = event.target.dataset.targetSection;
+                    showDebugMessage(`Clicked DMCS dropdown item: ${targetSectionId}`);
 
                     // Deactivate all report nav buttons
                     reportNavButtons.forEach(btn => {
@@ -1322,6 +1519,7 @@
             document.querySelectorAll('.third-party-month-btn').forEach(button => {
                 button.addEventListener('click', () => {
                     const targetSectionId = button.dataset.targetSection;
+                    showDebugMessage(`Clicked Third Party month button: ${targetSectionId}`);
                     
                     // Hide all report content sections
                     reportContentSections.forEach(section => {
@@ -1334,6 +1532,7 @@
                         sectionToShow.classList.remove('hidden');
                         // If it's the third-party-july-content, initialize its charts and generate recommendations
                         if (targetSectionId === 'third-party-july-content') {
+                            showDebugMessage("Navigated to Third Party Views - July from month button. Initializing charts.");
                             // Update KPIs for Third Party Views - July
                             document.getElementById('total-profiles').textContent = updatedTotalProfiles;
                             document.getElementById('total-clips').textContent = updatedTotalClips;
@@ -1343,7 +1542,6 @@
                                 initializeThirdPartyJulyCharts();
                                 populateLowTitlesTable(); // Populate low titles table
                                 populateTopTotalViewsTable(); // Populate the new table
-                                // Do not call generateRecommendations here, it will be called by the new button
                             }, 500); // Increased timeout to 500ms
                         }
                     }
@@ -1353,6 +1551,7 @@
             // Event listeners for "Back to Dashboard" buttons within sections
             document.querySelectorAll('.back-to-main-dashboard').forEach(button => {
                 button.addEventListener('click', () => {
+                    showDebugMessage("Clicked 'Back to Dashboard' button.");
                     // Hide all report content sections
                     reportContentSections.forEach(section => {
                         section.classList.add('hidden');
@@ -1379,10 +1578,20 @@
 
             // Function to initialize charts for Third Party Views - July
             function initializeThirdPartyJulyCharts() {
+                showDebugMessage("Running initializeThirdPartyJulyCharts().");
                 // Destroy existing chart instances if they exist to prevent duplicates
-                if (window.totalViewsChartInstance) window.totalViewsChartInstance.destroy();
-                if (window.avgViewsChartInstance) window.avgViewsChartInstance.destroy();
-                if (window.lowAvgViewsChartInstance) window.lowAvgViewsChartInstance.destroy(); // Destroy new chart too
+                if (window.totalViewsChartInstance) {
+                    window.totalViewsChartInstance.destroy();
+                    showDebugMessage("Destroyed existing totalViewsChartInstance.");
+                }
+                if (window.avgViewsChartInstance) {
+                    window.avgViewsChartInstance.destroy();
+                    showDebugMessage("Destroyed existing avgViewsChartInstance.");
+                }
+                if (window.lowAvgViewsChartInstance) {
+                    window.lowAvgViewsChartInstance.destroy();
+                    showDebugMessage("Destroyed existing lowAvgViewsChartInstance.");
+                }
 
                 // Ensure canvases exist and their getContext method is available before trying to get context
                 const totalViewsCanvas = document.getElementById('totalViewsChart');
@@ -1394,7 +1603,7 @@
                 const lowAvgViewsCtx = lowAvgViewsCanvas && lowAvgViewsCanvas.getContext ? lowAvgViewsCanvas.getContext('2d') : null;
 
                 if (!totalViewsCtx || !avgViewsCtx || !lowAvgViewsCtx) {
-                    console.error("One or more chart canvases for Third Party Views - July not found or not ready.");
+                    showDebugMessage("ERROR: One or more chart canvases for Third Party Views - July not found or not ready.");
                     return;
                 }
 
@@ -1457,6 +1666,24 @@
                         scales: {
                             x: { title: { display: true, text: 'Total Views' }, grid: { color: '#e5e7eb' } },
                             y: { grid: { display: false } }
+                        },
+                        onClick: (evt, elements) => { // New onClick for totalViewsChartInstance
+                            showDebugMessage("Chart click event triggered on July Total Views Chart.");
+                            if (elements.length > 0) {
+                                const dataIndex = elements[0].index;
+                                const clickedTitle = window.totalViewsChartInstance.data.labels[dataIndex];
+                                // If the label is an array (due to formatClipLabel), join it back to a string for comparison
+                                const cleanClickedTitle = Array.isArray(clickedTitle) ? clickedTitle.join(' ') : clickedTitle;
+                                showDebugMessage("Clicked title on July Total Views Chart: " + cleanClickedTitle);
+                                if (cleanClickedTitle.includes("Leyla")) { // Use .includes for partial match due to formatting
+                                    showDebugMessage("Calling showShortsModal for Leyla from July Total Views Chart click.");
+                                    showShortsModal("Leyla", leylaShortsData);
+                                } else {
+                                    showDebugMessage("Clicked on a title other than Leyla on July Total Views Chart.");
+                                }
+                            } else {
+                                showDebugMessage("No element clicked on July Total Views Chart.");
+                            }
                         }
                     }
                 });
@@ -1517,10 +1744,11 @@
                         }
                     }
                 });
+                showDebugMessage("Third Party July Charts initialized.");
             }
 
             // Function to populate the Low 5 Titles table
-            async function populateLowTitlesTable() {
+            function populateLowTitlesTable() {
                 const tableBody = document.getElementById('lowTitlesTableBody');
                 if (!tableBody) return;
                 tableBody.innerHTML = ''; // Clear existing rows
@@ -1535,21 +1763,9 @@
                         <td class="px-4 py-2 whitespace-nowrap">${item.clips}</td>
                         <td class="px-4 py-2 whitespace-nowrap">${item.totalViews.toLocaleString()}</td>
                         <td class="px-4 py-2 whitespace-nowrap">${item.avgViews.toFixed(1)}</td>
-                        <td class="px-4 py-2 text-slate-500 italic" id="reason-${item.name.replace(/\s/g, '-')}-low">Loading reasons...</td>
+                        <td class="px-4 py-2 text-slate-500 italic">No specific reason generated.</td>
                     `;
                     tableBody.appendChild(row);
-                });
-
-                // Fetch reasons from LLM
-                const reasons = await generateLowPerformanceReasons(low5Titles);
-
-                // Update rows with fetched reasons
-                reasons.forEach(reason => {
-                    const reasonCell = document.getElementById(`reason-${reason.title.replace(/\s/g, '-')}-low`);
-                    if (reasonCell) {
-                        reasonCell.textContent = reason.reason;
-                        reasonCell.classList.remove('text-slate-500', 'italic');
-                    }
                 });
             }
 
@@ -1580,6 +1796,7 @@
             if (showTopTotalViewsTableBtn && topTotalViewsTableContainer) {
                 showTopTotalViewsTableBtn.addEventListener('click', () => {
                     topTotalViewsTableContainer.classList.toggle('hidden');
+                    showDebugMessage("Toggled Top Total Views Table visibility.");
                 });
             }
 
@@ -1590,209 +1807,69 @@
             if (showLowAvgViewsTableBtn && lowTitlesTableContainer) {
                 showLowAvgViewsTableBtn.addEventListener('click', () => {
                     lowTitlesTableContainer.classList.toggle('hidden');
+                    showDebugMessage("Toggled Low Avg Views Table visibility.");
                 });
             }
 
-            // Event listener for the new "Generate Strategic Recommendations" button
-            const generateRecommendationsBtn = document.getElementById('generateRecommendationsBtn');
-            if (generateRecommendationsBtn) {
-                generateRecommendationsBtn.addEventListener('click', generateRecommendations);
+            // Modal functionality
+            const shortsModal = document.getElementById('shortsModal');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const modalTableBody = document.getElementById('modalTableBody');
+            const modalTitle = document.getElementById('modalTitle');
+            const debugMessageDiv = document.getElementById('debugMessage');
+
+            function showDebugMessage(message) {
+                debugMessageDiv.textContent = message;
+                debugMessageDiv.classList.add('show');
+                debugMessageDiv.classList.remove('hidden');
+                setTimeout(() => {
+                    debugMessageDiv.classList.remove('show');
+                    debugMessageDiv.classList.add('hidden');
+                }, 5000); // Message disappears after 5 seconds
             }
 
+            function showShortsModal(title, data) {
+                showDebugMessage(`Attempting to open ${title} shorts modal...`);
+                modalTitle.textContent = `${title} Shorts Views`;
+                modalTableBody.innerHTML = ''; // Clear previous data
 
-            // Function to generate reasons for low performance using LLM
-            async function generateLowPerformanceReasons(lowTitlesData) {
-                const prompt = `Based on the following low-performing clip data, provide a concise reason why we should consider stopping or re-evaluating work on each of these titles. Focus on low average views and overall low engagement.
-
-                Data: ${JSON.stringify(lowTitlesData)}
-
-                Provide the response as a JSON array of objects, where each object has 'title' (string, matching the profile name) and 'reason' (string) properties.`;
-
-                try {
-                    let chatHistory = [];
-                    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-                    const payload = {
-                        contents: chatHistory,
-                        generationConfig: {
-                            responseMimeType: "application/json",
-                            responseSchema: {
-                                type: "ARRAY",
-                                items: {
-                                    type: "OBJECT",
-                                    properties: {
-                                        "title": { "type": "STRING" },
-                                        "reason": { "type": "STRING" }
-                                    },
-                                    "propertyOrdering": ["title", "reason"]
-                                }
-                            }
-                        }
-                    };
-                    const apiKey = ""; 
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    const result = await response.json();
-
-                    if (result.candidates && result.candidates.length > 0 &&
-                        result.candidates[0].content && result.candidates[0].content.parts &&
-                        result.candidates[0].content.parts.length > 0) {
-                        const json = result.candidates[0].content.parts[0].text;
-                        return JSON.parse(json);
-                    } else {
-                        console.error("LLM response structure unexpected or content missing for low performance reasons:", result);
-                        return lowTitlesData.map(item => ({ title: item.name, reason: "No specific reason generated." }));
-                    }
-                } catch (error) {
-                    console.error("Error calling LLM API for low performance reasons:", error);
-                    return lowTitlesData.map(item => ({ title: item.name, reason: "Failed to generate reason due to API error." }));
-                }
-            }
-
-
-            // Function to generate recommendations using LLM
-            async function generateRecommendations() {
-                const dynamicRecommendationsDiv = document.getElementById('dynamic-recommendations');
-                
-                if (!dynamicRecommendationsDiv) {
-                    console.error("Dynamic recommendations container not found.");
-                    return;
-                }
-
-                // Clear any existing content (including the static placeholders) before fetching new ones
-                dynamicRecommendationsDiv.innerHTML = '<div class="col-span-full text-center text-slate-600">Generating recommendations...</div>';
-
-
-                const prompt = `Based on the following clip performance data, provide three strategic recommendations. Focus on "Emulate High-Efficiency Profiles", "Optimize High-Reach Channels", and "Quality Over Quantity". For each recommendation, provide a concise title and a detailed description as a list of bullet points (each point as a separate string in an array).
-
-                Data: ${JSON.stringify(thirdPartyJulyProfileData)}
-
-                Provide the response as a JSON array of objects, where each object has 'title' (string) and 'description' (array of strings) properties.`;
-
-                try {
-                    let chatHistory = [];
-                    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-                    const payload = {
-                        contents: chatHistory,
-                        generationConfig: {
-                            responseMimeType: "application/json",
-                            responseSchema: {
-                                type: "ARRAY",
-                                items: {
-                                    type: "OBJECT",
-                                    properties: {
-                                        "title": { "type": "STRING" },
-                                        "description": {
-                                            type: "ARRAY",
-                                            items: { "type": "STRING" }
-                                        }
-                                    },
-                                    "propertyOrdering": ["title", "description"]
-                                }
-                            }
-                        }
-                    };
-                    const apiKey = ""; // If you want to use models other than gemini-2.0-flash or imagen-3.0-generate-002, provide an API key here. Otherwise, leave this as-is.
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    const result = await response.json();
-
-                    if (result.candidates && result.candidates.length > 0 &&
-                        result.candidates[0].content && result.candidates[0].content.parts &&
-                        result.candidates[0].content.parts.length > 0) {
-                        const json = result.candidates[0].content.parts[0].text;
-                        const parsedJson = JSON.parse(json);
-
-                        dynamicRecommendationsDiv.innerHTML = ''; // Clear existing static content
-                        parsedJson.forEach((rec, index) => {
-                            let borderColorClass = '';
-                            if (index === 0) borderColorClass = 'blue-border';
-                            else if (index === 1) borderColorClass = 'yellow-border';
-                            else if (index === 2) borderColorClass = 'red-border';
-
-                            const recCard = document.createElement('div');
-                            recCard.className = `recommendation-card ${borderColorClass}`;
-                            recCard.innerHTML = `
-                                <h3 class="font-bold text-lg mb-2 text-[#005f73]">${rec.title}</h3>
-                                <ul class="list-disc pl-5 text-gray-600 space-y-1">
-                                    ${rec.description.map(point => `<li>${point}</li>`).join('')}
-                                </ul>
-                            `;
-                            dynamicRecommendationsDiv.appendChild(recCard);
-                        });
-                    } else {
-                        // Fallback to static content if LLM fails
-                        dynamicRecommendationsDiv.innerHTML = `
-                            <div class="recommendation-card blue-border">
-                                <h3 class="font-bold text-lg mb-2 text-[#005f73]">Emulate High-Efficiency Profiles</h3>
-                                <ul class="list-disc pl-5 text-gray-600 space-y-1">
-                                    <li>Analyze content strategies of profiles with high average views per clip (e.g., 'Al Ameel (Icerde) S1').</li>
-                                    <li>Identify common themes, lengths, or engagement tactics that contribute to their per-clip effectiveness.</li>
-                                    <li>Apply these insights to new content creation to maximize engagement even with fewer clips.</li>
-                                </ul>
-                            </div>
-                            <div class="recommendation-card yellow-border">
-                                <h3 class="font-bold text-lg mb-2 text-[#005f73]">Optimize High-Reach Channels</h3>
-                                <ul class="list-disc pl-5 text-gray-600 space-y-1">
-                                    <li>Invest further in content production and promotion for profiles with high total views (e.g., 'Al Atawla S1').</li>
-                                    <li>Explore cross-promotion opportunities between high-reach and high-efficiency content.</li>
-                                    <li>Leverage these popular channels to introduce new content or drive specific audience actions.</li>
-                                </ul>
-                            </div>
-                            <div class="recommendation-card red-border">
-                                <h3 class="font-bold text-lg mb-2 text-[#005f73]">Prioritize Quality Over Quantity</h3>
-                                <ul class="list-disc pl-5 text-gray-600 space-y-1">
-                                    <li>Focus on creating compelling, high-quality clips rather than simply increasing clip count.</li>
-                                    <li>The scatter plots indicate that more clips do not necessarily translate to higher average engagement.</li>
-                                    <li>Allocate resources to enhance the production value and narrative strength of each clip.</li>
-                                </ul>
-                            </div>
+                if (data && data.length > 0) {
+                    data.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${item.title}</td>
+                            <td>${item.views.toLocaleString()}</td>
                         `;
-                        console.error("LLM response structure unexpected or content missing, falling back to static:", result);
-                    }
-                } catch (error) {
-                    // Fallback to static content if API call fails
-                    dynamicRecommendationsDiv.innerHTML = `
-                        <div class="recommendation-card blue-border">
-                            <h3 class="font-bold text-lg mb-2 text-[#005f73]">Emulate High-Efficiency Profiles</h3>
-                            <ul class="list-disc pl-5 text-gray-600 space-y-1">
-                                <li>Analyze content strategies of profiles with high average views per clip (e.g., 'Al Ameel (Icerde) S1').</li>
-                                <li>Identify common themes, lengths, or engagement tactics that contribute to their per-clip effectiveness.</li>
-                                <li>Apply these insights to new content creation to maximize engagement even with fewer clips.</li>
-                            </ul>
-                        </div>
-                        <div class="recommendation-card yellow-border">
-                            <h3 class="font-bold text-lg mb-2 text-[#005f73]">Optimize High-Reach Channels</h3>
-                            <ul class="list-disc pl-5 text-gray-600 space-y-1">
-                                <li>Invest further in content production and promotion for profiles with high total views (e.g., 'Al Atawla S1').</li>
-                                <li>Explore cross-promotion opportunities between high-reach and high-efficiency content.</li>
-                                <li>Leverage these popular channels to introduce new content or drive specific audience actions.</li>
-                            </ul>
-                        </div>
-                        <div class="recommendation-card red-border">
-                            <h3 class="font-bold text-lg mb-2 text-[#005f73]">Prioritize Quality Over Quantity</h3>
-                            <ul class="list-disc pl-5 text-gray-600 space-y-1">
-                                <li>Focus on creating compelling, high-quality clips rather than simply increasing clip count.</li>
-                                <li>The scatter plots indicate that more clips do not necessarily translate to higher average engagement.</li>
-                                <li>Allocate resources to enhance the production value and narrative strength of each clip.</li>
-                            </ul>
-                        </div>
-                    `;
-                    console.error("Error calling LLM API, falling back to static:", error);
+                        modalTableBody.appendChild(row);
+                    });
+                } else {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td colspan="2" class="text-center py-4 text-slate-500">No shorts data available for ${title}.</td>`;
+                    modalTableBody.appendChild(row);
                 }
+
+                shortsModal.classList.add('show');
+                showDebugMessage("Modal 'show' class added.");
             }
 
+            closeModalBtn.addEventListener('click', () => {
+                showDebugMessage("Close modal button clicked.");
+                shortsModal.classList.remove('show');
+                showDebugMessage("Modal 'show' class removed.");
+            });
+
+            // Close modal when clicking outside of it
+            shortsModal.addEventListener('click', (event) => {
+                if (event.target === shortsModal) {
+                    showDebugMessage("Clicked outside modal, closing.");
+                    shortsModal.classList.remove('show');
+                }
+            });
 
             // Initial updates
             updateKPIs(fullDailyData);
             populateTopTitlesTable(); // Populate the table on load
+            showDebugMessage("Dashboard Initialized!"); // Confirm script execution
             // Do NOT call updateDailyViewsChart('all') here, as we want it hidden initially.
         });
     </script>
