@@ -1032,7 +1032,7 @@
                     { title: "امير بدل خليل وفريقه على مكان الشحنة الحقيقية 🤯", views: 37140 },
                     { title: "وسام بيعابيها صح", views: 1225 },
                     { title: "مشاعر الحب 🔥", views: 1790 },
-                    { title: "القتل عدداً 😱", views: 1615 },
+                    { title: "القتل عدداً �", views: 1615 },
                     { title: "المعلم هو اللي بيعتني 😔", views: 30465 },
                     { title: "عشاء رومانسي", views: 2219 },
                     { title: "محتار من وين ابلش", views: 1840 },
@@ -1153,7 +1153,7 @@
                     { title: "صدمة وجود ابوه 😡", views: 6180 },
                     { title: "زيد بيساعد نور و اختها 🤍", views: 1886 },
                     { title: "امير و نور 🤍", views: 3498 },
-                    { title: "تالا و طارق", views: 429 }
+                    { title: "تala و طارق", views: 429 }
                 ],
                 "Al -Meerath": [
                     { title: "تهديد رسمي 😡", views: 274 },
@@ -1461,13 +1461,26 @@
             };
 
             const updateKPIs = (data, prefix = '') => {
+                // Check if the elements exist before trying to update them
+                const kpiHighestElem = document.getElementById(`${prefix}KpiHighest`);
+                const kpiHighestDayElem = document.getElementById(`${prefix}KpiHighestDay`);
+                const kpiLowestElem = document.getElementById(`${prefix}KpiLowest`);
+                const kpiLowestDayElem = document.getElementById(`${prefix}KpiLowestDay`);
+                const kpiMidWeekAvgElem = document.getElementById(`${prefix}KpiMidWeekAvg`);
+                const kpiWeekendAvgElem = document.getElementById(`${prefix}KpiWeekendAvg`);
+
+                if (!kpiHighestElem || !kpiHighestDayElem || !kpiLowestElem || !kpiLowestDayElem || !kpiMidWeekAvgElem || !kpiWeekendAvgElem) {
+                    console.warn(`KPI elements with prefix '${prefix}' not found. Skipping KPI update.`);
+                    return;
+                }
+
                 if (data.length === 0) {
-                    document.getElementById(`${prefix}KpiHighest`).textContent = 'N/A';
-                    document.getElementById(`${prefix}KpiHighestDay`).textContent = '';
-                    document.getElementById(`${prefix}KpiLowest`).textContent = 'N/A';
-                    document.getElementById(`${prefix}KpiLowestDay`).textContent = '';
-                    document.getElementById(`${prefix}KpiMidWeekAvg`).textContent = 'N/A';
-                    document.getElementById(`${prefix}KpiWeekendAvg`).textContent = 'N/A';
+                    kpiHighestElem.textContent = 'N/A';
+                    kpiHighestDayElem.textContent = '';
+                    kpiLowestElem.textContent = 'N/A';
+                    kpiLowestDayElem.textContent = '';
+                    kpiMidWeekAvgElem.textContent = 'N/A';
+                    kpiWeekendAvgElem.textContent = 'N/A';
                     return;
                 }
 
@@ -1493,12 +1506,12 @@
                 const avgMidWeek = midWeekViews.length > 0 ? midWeekViews.reduce((sum, v) => sum + v, 0) / midWeekViews.length : 0;
                 const avgWeekend = weekendViews.length > 0 ? weekendViews.reduce((sum, v) => sum + v, 0) / weekendViews.length : 0;
 
-                document.getElementById(`${prefix}KpiHighest`).textContent = `${highestView}K`;
-                document.getElementById(`${prefix}KpiHighestDay`).textContent = `on ${highestDay}`;
-                document.getElementById(`${prefix}KpiLowest`).textContent = `${lowestView}K`;
-                document.getElementById(`${prefix}KpiLowestDay`).textContent = `on ${lowestDay}`;
-                document.getElementById(`${prefix}KpiMidWeekAvg`).textContent = `${avgMidWeek.toFixed(0)}K`;
-                document.getElementById(`${prefix}KpiWeekendAvg`).textContent = `${avgWeekend.toFixed(0)}K`;
+                kpiHighestElem.textContent = `${highestView}K`;
+                kpiHighestDayElem.textContent = `on ${highestDay}`;
+                kpiLowestElem.textContent = `${lowestView}K`;
+                kpiLowestDayElem.textContent = `on ${lowestDay}`;
+                kpiMidWeekAvgElem.textContent = `${avgMidWeek.toFixed(0)}K`;
+                kpiWeekendAvgElem.textContent = `${avgWeekend.toFixed(0)}K`;
             };
 
             const chartClickHandler = (evt, elements, chart) => {
@@ -2726,7 +2739,7 @@
                     if (sectionToShow) {
                         sectionToShow.classList.remove('hidden');
                         if (targetSectionId === 'july-dashboard-section') {
-                            updateKPIs(julyDailyData, 'july');
+                            updateKPIs(julyDailyData, 'july'); // Update July KPIs when dashboard is shown
                             initializeJulyCharts();
                         } else if (targetSectionId === 'july-top-titles-section') {
                             populateJulyTopTitlesTable();
@@ -2752,3 +2765,4 @@
     </script>
 </body>
 </html>
+�
