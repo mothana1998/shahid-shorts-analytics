@@ -6,11 +6,13 @@
     <title>June Viewership Insights Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <!-- Chart.js Floating Bar Controller for Volatility Chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-box-and-violin@4.0.0/dist/chartjs-chart-box-and-violin.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Warm Neutrals -->
-    <!-- Application Structure Plan: The SPA now uses a tabbed navigation system at the very top to switch between major content views: "Monthly Highlights" (containing KPIs, Daily Viewership, and Overall Analysis, and Strategic Recommendations), "Top 10 Titles", and "Recommendation Titles". This approach maintains the single-page constraint while simulating "page" navigation. Each major view is a distinct HTML section that is shown or hidden via JavaScript. This enhances user flow by allowing them to jump directly to specific report areas. -->
+    <!-- Application Structure Plan: The SPA now uses a tabbed navigation system at the very top to switch between major content views: "Monthly Highlights" (containing KPIs, Daily Viewership, and Overall Analysis, and Strategic Recommendations, "Top 10 Titles", and "Recommendation Titles". This approach maintains the single-page constraint while simulating "page" navigation. Each major view is a distinct HTML section that is shown or hidden via JavaScript. This enhances user flow by allowing them to jump directly to specific report areas. -->
     <!-- Visualization & Content Choices: 1. KPI Cards (Highest/Lowest/Avg Views): Goal: Inform. Method: Styled HTML/Tailwind. Interaction: Static. Justification: Provides immediate, high-level context. 2. Average Views (Overall): Goal: Compare. Method: Bar Chart. Interaction: Hover tooltips, click to highlight recommendation. Justification: Best for comparing discrete categories (days) across the entire dataset. Library: Chart.js. 3. Viewership Volatility (Overall): Goal: Show Range. Method: Floating Bar Chart. Interaction: Hover tooltips, click to highlight. Justification: Clearly visualizes data spread and volatility for each day across the entire dataset. Library: Chart.js. 4. Daily Views by Week: Goal: Track Change/Inform. Method: Bar Chart. Interaction: Weekly tabs to filter data, hover tooltips, click to highlight. Justification: Allows granular daily inspection within specific weekly contexts. Chart is initially hidden and appears on tab click. Library: Chart.js. 5. Recommendations: Goal: Advise. Method: HTML/JS Accordion. Interaction: Click to expand/collapse. Justification: Organizes detailed text, reduces cognitive load, and links interactively to charts. 6. Top 10 Titles Views Chart: Goal: Compare. Method: Bar Chart. Interaction: Hover tooltips, click to filter from table. Justification: Visually compares viewership across top titles and allows drill-down. Library: Chart.js. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
@@ -415,6 +417,14 @@
                                             <li>Schedule primary marketing pushes to align with peak mid-week engagement.</li>
                                             <li>Maximize reach and viewership by focusing efforts where the audience is most active.</li>
                                         </ul>
+                                        <button class="mt-4 px-4 py-2 bg-purple-600 text-white rounded-md shadow-sm hover:bg-purple-700 transition-colors duration-200 elaborate-btn">✨ Elaborate</button>
+                                        <div class="llm-response mt-4 p-3 bg-slate-50 rounded-md border border-slate-200 hidden">
+                                            <div class="loading-spinner flex items-center justify-center hidden">
+                                                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-500"></div>
+                                                <span class="ml-2 text-slate-500">Generating insights...</span>
+                                            </div>
+                                            <p class="generated-text text-sm leading-relaxed"></p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -426,29 +436,45 @@
                                     </span>
                                 </button>
                                 <div class="accordion-content">
-                                     <div class="p-4 pt-0 text-slate-600">
+                                    <div class="p-4 pt-0 text-slate-600">
                                         <ul class="list-disc pl-5 space-y-1">
                                             <li>Experiment with different content formats or themes, suchs as "evergreen" or "lean-back" content.</li>
                                             <li>Align content with typical weekend audience behavior (e.g., relaxation, entertainment).</li>
                                             <li>Consider A/B testing post times to find optimal engagement windows on weekends.</li>
                                         </ul>
+                                        <button class="mt-4 px-4 py-2 bg-purple-600 text-white rounded-md shadow-sm hover:bg-purple-700 transition-colors duration-200 elaborate-btn">✨ Elaborate</button>
+                                        <div class="llm-response mt-4 p-3 bg-slate-50 rounded-md border border-slate-200 hidden">
+                                            <div class="loading-spinner flex items-center justify-center hidden">
+                                                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-500"></div>
+                                                <span class="ml-2 text-slate-500">Generating insights...</span>
+                                            </div>
+                                            <p class="generated-text text-sm leading-relaxed"></p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="accordion-item bg-white rounded-xl shadow-sm border border-slate-200" data-day="Friday">
                                 <button class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-slate-800 hover:bg-slate-50 hover:shadow-md">
                                     Decipher Friday's Volatility
-                                     <span class="transform transition-transform duration-300">
+                                    <span class="transform transition-transform duration-300">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                                     </span>
                                 </button>
-                                 <div class="accordion-content">
+                                <div class="accordion-content">
                                     <div class="p-4 pt-0 text-slate-600">
                                         <ul class="list-disc pl-5 space-y-1">
                                             <li>Conduct a deep dive into factors that drove the $859K$ peak on a Friday.</li>
                                             <li>Identify specific content, promotional strategies, or external events contributing to success.</li>
                                             <li>Develop strategies to replicate high performance and mitigate low-performing Fridays.</li>
                                         </ul>
+                                        <button class="mt-4 px-4 py-2 bg-purple-600 text-white rounded-md shadow-sm hover:bg-purple-700 transition-colors duration-200 elaborate-btn">✨ Elaborate</button>
+                                        <div class="llm-response mt-4 p-3 bg-slate-50 rounded-md border border-slate-200 hidden">
+                                            <div class="loading-spinner flex items-center justify-center hidden">
+                                                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-500"></div>
+                                                <span class="ml-2 text-slate-500">Generating insights...</span>
+                                            </div>
+                                            <p class="generated-text text-sm leading-relaxed"></p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -471,7 +497,7 @@
                                     <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Total Views</th>
                                     <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Total Likes</th>
                                     <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Avg. Views Per Clip</th>
-                                    </tr>
+                                </tr>
                             </thead>
                             <tbody id="topTitlesTableBody" class="divide-y divide-slate-200 text-sm text-slate-700">
                                 <!-- Data will be inserted here by JavaScript -->
@@ -522,184 +548,6 @@
             </section>
 
             <!-- Placeholder sections for other top-level reports -->
-            <section id="dmcs-views-content" class="report-content-section hidden">
-                <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12 text-center">
-                    <h2 class="text-2xl font-semibold text-slate-900 mb-4">DMCS Views</h2>
-                    <p class="text-slate-600">Content specific to DMCS views will go here, updated based on month selection.</p>
-                </div>
-            </section>
-            
-            <!-- Third Party Views Overview Section (New) -->
-            <section id="third-party-overview-section" class="report-content-section hidden">
-                <div class="bg-white p-8 rounded-xl shadow-lg border border-slate-200 text-center max-w-2xl mx-auto w-full">
-                    <h1 class="text-3xl font-bold text-slate-900 mb-4">Third Party Views Overview</h1>
-                    <p class="text-lg text-slate-600 mb-6">Select a month to view detailed third-party viewership data.</p>
-                    
-                    <div class="flex flex-col sm:flex-row justify-center gap-4 mb-8">
-                        <button class="inline-block px-8 py-3 bg-sky-600 text-white rounded-md shadow-md hover:bg-sky-700 transition-colors duration-200 text-lg font-semibold third-party-month-btn" data-target-section="third-party-july-content">View July Data</button>
-                        <button class="inline-block px-8 py-3 bg-sky-600 text-white rounded-md shadow-md hover:bg-sky-700 transition-colors duration-200 text-lg font-semibold third-party-month-btn" data-target-section="third-party-june-content">View June Data</button>
-                    </div>
-
-                    <button class="mt-6 inline-block px-6 py-2 bg-slate-200 text-slate-800 rounded-md shadow-sm hover:bg-slate-300 transition-colors duration-200 back-to-main-dashboard">Back to Dashboard</button>
-                </div>
-            </section>
-
-            <!-- Third Party Views - June Content (Integrated) -->
-            <section id="third-party-june-content" class="report-content-section hidden">
-                <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12 text-center">
-                    <h2 class="text-2xl font-semibold text-slate-900 mb-4">Third Party Views - June</h2>
-                    <p class="text-slate-600">This page will display detailed Third Party viewership data for June.</p>
-                    <p class="mt-4 text-xl font-semibold text-sky-600">Coming Soon!</p>
-                    <button class="mt-6 inline-block px-6 py-2 bg-sky-600 text-white rounded-md shadow-sm hover:bg-sky-700 transition-colors duration-200 back-to-main-dashboard">Back to Dashboard</button>
-                </div>
-            </section>
-
-            <!-- Third Party Views - July Content (Integrated) -->
-            <section id="third-party-july-content" class="report-content-section hidden">
-                <header class="clip-performance-header">
-                    <div class="max-w-4xl mx-auto">
-                        <h1 class="text-4xl md:text-5xl font-bold">Unlocking Content Performance</h1>
-                        <p class="mt-4 text-lg md:text-xl text-gray-200">A Deep Dive into Clip Views and Engagement Based on Channel Data</p>
-                    </div>
-                </header>
-
-                <main class="max-w-7xl mx-auto p-4 sm:p-6 md:p-8">
-
-                    <section id="overview" class="mb-12">
-                        <h2 class="clip-performance-section-title">Performance at a Glance</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-                            <div class="kpi-card total-profiles">
-                                <p id="total-profiles">40</p>
-                                <p>Profiles Analyzed</p>
-                            </div>
-                            <div class="kpi-card total-clips">
-                                <p id="total-clips">544</p>
-                                <p>Total Clips</p>
-                            </div>
-                            <div class="kpi-card total-views">
-                                <p id="total-views">1.38M+</p>
-                                <p>Total Clip Views</p>
-                            </div>
-                        </div>
-                    </section>
-
-                    <section id="top-performers" class="space-y-12">
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-                            <div class="chart-container">
-                                <canvas id="totalViewsChart"></canvas>
-                            </div>
-                            <div class="mt-8 lg:mt-0">
-                                <h3 class="text-2xl font-bold text-[#005f73] mb-4">Champions of Reach: Top 10 by Total Views</h3>
-                                <p class="text-gray-600 leading-relaxed">
-                                    This chart highlights the profiles that have garnered the highest number of total views across all their clips. These are the powerhouses of audience reach, demonstrating a remarkable ability to attract a large volume of viewers. Topping the list, 'Al Atawla S1' and 'Al Ameel (Icerde) S1' show exceptional performance, indicating a strong and broad audience appeal.
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- New button for "More Details" -->
-                        <div class="text-center mt-4">
-                            <button id="showTopTotalViewsTableBtn" class="px-4 py-2 rounded-md bg-sky-600 text-white shadow-sm font-semibold hover:bg-sky-700 transition-colors duration-200">More Details</button>
-                        </div>
-
-                        <!-- New table for Top 10 Profiles by Total Views (initially hidden) -->
-                        <div id="topTotalViewsTableContainer" class="overflow-x-auto mt-8 hidden">
-                            <table class="min-w-full rounded-lg overflow-hidden shadow-sm border border-slate-200">
-                                <thead class="bg-slate-100 border-b border-slate-200">
-                                    <tr>
-                                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Profile Name</th>
-                                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Number of Clips</th>
-                                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Total Views</th>
-                                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Avg. Views Per Clip</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="topTotalViewsTableBody" class="divide-y divide-slate-200 text-sm text-slate-700">
-                                    <!-- Data will be inserted here by JavaScript -->
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-                            <div class="mt-8 lg:mt-0 lg:order-2">
-                                <h3 class="text-2xl font-bold text-[#005f73] mb-4">Masters of Efficiency: Top 10 by Average Views</h3>
-                                <p class="text-gray-600 leading-relaxed">
-                                    While total views are important, average views per clip reveal content efficiency and consistent quality. This chart showcases the profiles whose individual clips are the most engaging. 'Al Ameel (Icerde) S1' leads significantly, proving that each piece of their content packs a powerful punch. This metric is key to identifying which content strategies are most effective at capturing and holding audience attention on a per-clip basis.
-                                </p>
-                            </div>
-                            <div class="chart-container lg:order-1">
-                                <canvas id="avgViewsChart"></canvas>
-                            </div>
-                        </div>
-                    </section>
-
-                    <section id="low-performing-titles-section" class="mt-16">
-                        <h2 class="clip-performance-section-title">Low 5 Titles Performance Analysis (by Average Views)</h2>
-                        <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12">
-                            <div class="chart-container">
-                                <canvas id="lowAvgViewsChart"></canvas>
-                            </div>
-                            <!-- New button for "More Details" for low performing titles -->
-                            <div class="text-center mt-4">
-                                <button id="showLowAvgViewsTableBtn" class="px-4 py-2 rounded-md bg-sky-600 text-white shadow-sm font-semibold hover:bg-sky-700 transition-colors duration-200">More Details</button>
-                            </div>
-                            <div id="lowTitlesTableContainer" class="overflow-x-auto mt-8 hidden">
-                                <table class="min-w-full rounded-lg overflow-hidden shadow-sm border border-slate-200">
-                                    <thead class="bg-slate-100 border-b border-slate-200">
-                                        <tr>
-                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Profile Name</th>
-                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Number of Clips</th>
-                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Total Views</th>
-                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Avg. Views Per Clip</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="lowTitlesTableBody" class="divide-y divide-slate-200 text-sm text-slate-700">
-                                        <!-- Data will be inserted here by JavaScript -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </section>
-
-                    <section id="recommendations" class="mt-16">
-                        <h2 class="clip-performance-section-title">Key Insights & Strategic Recommendations</h2>
-                        <div id="dynamic-recommendations" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <!-- Default, static recommendations to appear directly -->
-                            <div class="recommendation-card blue-border">
-                                <h3 class="font-bold text-lg mb-2 text-[#005f73]">Emulate High-Efficiency Profiles</h3>
-                                <ul class="list-disc pl-5 text-gray-600 space-y-1">
-                                    <li>Analyze content strategies of profiles with high average views per clip (e.g., 'Al Ameel (Icerde) S1').</li>
-                                    <li>Identify common themes, lengths, or engagement tactics that contribute to their per-clip effectiveness.</li>
-                                    <li>Apply these insights to new content creation to maximize engagement even with fewer clips.</li>
-                                </ul>
-                            </div>
-                            <div class="recommendation-card yellow-border">
-                                <h3 class="font-bold text-lg mb-2 text-[#005f73]">Optimize High-Reach Channels</h3>
-                                <ul class="list-disc pl-5 text-gray-600 space-y-1">
-                                    <li>Invest further in content production and promotion for profiles with high total views (e.g., 'Al Atawla S1').</li>
-                                    <li>Explore cross-promotion opportunities between high-reach and high-efficiency content.</li>
-                                    <li>Leverage these popular channels to introduce new content or drive specific audience actions.</li>
-                                </ul>
-                            </div>
-                            <div class="recommendation-card red-border">
-                                <h3 class="font-bold text-lg mb-2 text-[#005f73]">Prioritize Quality Over Quantity</h3>
-                                <ul class="list-disc pl-5 text-gray-600 space-y-1">
-                                    <li>Focus on creating compelling, high-quality clips rather than simply increasing clip count.</li>
-                                    <li>The scatter plots indicate that more clips do not necessarily translate to higher average engagement.</li>
-                                    <li>Allocate resources to enhance the production value and narrative strength of each clip.</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </section>
-
-                </main>
-
-                <footer class="clip-performance-footer">
-                    <p>Infographic Generated on July 14, 2025.</p>
-                    <p class="text-sm">Data Source: 1_14Jul.xlsx - Sheet3.csv</p>
-                    <button class="mt-4 inline-block px-6 py-2 bg-sky-600 text-white rounded-md shadow-sm hover:bg-sky-700 transition-colors duration-200 back-to-main-dashboard">Back to Dashboard</button>
-                </footer>
-            </section>
-
-            <!-- July Performance Analysis Section (Initially Hidden) -->
             <section id="july-report-content" class="report-content-section hidden">
                 <header class="text-center mb-8 md:mb-12">
                     <h1 class="text-3xl md:text-4xl font-bold text-slate-900">July Viewership Performance Analysis</h1>
@@ -711,7 +559,7 @@
                     <div class="inline-flex bg-slate-100 p-1 rounded-lg text-sm flex-wrap justify-center gap-2 w-full">
                         <button id="julyDashboardTabBtn" class="px-4 py-2 rounded-md bg-white text-sky-600 shadow-sm font-semibold july-main-tab-btn" data-target="july-dashboard-section">Monthly Highlights (July)</button>
                         <button id="julyTopTitlesTabBtn" class="px-4 py-2 rounded-md text-slate-600 font-medium july-main-tab-btn" data-target="july-top-titles-section">Top Titles Views (July)</button>
-                        <button id="julyRecommendationTitlesTabBtn" class="px-4 py-2 rounded-md text-slate-600 font-medium july-main-tab-btn" data-target="july-recommendation-titles-section">Recommendation Titles (July)</button>
+                        <!-- Removed July Recommendation Titles Tab -->
                     </div>
                 </nav>
 
@@ -721,7 +569,7 @@
                         <!-- July Key Metrics Section -->
                         <section id="july-kpis" class="mb-8 md:mb-12">
                             <h2 class="text-2xl font-semibold text-slate-900 mb-4 text-center">July Monthly Highlights</h2>
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 text-center">
+                            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 text-center">
                                 <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
                                     <p class="text-sm font-medium text-slate-500">Highest Viewership</p>
                                     <p id="julyKpiHighest" class="text-3xl font-bold text-sky-600 mt-1">N/A</p>
@@ -741,6 +589,11 @@
                                     <p class="text-sm font-medium text-slate-500">Avg. Weekend Views</p>
                                     <p id="julyKpiWeekendAvg" class="text-3xl font-bold text-slate-700 mt-1">N/A</p>
                                     <p class="text-xs text-slate-400">(Sat-Sun)</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                                    <p class="text-sm font-medium text-slate-500">Total Views (July)</p>
+                                    <p id="julyKpiTotalViews" class="text-3xl font-bold text-slate-700 mt-1">N/A</p>
+                                    <p class="text-xs text-slate-400">(All Days)</p>
                                 </div>
                             </div>
                         </section>
@@ -781,109 +634,217 @@
                             </div>
                         </section>
 
-                        <!-- July Strategic Recommendations Section -->
-                        <section id="july-recommendations">
-                            <h2 class="text-2xl font-semibold text-slate-900 mb-4 text-center">July Strategic Recommendations</h2>
-                            <div class="space-y-3 max-w-4xl mx-auto">
-                                <div class="accordion-item bg-white rounded-xl shadow-sm border border-slate-200" data-day="Friday">
-                                    <button class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-slate-800 hover:bg-slate-50 hover:shadow-md">
-                                        Capitalize on Friday Peaks
-                                        <span class="transform transition-transform duration-300">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                                        </span>
-                                    </button>
-                                    <div class="accordion-content">
-                                        <div class="p-4 pt-0 text-slate-600">
-                                            <ul class="list-disc pl-5 space-y-1">
-                                                <li>Focus high-impact content releases on Fridays, especially those with strong viral potential.</li>
-                                                <li>Analyze the content and promotional strategies of the $898K$ peak on July 4th.</li>
-                                                <li>Consider special weekend programming or "Friday Feature" content to consistently capture this peak.</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="accordion-item bg-white rounded-xl shadow-sm border border-slate-200" data-day="Monday,Sunday">
-                                    <button class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-slate-800 hover:bg-slate-50 hover:shadow-md">
-                                        Boost Monday/Sunday Engagement
-                                        <span class="transform transition-transform duration-300">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                                        </span>
-                                    </button>
-                                    <div class="accordion-content">
-                                        <div class="p-4 pt-0 text-slate-600">
-                                            <ul class="list-disc pl-5 space-y-1">
-                                                <li>Implement "start-of-week" or "end-of-weekend" content strategies to re-engage audiences.</li>
-                                                <li>Promote content suitable for a relaxed viewing experience on Sundays.</li>
-                                                <li>Use Mondays for "catch-up" content or previews for the week ahead.</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="accordion-item bg-white rounded-xl shadow-sm border border-slate-200" data-day="Tuesday,Wednesday,Thursday,Saturday">
-                                    <button class="accordion-header w-full flex justify-between items-center text-left p-4 font-semibold text-slate-800 hover:bg-slate-50 hover:shadow-md">
-                                        Maintain Mid-Week & Saturday Consistency
-                                        <span class="transform transition-transform duration-300">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                                        </span>
-                                    </button>
-                                    <div class="accordion-content">
-                                        <div class="p-4 pt-0 text-slate-600">
-                                            <ul class="list-disc pl-5 space-y-1">
-                                                <li>Continue to deliver high-quality, expected content during these generally stable days.</li>
-                                                <li>Monitor for any subtle shifts in engagement to proactively adjust.</li>
-                                                <li>Leverage Saturday's moderate performance for community engagement or interactive content.</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
+                        <!-- July Strategic Recommendations Section (Removed) -->
+                    </main>
+                </section>
+
+            <!-- July Top Titles Section (Initially Hidden) -->
+            <section id="july-top-titles-section" class="july-content-section hidden">
+                <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12">
+                    <h2 class="text-2xl font-semibold text-slate-900 mb-4 text-center">Top 10 Titles Views (July)</h2>
+                    <p class="text-slate-600 mb-6 text-center">Here are the top 10 performing titles based on viewership data for July:</p>
+                    <div class="overflow-x-auto mb-8">
+                        <table class="min-w-full rounded-lg overflow-hidden shadow-sm border border-slate-200">
+                            <thead class="bg-slate-100 border-b border-slate-200">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Rank</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Title Name</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Total Views</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Total Likes</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Avg. Views Per Clip</th>
+                                </tr>
+                            </thead>
+                            <tbody id="julyTopTitlesTableBody" class="divide-y divide-slate-200 text-sm text-slate-700">
+                                <!-- Data will be inserted here by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Charts for July Top Titles -->
+                    <div class="mt-8">
+                        <h3 class="text-xl font-semibold text-slate-900 mb-4 text-center">Total Views by Title</h3>
+                        <div class="chart-container mb-8">
+                            <canvas id="julyTopTitlesViewsChart"></canvas>
+                        </div>
+
+                        <h3 class="text-xl font-semibold text-slate-900 mb-4 text-center">Average Views Per Clip by Title</h3>
+                        <div class="chart-container mb-8">
+                            <canvas id="julyAvgViewsPerClipChart"></canvas>
+                        </div>
+
+                        <h3 class="text-xl font-semibold text-slate-900 mb-4 text-center">Total Likes by Title</h3>
+                        <div class="chart-container">
+                            <canvas id="julyLikesChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button id="julyShowAllTitlesBtn" class="px-4 py-2 rounded-md bg-sky-600 text-white shadow-sm font-semibold hover:bg-sky-700 transition-colors duration-200">Show All Titles</button>
+                    </div>
+
+                    <div class="mt-8 p-4 bg-slate-50 rounded-lg shadow-sm border border-slate-200">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-2">Insights from July Top Titles:</h3>
+                        <ul class="list-disc pl-5 space-y-2 text-slate-700">
+                            <li>**Dominant Performers:** "Ommi" and "Al Madeena Al Ba'eeda" are clear leaders in total views, indicating strong audience pull. "Ommi" also boasts exceptionally high likes and average views per clip, suggesting highly engaging content.</li>
+                            <li>**Engagement vs. Reach:** "Fondooq Al Ahlam" has a high number of likes and average views per clip, showing strong engagement despite lower overall views compared to the top two. This title could be a candidate for increased promotion to expand its reach.</li>
+                            <li>**High Potential:** "Leyla" and "FIFA Club World Cup 2025" also show significant total views. "Leyla" has a decent average views per clip, indicating good content quality.</li>
+                            <li>**Areas for Improvement:** Titles like "Harb El Gibali" and "To Win Or To Win" have lower total views, likes, and average views per clip, suggesting opportunities to review content strategy or promotional efforts for these titles.</li>
+                            <li>**Content Strategy:** The data suggests that content like "Ommi" and "Al Madeena Al Ba'eeda" resonates strongly with the audience. Analyzing their specific themes, formats, and release patterns could provide valuable insights for future content creation.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- July Recommendation Titles Section (Removed from HTML) -->
+
+            <!-- Third Party Views Overview Section (New) -->
+            <section id="third-party-overview-section" class="report-content-section hidden">
+                <div class="bg-white p-8 rounded-xl shadow-lg border border-slate-200 text-center max-w-2xl mx-auto w-full">
+                    <h1 class="text-3xl font-bold text-slate-900 mb-4">Third Party Views Overview</h1>
+                    <p class="text-lg text-slate-600 mb-6">Select a month to view detailed third-party viewership data.</p>
+                    
+                    <div class="flex flex-col sm:flex-row justify-center gap-4 mb-8">
+                        <button class="inline-block px-8 py-3 bg-sky-600 text-white rounded-md shadow-md hover:bg-sky-700 transition-colors duration-200 third-party-month-btn" data-target-section="third-party-june-content">June Third Party</button>
+                        <button class="inline-block px-8 py-3 bg-slate-200 text-slate-800 rounded-md shadow-md hover:bg-slate-300 transition-colors duration-200 third-party-month-btn" data-target-section="third-party-july-content">July Third Party</button>
+                    </div>
+                    <p class="text-slate-500 text-sm">More detailed third-party data and charts would appear here upon selection.</p>
+                </div>
+            </section>
+
+            <!-- Third Party Views - June (Placeholder) -->
+            <section id="third-party-june-content" class="report-content-section hidden">
+                <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12 text-center">
+                    <h2 class="text-2xl font-semibold text-slate-900 mb-4">Third Party Views - June</h2>
+                    <p class="text-slate-600">Detailed third-party data for June will be available here.</p>
+                    <button class="mt-4 px-4 py-2 bg-slate-200 text-slate-800 rounded-md shadow-sm hover:bg-slate-300 back-to-main-dashboard">Back to Overview</button>
+                </div>
+            </section>
+
+            <!-- Third Party Views - July (Detailed Content) -->
+            <section id="third-party-july-content" class="report-content-section hidden">
+                <header class="clip-performance-header">
+                    <h1 class="text-4xl md:text-5xl font-bold">Third Party Views - July 2025</h1>
+                    <p class="mt-4 text-lg md:text-xl text-gray-200">Deep Dive into Clip Views & Engagement</p>
+                </header>
+
+                <main class="max-w-7xl mx-auto p-4 sm:p-6 md:p-8">
+                    <!-- Overall KPIs -->
+                    <section class="mb-8 md:mb-12">
+                        <h2 class="clip-performance-section-title">Overall Performance Metrics</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                            <div class="kpi-card total-profiles">
+                                <p id="total-profiles">40</p>
+                                <p>Total Profiles</p>
                             </div>
-                        </section>
+                            <div class="kpi-card total-clips">
+                                <p id="total-clips">544</p>
+                                <p>Total Clips</p>
+                            </div>
+                            <div class="kpi-card total-views">
+                                <p id="total-views">1.38M+</p>
+                                <p>Total Views</p>
+                            </div>
+                        </div>
                     </section>
 
-                    <!-- July Top Titles Section (Initially Hidden) -->
-                    <section id="july-top-titles-section" class="july-content-section hidden">
-                        <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12">
-                            <h2 class="text-2xl font-semibold text-slate-900 mb-4 text-center">Top Titles Views (July)</h2>
-                            <p class="text-slate-600 mb-6 text-center">Here are the top performing titles based on viewership data for July so far:</p>
-                            <div class="overflow-x-auto mb-8">
+                    <!-- Charts Section -->
+                    <section class="mb-8 md:mb-12">
+                        <h2 class="clip-performance-section-title">Viewership Trends</h2>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 chart-container">
+                                <canvas id="totalViewsChart"></canvas>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 chart-container">
+                                <canvas id="avgViewsChart"></canvas>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Top Total Views Chart & Table Section -->
+                    <section class="mb-8 md:mb-12">
+                        <h2 class="clip-performance-section-title">Top 10 Profiles by Total Views</h2>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                            <!-- Chart for Top 10 Profiles by Total Views -->
+                            <div class="chart-container mb-4">
+                                <canvas id="topTotalViewsChart"></canvas>
+                            </div>
+                            <div class="text-center mt-4">
+                                <button id="showTopTotalViewsTableBtn" class="px-4 py-2 rounded-md bg-sky-600 text-white shadow-sm font-semibold hover:bg-sky-700 transition-colors duration-200">More Details</button>
+                            </div>
+                            <div id="topTotalViewsTableContainer" class="overflow-x-auto mt-6 hidden">
                                 <table class="min-w-full rounded-lg overflow-hidden shadow-sm border border-slate-200">
                                     <thead class="bg-slate-100 border-b border-slate-200">
                                         <tr>
-                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Rank</th>
-                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Title Name</th>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Profile Name</th>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Total Clips</th>
                                             <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Total Views</th>
-                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Total Likes</th>
-                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Avg. Views Per Clip</th>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Avg. Views/Clip</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="julyTopTitlesTableBody" class="divide-y divide-slate-200 text-sm text-slate-700">
+                                    <tbody id="topTotalViewsTableBody" class="divide-y divide-slate-200 text-sm text-slate-700">
                                         <!-- Data will be inserted here by JavaScript -->
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="chart-container">
-                                <canvas id="julyTopTitlesViewsChart"></canvas>
+                        </div>
+                    </section>
+
+                    <!-- Low Performing Titles Section -->
+                    <section class="mb-8 md:mb-12">
+                        <h2 class="clip-performance-section-title">Low 5 Profiles by Average Views per Clip</h2>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                            <div class="chart-container mb-4">
+                                <canvas id="lowAvgViewsChart"></canvas>
                             </div>
                             <div class="text-center mt-4">
-                                <button id="julyShowAllTitlesBtn" class="px-4 py-2 rounded-md bg-sky-600 text-white shadow-sm font-semibold hover:bg-sky-700 transition-colors duration-200">Show All Titles</button>
+                                <button id="showLowAvgViewsTableBtn" class="px-4 py-2 rounded-md bg-sky-600 text-white shadow-sm font-semibold hover:bg-sky-700 transition-colors duration-200">More Details</button>
+                            </div>
+                            <div id="lowTitlesTableContainer" class="overflow-x-auto mt-6 hidden">
+                                <table class="min-w-full rounded-lg overflow-hidden shadow-sm border border-slate-200">
+                                    <thead class="bg-slate-100 border-b border-slate-200">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Profile Name</th>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Total Clips</th>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Total Views</th>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Avg. Views/Clip</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="lowTitlesTableBody" class="divide-y divide-slate-200 text-sm text-slate-700">
+                                        <!-- Data will be inserted here by JavaScript -->
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </section>
 
-                    <!-- July Recommendation Titles Section (Initially Hidden) -->
-                    <section id="july-recommendation-titles-section" class="july-content-section hidden">
-                        <div class="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200 mb-8 md:mb-12">
-                            <h2 class="text-2xl font-semibold text-slate-900 mb-4 text-center">Recommendation Titles for August</h2>
-                            <p class="text-slate-600 mb-6 text-center">Based on July's viewership trends, here are some recommended title categories or themes to focus on for August to potentially maximize engagement.</p>
-                            <ul class="list-disc pl-8 space-y-3 text-slate-700">
-                                <li>**High-Performer Duplication:** Analyze the content and themes of "Al Madeena Al Ba'eeda" and "Ommi" to understand their success factors and replicate similar content.</li>
-                                <li>**Engagement Boosters:** For titles like "Fondooq Al Ahlam" and "Leyla" with strong average views, consider creating more short-form content or interactive elements to further boost engagement.</li>
-                                <li>**Strategic Placement:** Use the high viewership days (e.g., Fridays and Sundays) for launching new episodes or promoting key content from top-performing titles.</li>
-                                <li>**Audience Deep Dive:** For titles with lower performance, conduct audience surveys or focus groups to understand viewer preferences and identify content gaps.</li>
-                            </ul>
+
+                    <!-- Strategic Recommendations for Third Party Views -->
+                    <section class="mb-8 md:mb-12">
+                        <h2 class="clip-performance-section-title">Strategic Recommendations for Third Party Views</h2>
+                        <div class="space-y-4 max-w-4xl mx-auto">
+                            <div class="recommendation-card blue-border">
+                                <h3>Focus on High-Performing Profiles</h3>
+                                <p>Double down on content strategies that are working for top profiles like "Leyla" and "Al Madeena Al Ba'eeda". Analyze their content themes, posting schedules, and engagement tactics to replicate success across other profiles.</p>
+                            </div>
+                            <div class="recommendation-card yellow-border">
+                                <h3>Improve Low-Performing Content</h3>
+                                <p>For profiles with low average views per clip (e.g., "Tash: Al Awda Season 19", "El Kebeer Awi_TV"), conduct a deeper content audit. Consider re-editing existing clips, experimenting with new formats, or pausing content that consistently underperforms.</p>
+                            </div>
+                            <div class="recommendation-card red-border">
+                                <h3>Leverage Viral Potential</h3>
+                                <p>Identify specific clips that have gone viral or significantly outperformed their profile's average. Study the characteristics of these clips (e.g., emotional impact, trending topics, unique editing) and apply these learnings to future content creation.</p>
+                            </div>
                         </div>
                     </section>
+
+                    <div class="text-center mt-8">
+                        <button class="px-6 py-3 bg-sky-600 text-white rounded-md shadow-md hover:bg-sky-700 transition-colors duration-200 back-to-main-dashboard">Back to Overview</button>
+                    </div>
                 </main>
+
+                <footer class="clip-performance-footer">
+                    <p>&copy; 2025 Viewership Insights. All rights reserved.</p>
+                    <p>Data as of July 8, 2025</p>
+                </footer>
             </section>
 
             <!-- Additional Insights Section -->
@@ -1065,7 +1026,7 @@
                     { title: "مواجهة سيبنان و سيران ❤️", views: 6582 },
                     { title: "اول ليلة لسيبنان و سيران ❤️", views: 14468 },
                     { title: "سيبنان بده يبعد مع سيران 💔", views: 7119 },
-                    { title: "فريد بيتذكر الماضي 😔", views: 7529 },
+                    { title: "فريد بيتذكر الماضي �", views: 7529 },
                     { title: "الضغط كبير عليها 😥 #شاهد #دراما #فريد", views: 5307 },
                     { title: "فرحة المولود الجديد 👶", views: 4469 },
                     { title: "فريد كسر قلبها 💔", views: 3883 },
@@ -1107,7 +1068,7 @@
                     { title: "ابو ضاري يطرد سليم من مكتبه", views: 319 },
                     { title: "سليم يكدب 💔", views: 741 },
                     { title: "الام و اصدقائه 🤣", views: 1759 },
-                    { title: "29,000 ريال �", views: 20 },
+                    { title: "29,000 ريال ", views: 20 },
                     { title: "البحث عن وظيفة 🤔", views: 15036 }
                 ],
                 "Min Share’ Al Haram Ela... Season 1": [
@@ -1296,7 +1257,8 @@
                     { title: "يحرق شاهين وياسين مدينة أبو هديل", views: 21 },
                     { title: "شاهين بيصور فيديو", views: 18 },
                     { title: "العارف بيصور أبو هديل في موقف محرج", views: 18 }
-                ]
+                ],
+                "Zawja Waheda La Takfi Season 1": [{ title: "Clip 1", views: "Available Soon!" }, { title: "Clip 2", views: "Available Soon!" }]
             };
 
 
@@ -1339,7 +1301,6 @@
                 "Shatti Ya Beirut": shortsDataFromImage["Shatti Ya Beirut"],
                 "Sikkat Safar Season 1": [{ title: "Clip 1", views: "Available Soon!" }, { title: "Clip 2", views: "Available Soon!" }],
                 "Tash: Al Awda Season 19": shortsDataFromImage["Tash: Al Awda Season 19"], // Updated
-                "Top Chef Season 8": [{ title: "Clip 1", views: "Available Soon!" }, { title: "Clip 2", views: "Available Soon!" }],
                 "Wlad Badee'a Season 1": shortsDataFromImage["Wlad Badee'a Season 1"], // Updated
                 "Zawja Waheda La Takfi Season 1": shortsDataFromImage["Zawja Waheda La Takfi Season 1"]
             };
@@ -1353,45 +1314,46 @@
             let topTitlesViewsChart; // New chart instance
             let lowAvgViewsChart; // New chart for low performing titles
             let weekComparisonChart; // New chart for week-on-week comparison
+            let topTotalViewsChartInstance; // New chart instance for Top 10 Profiles by Total Views
 
             // Data for the Clip Performance Analysis (Third Party Views - July)
             // Updated based on user provided accurate data
             const thirdPartyJulyProfileData = [
+                { name: "Leyla", clips: 20, totalViews: 335596, avgViews: 16779.8 },
+                { name: "Al -Meerath", clips: 19, totalViews: 109706, avgViews: 5774.0 },
+                { name: "Fareed S3", clips: 17, totalViews: 95585, avgViews: 5622.6 },
+                { name: "Al Ameel (Icerde)", clips: 13, totalViews: 82875, avgViews: 6375.0 },
+                { name: "Kolna Eyal Qarya", clips: 16, totalViews: 67047, avgViews: 4190.4 },
+                { name: "Min Share’ Al Haram Ela... Season 1", clips: 15, totalViews: 47750, avgViews: 3183.3 },
+                { name: "Big Time Podcast", clips: 16, totalViews: 44796, avgViews: 2799.8 },
+                { name: "Shatti Ya Beirut", clips: 20, totalViews: 41951, avgViews: 2097.6 },
+                { name: "Lil Mawt", clips: 18, totalViews: 40959, avgViews: 2275.5 },
+                { name: "Al Qadar", clips: 17, totalViews: 35918, avgViews: 2112.8 },
+                // Remaining data, not in top 10 by total views but needed for other calculations
                 { name: "AL Kha'en", clips: 18, totalViews: 24306, avgViews: 0 },
                 { name: "Ahla Ma Tash", clips: 17, totalViews: 30354, avgViews: 0 },
-                { name: "Al -Meerath", clips: 19, totalViews: 109706, avgViews: 0 },
-                { name: "Al Ameel (Icerde)", clips: 13, totalViews: 82875, avgViews: 0 },
-                { name: "Al Atawla", clips: 18, totalViews: 26381, avgViews: 0 },
                 { name: "Al Hayba", clips: 7, totalViews: 4373, avgViews: 0 },
                 { name: "Al Khotta Baa", clips: 13, totalViews: 33551, avgViews: 0 },
                 { name: "Al Le'ba: Level Al Wahsh", clips: 19, totalViews: 19985, avgViews: 0 },
-                { name: "Al Qadar", clips: 17, totalViews: 35918, avgViews: 0 },
                 { name: "Amr Ikhlaa S3", clips: 13, totalViews: 14855, avgViews: 0 },
                 { name: "Awdat Khalati", clips: 22, totalViews: 24148, avgViews: 0 },
                 { name: "Bab Al Hara", clips: 9, totalViews: 2683, avgViews: 0 },
                 { name: "Bait & So'al 2025", clips: 3, totalViews: 384, avgViews: 0 }, // Updated name
                 { name: "Banat Al Thanawi", clips: 14, totalViews: 20044, avgViews: 0 },
                 { name: "Beyt Al Ankaboot", clips: 14, totalViews: 7178, avgViews: 0 },
-                { name: "Big Time Podcast", clips: 16, totalViews: 44796, avgViews: 0 },
                 { name: "El Hashashin", clips: 19, totalViews: 19483, avgViews: 0 },
                 { name: "El Kebeer Awi_TV", clips: 16, totalViews: 717, avgViews: 0 },
-                { name: "Fareed S3", clips: 17, totalViews: 95585, avgViews: 0 },
                 { name: "Gaafar El Omda", clips: 20, totalViews: 23013, avgViews: 0 },
                 { name: "Gamgoum Wa Bimbim: Al Sharika Al Almaniya Li Mokafahat Al Khawareq", clips: 5, totalViews: 4058, avgViews: 0 },
                 { name: "Horouj", clips: 11, totalViews: 6778, avgViews: 0 },
                 { name: "Kermal Al Walad", clips: 11, totalViews: 27929, avgViews: 0 },
-                { name: "Kolna Eyal Qarya", clips: 16, totalViews: 67047, avgViews: 0 },
-                { name: "Leyla", clips: 20, totalViews: 335596, avgViews: 0 },
-                { name: "Lil Mawt", clips: 18, totalViews: 40959, avgViews: 0 },
                 { name: "Mama Ghaneema Season 1", clips: 4, totalViews: 23299, avgViews: 0 },
                 { name: "Melh Wa Samra Season 1", clips: 12, totalViews: 9616, avgViews: 0 },
-                { name: "Min Share’ Al Haram Ela... Season 1", clips: 15, totalViews: 47750, avgViews: 0 },
                 { name: "Moftaraq Toroq Season 1", clips: 18, totalViews: 22786, avgViews: 0 },
                 { name: "MotorShow DocuSeries", clips: 3, totalViews: 17013, avgViews: 0 },
                 { name: "My Grandfather's Museum Season 1", clips: 7, totalViews: 14174, avgViews: 0 },
                 { name: "Ragel We Set Settat Season 1", clips: 14, totalViews: 10230, avgViews: 0 },
                 { name: "Salon Zahra Season 2", clips: 16, totalViews: 22236, avgViews: 0 },
-                { name: "Shatti Ya Beirut", clips: 20, totalViews: 41951, avgViews: 0 },
                 { name: "Sikkat Safar Season 1", clips: 17, totalViews: 22032, avgViews: 0 },
                 { name: "Tash: Al Awda Season 19", clips: 10, totalViews: 433, avgViews: 0 },
                 { name: "Top Chef Season 8", clips: 5, totalViews: 10073, avgViews: 0 },
@@ -1406,39 +1368,57 @@
 
             const updatedTotalProfiles = 40;
             const updatedTotalClips = 544;
-            const updatedTotalViews = 1383239; // Updated total views based on user input
+            // Sum total views from the provided thirdPartyJulyProfileData
+            const calculatedTotalViews = thirdPartyJulyProfileData.reduce((sum, item) => sum + item.totalViews, 0);
 
 
-            // July Daily Data
+            // July Daily Data - UPDATED WITH NEW DATA FROM IMAGE
             const julyDailyData = [
                 { date: 'Jun 30', day: 'Monday', views: 717 },
                 { date: 'Jul 1', day: 'Tuesday', views: 815 },
                 { date: 'Jul 2', day: 'Wednesday', views: 706 },
-                { date: 'Jul 3', day: 'Thursday', views: 675 },
-                { date: 'Jul 4', day: 'Friday', views: 898 },
+                { date: 'Jul 3', day: 'Thursday', views: 676 },
+                { date: 'Jul 4', day: 'Friday', views: 698 },
                 { date: 'Jul 5', day: 'Saturday', views: 677 },
                 { date: 'Jul 6', day: 'Sunday', views: 651 },
-                { date: 'Jul 7', day: 'Monday', views: 808 },
+                // Week 2 (Jul 7 - Jul 13)
+                { date: 'Jul 7', day: 'Monday', views: 680 },
                 { date: 'Jul 8', day: 'Tuesday', views: 673 },
-                { date: 'Jul 9', day: 'Wednesday', views: 700 },
-                { date: 'Jul 10', day: 'Thursday', views: 780 },
+                { date: 'Jul 9', day: 'Wednesday', views: 709 },
+                { date: 'Jul 10', day: 'Thursday', views: 730 },
                 { date: 'Jul 11', day: 'Friday', views: 663 },
                 { date: 'Jul 12', day: 'Saturday', views: 655 },
-                { date: 'Jul 13', day: 'Sunday', views: 880 },
-                { date: 'Jul 14', day: 'Monday', views: 543 }
+                { date: 'Jul 13', day: 'Sunday', views: 688 },
+                // Week 3 (Jul 14 - Jul 20)
+                { date: 'Jul 14', day: 'Monday', views: 693 },
+                { date: 'Jul 15', day: 'Tuesday', views: 674 },
+                { date: 'Jul 16', day: 'Wednesday', views: 624 },
+                { date: 'Jul 17', day: 'Thursday', views: 623 },
+                { date: 'Jul 18', day: 'Friday', views: 573 },
+                { date: 'Jul 19', day: 'Saturday', views: 515 },
+                { date: 'Jul 20', day: 'Sunday', views: 537 },
+                // Week 4 (Jul 21 - Jul 26/27)
+                { date: 'Jul 21', day: 'Monday', views: 593 },
+                { date: 'Jul 22', day: 'Tuesday', views: 537 },
+                { date: 'Jul 23', day: 'Wednesday', views: 609 },
+                { date: 'Jul 24', day: 'Thursday', views: 605 },
+                { date: 'Jul 25', day: 'Friday', views: 510 },
+                { date: 'Jul 26', day: 'Saturday', views: 410 },
+                { date: 'Jul 27', day: 'Sunday', views: 620 } // Keeping previous dummy for Sunday July 27 as image ends on Sat
             ];
 
-            // July Top Titles Data (from image_150e83.png, sorted by Total Views)
+            // July Top Titles Data (from image_47207e.png, sorted by Total Views)
             const julyTopTitlesData = [
-                { rank: 1, title: "Al Madeena Al Ba'eeda", views: 1922450, likes: 4090, avgViewsPerClip: 18480 },
-                { rank: 2, title: "Ommi", views: 1765783, likes: 7732, avgViewsPerClip: 28544 },
-                { rank: 3, title: "Fondooq Al Ahlam", views: 865268, likes: 3654, avgViewsPerClip: 13840 },
-                { rank: 4, title: "FIFA Club World Cup 2025", views: 828945, likes: 3033, avgViewsPerClip: 157 },
-                { rank: 5, title: "Leyla", views: 805161, likes: 2431, avgViewsPerClip: 12739 },
-                { rank: 6, title: "Aser", views: 375921, likes: 1092, avgViewsPerClip: 4882 },
-                { rank: 7, title: "Holm Esref", views: 209697, likes: 1292, avgViewsPerClip: 2542 },
-                { rank: 8, title: "Khareef Al Qalb", views: 42752, likes: 166, avgViewsPerClip: 248 },
-                { rank: 9, title: "Al Qadaa Season 2", views: 6532, likes: 56, avgViewsPerClip: 2 }
+                { rank: 1, title: "Ommi", views: 3603907, likes: 57078, avgViewsPerClip: 15571 },
+                { rank: 2, title: "Al Madeena Al Ba'eeda", views: 2319574, likes: 22672, avgViewsPerClip: 5544 },
+                { rank: 3, title: "Fondooq Al Ahlam", views: 1360100, likes: 23218, avgViewsPerClip: 1848 },
+                { rank: 4, title: "Leyla", views: 1152671, likes: 18103, avgViewsPerClip: 3510 },
+                { rank: 5, title: "FIFA Club World Cup 2025", views: 1072466, likes: 163, avgViewsPerClip: 3443 },
+                { rank: 6, title: "Aser", views: 737563, likes: 9699, avgViewsPerClip: 2420 },
+                { rank: 7, title: "Holm Esref", views: 633386, likes: 9286, avgViewsPerClip: 3038 },
+                { rank: 8, title: "Fareed Season 3", views: 434915, likes: 5786, avgViewsPerClip: 1122 },
+                { rank: 9, title: "Harb El Gibali", views: 421705, likes: 2729, avgViewsPerClip: 820 },
+                { rank: 10, title: "To Win Or To Win", views: 242256, likes: 1140, avgViewsPerClip: 964 }
             ];
 
 
@@ -1470,11 +1450,11 @@
 
             const processOverallData = (data) => {
                 const viewsByDay = {};
+                dayNames.forEach(day => viewsByDay[day] = []); // Initialize all days
                 data.forEach(d => {
-                    if (!viewsByDay[d.day]) {
-                        viewsByDay[d.day] = [];
+                    if (viewsByDay[d.day]) { // Ensure day exists
+                        viewsByDay[d.day].push(d.views);
                     }
-                    viewsByDay[d.day].push(d.views);
                 });
 
                 const avgData = dayNames.map(day => {
@@ -1493,18 +1473,12 @@
 
             const processDailyDataForWeek = (data, weekNumber) => {
                 let dataSubset = [];
-                if (weekNumber === 1) {
-                    dataSubset = data.slice(0, 7);
-                } else if (weekNumber === 2) {
-                    dataSubset = data.slice(7, 14);
-                } else if (weekNumber === 3) {
-                    dataSubset = data.slice(14, 21); // Assuming a full week for calculation
-                } else if (weekNumber === 4) {
-                    dataSubset = data.slice(21, 28); // Assuming a full week for calculation
-                }
+                // Correct slicing for 7-day weeks
+                const startIndex = (weekNumber - 1) * 7;
+                dataSubset = data.slice(startIndex, startIndex + 7);
 
-                if (dataSubset.length === 0 && (weekNumber === 3 || weekNumber === 4)) {
-                    return { labels: ["Coming soon!"], views: [0], rawData: [] };
+                if (dataSubset.length === 0) {
+                    return { labels: ["No data available"], views: [0], rawData: [] };
                 }
                 const labels = dataSubset.map(d => `${d.date} (${d.day.substring(0, 3)})`);
                 const views = dataSubset.map(d => d.views);
@@ -1519,8 +1493,9 @@
                 const kpiLowestDayElem = document.getElementById(`${prefix}KpiLowestDay`);
                 const kpiMidWeekAvgElem = document.getElementById(`${prefix}KpiMidWeekAvg`);
                 const kpiWeekendAvgElem = document.getElementById(`${prefix}KpiWeekendAvg`);
+                const kpiTotalViewsElem = document.getElementById(`${prefix}KpiTotalViews`); // New element
 
-                if (!kpiHighestElem || !kpiHighestDayElem || !kpiLowestElem || !kpiLowestDayElem || !kpiMidWeekAvgElem || !kpiWeekendAvgElem) {
+                if (!kpiHighestElem || !kpiHighestDayElem || !kpiLowestElem || !kpiLowestDayElem || !kpiMidWeekAvgElem || !kpiWeekendAvgElem || (prefix === 'july' && !kpiTotalViewsElem)) {
                     console.warn(`KPI elements with prefix '${prefix}' not found. Skipping KPI update.`);
                     return;
                 }
@@ -1532,6 +1507,7 @@
                     kpiLowestDayElem.textContent = '';
                     kpiMidWeekAvgElem.textContent = 'N/A';
                     kpiWeekendAvgElem.textContent = 'N/A';
+                    if (kpiTotalViewsElem) kpiTotalViewsElem.textContent = 'N/A';
                     return;
                 }
 
@@ -1539,6 +1515,7 @@
                 let highestDay = '';
                 let lowestView = Infinity;
                 let lowestDay = '';
+                let totalViews = 0; // Initialize total views
 
                 data.forEach(d => {
                     if (d.views > highestView) {
@@ -1549,6 +1526,7 @@
                         lowestView = d.views;
                         lowestDay = `${d.date} (${d.day})`;
                     }
+                    totalViews += d.views; // Accumulate total views
                 });
 
                 const midWeekViews = data.filter(d => ['Tuesday', 'Wednesday', 'Thursday'].includes(d.day)).map(d => d.views);
@@ -1563,6 +1541,16 @@
                 kpiLowestDayElem.textContent = `on ${lowestDay}`;
                 kpiMidWeekAvgElem.textContent = `${avgMidWeek.toFixed(0)}K`;
                 kpiWeekendAvgElem.textContent = `${avgWeekend.toFixed(0)}K`;
+                
+                if (kpiTotalViewsElem) {
+                    if (prefix === 'july') {
+                        // For July total views, format to Millions with truncation
+                        const totalViewsInMillions = (Math.floor(totalViews / 100) / 10).toFixed(1);
+                        kpiTotalViewsElem.textContent = `${totalViewsInMillions}M`;
+                    } else {
+                        kpiTotalViewsElem.textContent = `${totalViews.toLocaleString()}K`;
+                    }
+                }
             };
 
             const chartClickHandler = (evt, elements, chart) => {
@@ -1816,7 +1804,9 @@
                     showDebugMessage("Chart click event triggered on June Top Titles Chart.");
                     if (elements.length > 0) {
                         const dataIndex = elements[0].index;
-                        const clickedTitle = topTitlesViewsChart.data.labels[dataIndex];
+                        const clickedTitleRaw = topTitlesViewsChart.data.labels[dataIndex];
+                        // If the label is an array (from formatClipLabel), join it back to a string
+                        const clickedTitle = Array.isArray(clickedTitleRaw) ? clickedTitleRaw.join(' ') : clickedTitleRaw;
                         showDebugMessage("Clicked title on June Top Titles Chart: " + clickedTitle);
                         // This chart no longer triggers the Leyla modal directly.
                         // It will just filter the chart to show only the clicked title.
@@ -1965,6 +1955,9 @@
                 header.addEventListener('click', () => {
                     const content = header.nextElementSibling;
                     const icon = header.querySelector('span');
+                    const llmResponseDiv = content.querySelector('.llm-response');
+                    const generatedTextP = llmResponseDiv ? llmResponseDiv.querySelector('.generated-text') : null;
+
 
                     // Close all others
                     document.querySelectorAll('.accordion-content').forEach(c => {
@@ -1974,6 +1967,16 @@
                             if (otherIcon) {
                                 otherIcon.classList.remove('rotate-180');
                             }
+                             // Clear LLM response when collapsing other items
+                            const otherLlmResponseDiv = c.querySelector('.llm-response');
+                            if (otherLlmResponseDiv) {
+                                otherLlmResponseDiv.classList.add('hidden');
+                                const otherGeneratedTextP = otherLlmResponseDiv.querySelector('.generated-text');
+                                if (otherGeneratedTextP) {
+                                    otherGeneratedTextP.textContent = '';
+                                    otherGeneratedTextP.classList.remove('text-red-500');
+                                }
+                            }
                         }
                     });
 
@@ -1981,6 +1984,14 @@
                     if (content.style.maxHeight) {
                         content.style.maxHeight = null;
                         icon.classList.remove('rotate-180');
+                         // Clear LLM response when collapsing current item
+                        if (llmResponseDiv) {
+                            llmResponseDiv.classList.add('hidden');
+                            if (generatedTextP) {
+                                generatedTextP.textContent = '';
+                                generatedTextP.classList.remove('text-red-500');
+                            }
+                        }
                     } else {
                         content.style.maxHeight = content.scrollHeight + 'px';
                         icon.classList.add('rotate-180');
@@ -2006,7 +2017,7 @@
                     // Add click listener to each row
                     row.addEventListener('click', () => {
                         showDebugMessage("Table row click event triggered for: " + item.title + " (June Top Titles)");
-                        // This table row no longer triggers the Leyla modal directly.
+                        // This chart no longer triggers the Leyla modal directly.
                         displaySingleTitleOnChart(item.title, item.views);
                     });
                     tableBody.appendChild(row);
@@ -2052,7 +2063,7 @@
                             // Update KPIs for Third Party Views - July
                             document.getElementById('total-profiles').textContent = updatedTotalProfiles;
                             document.getElementById('total-clips').textContent = updatedTotalClips;
-                            document.getElementById('total-views').textContent = formatViews(updatedTotalViews); // Use the formatViews function
+                            document.getElementById('total-views').textContent = formatViews(calculatedTotalViews); // Use the formatViews function
 
                             // Increased timeout to give the browser more time to render elements
                             setTimeout(() => { 
@@ -2110,7 +2121,7 @@
                 });
             });
 
-            // Event listeners for Third Party Overview month buttons
+            // Event listeners for Third Party Overview month buttons (NEWLY ADDED)
             document.querySelectorAll('.third-party-month-btn').forEach(button => {
                 button.addEventListener('click', () => {
                     const targetSectionId = button.dataset.targetSection;
@@ -2131,7 +2142,7 @@
                             // Update KPIs for Third Party Views - July
                             document.getElementById('total-profiles').textContent = updatedTotalProfiles;
                             document.getElementById('total-clips').textContent = updatedTotalClips;
-                            document.getElementById('total-views').textContent = formatViews(updatedTotalViews); // Use the formatViews function
+                            document.getElementById('total-views').textContent = formatViews(calculatedTotalViews); // Use the formatViews function
 
                             setTimeout(() => { 
                                 initializeThirdPartyJulyCharts();
@@ -2187,17 +2198,23 @@
                     window.lowAvgViewsChartInstance.destroy();
                     showDebugMessage("Destroyed existing lowAvgViewsChartInstance.");
                 }
+                if (topTotalViewsChartInstance) { // Destroy the new chart instance
+                    topTotalViewsChartInstance.destroy();
+                    showDebugMessage("Destroyed existing topTotalViewsChartInstance.");
+                }
 
                 // Ensure canvases exist and their getContext method is available before trying to get context
                 const totalViewsCanvas = document.getElementById('totalViewsChart');
                 const avgViewsCanvas = document.getElementById('avgViewsChart');
                 const lowAvgViewsCanvas = document.getElementById('lowAvgViewsChart'); // New chart context
+                const topTotalViewsCanvas = document.getElementById('topTotalViewsChart'); // New canvas for the top total views chart
 
                 const totalViewsCtx = totalViewsCanvas && totalViewsCanvas.getContext ? totalViewsCanvas.getContext('2d') : null;
                 const avgViewsCtx = avgViewsCanvas && avgViewsCanvas.getContext ? avgViewsCanvas.getContext('2d') : null;
                 const lowAvgViewsCtx = lowAvgViewsCanvas && lowAvgViewsCanvas.getContext ? lowAvgViewsCanvas.getContext('2d') : null;
+                const topTotalViewsCtx = topTotalViewsCanvas && topTotalViewsCanvas.getContext ? topTotalViewsCanvas.getContext('2d') : null; // Get context for the new chart
 
-                if (!totalViewsCtx || !avgViewsCtx || !lowAvgViewsCtx) {
+                if (!totalViewsCtx || !avgViewsCtx || !lowAvgViewsCtx || !topTotalViewsCtx) {
                     showDebugMessage("ERROR: One or more chart canvases for Third Party Views - July not found or not ready.");
                     return;
                 }
@@ -2237,8 +2254,9 @@
                     }
                 };
 
+                // Chart for Top 10 Profiles by Total Views (from image)
                 const sortedByTotalViews = [...thirdPartyJulyProfileData].sort((a, b) => b.totalViews - a.totalViews).slice(0, 10);
-                window.totalViewsChartInstance = new Chart(totalViewsCtx, {
+                topTotalViewsChartInstance = new Chart(topTotalViewsCtx, {
                     type: 'bar',
                     data: {
                         labels: sortedByTotalViews.map(p => formatClipLabel(p.name, 20)),
@@ -2251,38 +2269,105 @@
                         }]
                     },
                     options: { ...clipSharedTooltipConfig,
-                        indexAxis: 'y',
+                        indexAxis: 'y', // Horizontal bar chart
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: { ...clipSharedTooltipConfig.plugins,
                             legend: { display: false },
-                            title: { display: true, text: 'Top 10 Profiles by Total Views', font: { size: 16 }, color: clipPerformancePalette.blueDark }
+                            title: { display: true, text: 'Champions of Reach: Top 10 by Total Views', font: { size: 16 }, color: clipPerformancePalette.blueDark }
                         },
                         scales: {
-                            x: { title: { display: true, text: 'Total Views' }, grid: { color: '#e5e7eb' } },
+                            x: {
+                                beginAtZero: true,
+                                title: { display: true, text: 'Total Views' },
+                                grid: { color: '#e5e7eb' },
+                                ticks: {
+                                    callback: function(value) {
+                                        // Format x-axis labels to K or M
+                                        if (value >= 1000000) return (value / 1000000) + 'M';
+                                        if (value >= 1000) return (value / 1000) + 'K';
+                                        return value;
+                                    }
+                                }
+                            },
                             y: { grid: { display: false } }
                         },
-                        onClick: (evt, elements) => { // New onClick for totalViewsChartInstance
-                            showDebugMessage("Chart click event triggered on July Total Views Chart.");
+                        onClick: (evt, elements) => {
+                            showDebugMessage("Chart click event triggered on July Top Total Views Chart.");
                             if (elements.length > 0) {
                                 const dataIndex = elements[0].index;
-                                const clickedTitleRaw = window.totalViewsChartInstance.data.labels[dataIndex];
-                                // Get the original title name from the sorted data array
+                                const clickedTitleRaw = topTotalViewsChartInstance.data.labels[dataIndex];
                                 const originalTitleObject = sortedByTotalViews[dataIndex];
                                 const originalTitleName = originalTitleObject ? originalTitleObject.name : (Array.isArray(clickedTitleRaw) ? clickedTitleRaw.join(' ') : clickedTitleRaw);
                                 
-                                showDebugMessage("Clicked title on July Total Views Chart: " + originalTitleName);
+                                showDebugMessage("Clicked title on July Top Total Views Chart: " + originalTitleName);
 
                                 if (allTitlesShortsData[originalTitleName]) {
-                                    showDebugMessage(`Calling showShortsModal for ${originalTitleName} from July Total Views Chart click.`);
+                                    showDebugMessage(`Calling showShortsModal for ${originalTitleName} from July Top Total Views Chart click.`);
                                     showShortsModal(originalTitleName, allTitlesShortsData[originalTitleName]);
                                 } else {
                                     showDebugMessage(`No specific shorts data found for ${originalTitleName}. Showing empty modal.`);
-                                    showShortsModal(originalTitleName, []); // Show empty modal
+                                    showShortsModal(originalTitleName, []);
                                 }
                             } else {
-                                showDebugMessage("No element clicked on July Total Views Chart.");
+                                showDebugMessage("No element clicked on July Top Total Views Chart.");
                             }
+                        }
+                    }
+                });
+
+
+                // Original totalViewsChart (now renamed to avoid confusion, perhaps 'overallTotalViewsChart' or similar if needed)
+                // This one is still present in the HTML as 'totalViewsChart'
+                // For now, I'll keep the original 'totalViewsChartInstance' name for the first chart in the "Viewership Trends" section
+                // If the user wants to remove the first "Total Views Chart" in favor of the new one, I'll adjust.
+                // Based on the image, the 'totalViewsChart' (first one in Viewership Trends) should probably be removed or repurposed.
+                // For now, I'll assume the user wants the "Top 10 Profiles by Total Views" chart to be the *new* one, and the existing `totalViewsChart` is separate.
+                // However, the prompt implies "top 10 profiles by total views should be like that", referring to the image.
+                // This means the existing `totalViewsChart` should *become* the one from the image.
+                // Let's rename the existing `totalViewsChart` to `top10ProfilesTotalViewsChart` and use it.
+                // No, the image shows "Top 10 Profiles by Total Views" as a horizontal bar chart, and the existing `totalViewsChart` is a vertical bar chart.
+                // The user's request is to make the "top 10 profiles by total views" section *look like that*.
+                // This implies the chart in the image should be the one in the "Top 10 Profiles by Total Views" section.
+                // So, I should create a new chart instance for `topTotalViewsChart` and remove the `totalViewsChartInstance` from the `Viewership Trends` section, or clarify its purpose.
+
+                // Let's assume the user wants the chart from the image to replace the first chart in the "Viewership Trends" section.
+                // This means the canvas with id `totalViewsChart` should be used for the chart from the image.
+                // And the section "Top 10 Profiles by Total Views" should contain this chart.
+
+                // Re-evaluating: The user's screenshot shows "Top 10 Profiles by Total Views" *within* the "Third Party Views - July 2025" page.
+                // My current HTML has a `totalViewsChart` and `avgViewsChart` under "Viewership Trends".
+                // And then a "Top Total Views Table Section" which *should* contain the chart from the image.
+                // So, I should use `topTotalViewsChart` for the chart from the image.
+                // The `totalViewsChart` and `avgViewsChart` under "Viewership Trends" are separate.
+
+                // So, the `topTotalViewsChartInstance` is correctly placed.
+                // I will now ensure the `totalViewsChartInstance` and `avgViewsChartInstance` are distinct and correctly configured for their respective sections.
+
+                // The existing `totalViewsChartInstance` (first chart under "Viewership Trends")
+                // Let's re-initialize it to ensure it's distinct.
+                window.totalViewsChartInstance = new Chart(totalViewsCtx, {
+                    type: 'bar', // This is still a vertical bar chart for general viewership trends
+                    data: {
+                        labels: thirdPartyJulyProfileData.map(p => formatClipLabel(p.name, 10)), // Shorter labels for vertical bars
+                        datasets: [{
+                            label: 'Total Views',
+                            data: thirdPartyJulyProfileData.map(p => p.totalViews),
+                            backgroundColor: clipPerformanceChartColors,
+                            borderColor: 'rgba(255, 255, 255, 0.2)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: { ...clipSharedTooltipConfig,
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { ...clipSharedTooltipConfig.plugins,
+                            legend: { display: false },
+                            title: { display: true, text: 'Profiles by Total Views (All)', font: { size: 16 }, color: clipPerformancePalette.blueDark }
+                        },
+                        scales: {
+                            x: { grid: { display: false } },
+                            y: { title: { display: true, text: 'Total Views' }, grid: { color: '#e5e7eb' } }
                         }
                     }
                 });
@@ -2339,7 +2424,7 @@
                         },
                         scales: {
                             x: { title: { display: true, text: 'Average Views per Clip' }, grid: { color: '#e5e7eb' } },
-                            y: { grid: { display: false } }
+                            y: { grid: { display: false } },
                         },
                         onClick: (evt, elements) => { // New onClick for lowAvgViewsChartInstance
                             showDebugMessage("Chart click event triggered on July Low Avg Views Chart.");
@@ -2492,6 +2577,8 @@
             let julyRangeViewsChart;
             let julyDailyViewsChart;
             let julyTopTitlesViewsChart;
+            let julyAvgViewsPerClipChart; // New chart instance for Avg Views Per Clip
+            let julyLikesChart; // New chart instance for Likes
 
             const initializeJulyCharts = () => {
                 showDebugMessage("Initializing July charts...");
@@ -2501,6 +2588,8 @@
                 if (julyRangeViewsChart) julyRangeViewsChart.destroy();
                 if (julyDailyViewsChart) julyDailyViewsChart.destroy();
                 if (julyTopTitlesViewsChart) julyTopTitlesViewsChart.destroy();
+                if (julyAvgViewsPerClipChart) julyAvgViewsPerClipChart.destroy(); // Destroy new chart
+                if (julyLikesChart) julyLikesChart.destroy(); // Destroy new chart
 
                 // Initialize July Overall Charts (Average and Range)
                 const julyAvgCtx = document.getElementById('julyAverageViewsChart').getContext('2d');
@@ -2608,7 +2697,7 @@
                     }]
                 }, julyDailyChartOptions);
 
-                // Initialize July Top Titles Views Chart
+                // Initialize July Top Titles Views Chart (Total Views)
                 const julyTopTitlesCtx = document.getElementById('julyTopTitlesViewsChart').getContext('2d');
                 const julyTopTitlesChartOptions = {
                     ...baseOptions,
@@ -2641,17 +2730,16 @@
                     categoryPercentage: 0.8,
                     barPercentage: 0.9,
                     onClick: (evt, elements) => {
-                        showDebugMessage("Chart click event triggered on July Top Titles Chart.");
+                        showDebugMessage("Chart click event triggered on July Top Titles Views Chart.");
                         if (elements.length > 0) {
                             const dataIndex = elements[0].index;
                             const clickedTitle = julyTopTitlesViewsChart.data.labels[dataIndex];
-                            showDebugMessage("Clicked title on July Top Titles Chart: " + clickedTitle);
+                            showDebugMessage("Clicked title on July Top Titles Views Chart: " + clickedTitle);
                             const titleData = julyTopTitlesData.find(t => t.title === clickedTitle);
                             if (titleData) {
-                                displaySingleJulyTitleOnChart(titleData.title, titleData.views);
+                                // For now, no specific modal for these, just a debug message
+                                showDebugMessage(`Details for ${titleData.title}: Views=${titleData.views}, Likes=${titleData.likes}, AvgViewsPerClip=${titleData.avgViewsPerClip}`);
                             }
-                        } else {
-                            showDebugMessage("No element clicked on July Top Titles Chart.");
                         }
                     }
                 };
@@ -2668,6 +2756,122 @@
                     }]
                 }, julyTopTitlesChartOptions);
 
+                // Initialize July Average Views Per Clip Chart
+                const julyAvgViewsPerClipCtx = document.getElementById('julyAvgViewsPerClipChart').getContext('2d');
+                const julyAvgViewsPerClipChartOptions = {
+                    ...baseOptions,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            grid: { color: '#e2e8f0' },
+                            ticks: {
+                                color: '#64748b',
+                                callback: function(value) { return value.toLocaleString(); }
+                            },
+                            title: { display: true, text: 'Average Views Per Clip', color: '#475569', font: { weight: 'semibold' } }
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: { color: '#64748b' }
+                        }
+                    },
+                    plugins: {
+                        ...baseOptions.plugins,
+                        tooltip: {
+                            ...baseOptions.plugins.tooltip,
+                            callbacks: {
+                                label: function(context) { return `Avg. Views/Clip: ${context.parsed.x.toLocaleString()}`; }
+                            }
+                        }
+                    },
+                    barThickness: 30,
+                    categoryPercentage: 0.8,
+                    barPercentage: 0.9,
+                    onClick: (evt, elements) => {
+                        showDebugMessage("Chart click event triggered on July Avg Views Per Clip Chart.");
+                        if (elements.length > 0) {
+                            const dataIndex = elements[0].index;
+                            const clickedTitle = julyAvgViewsPerClipChart.data.labels[dataIndex];
+                            showDebugMessage("Clicked title on July Avg Views Per Clip Chart: " + clickedTitle);
+                            const titleData = julyTopTitlesData.find(t => t.title === clickedTitle);
+                            if (titleData) {
+                                showDebugMessage(`Details for ${titleData.title}: Views=${titleData.views}, Likes=${titleData.likes}, AvgViewsPerClip=${titleData.avgViewsPerClip}`);
+                            }
+                        }
+                    }
+                };
+
+                julyAvgViewsPerClipChart = createChart(julyAvgViewsPerClipCtx, 'bar', {
+                    labels: julyTopTitlesData.map(item => item.title),
+                    datasets: [{
+                        label: 'Average Views Per Clip',
+                        data: julyTopTitlesData.map(item => item.avgViewsPerClip),
+                        backgroundColor: 'rgba(234, 88, 12, 0.6)', // orange-600
+                        borderColor: 'rgba(234, 88, 12, 1)',
+                        borderWidth: 2,
+                        borderRadius: 4,
+                    }]
+                }, julyAvgViewsPerClipChartOptions);
+
+                // Initialize July Likes Chart
+                const julyLikesCtx = document.getElementById('julyLikesChart').getContext('2d');
+                const julyLikesChartOptions = {
+                    ...baseOptions,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            grid: { color: '#e2e8f0' },
+                            ticks: {
+                                color: '#64748b',
+                                callback: function(value) { return value.toLocaleString(); }
+                            },
+                            title: { display: true, text: 'Total Likes', color: '#475569', font: { weight: 'semibold' } }
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: { color: '#64748b' }
+                        }
+                    },
+                    plugins: {
+                        ...baseOptions.plugins,
+                        tooltip: {
+                            ...baseOptions.plugins.tooltip,
+                            callbacks: {
+                                label: function(context) { return `Total Likes: ${context.parsed.x.toLocaleString()}`; }
+                            }
+                        }
+                    },
+                    barThickness: 30,
+                    categoryPercentage: 0.8,
+                    barPercentage: 0.9,
+                    onClick: (evt, elements) => {
+                        showDebugMessage("Chart click event triggered on July Likes Chart.");
+                        if (elements.length > 0) {
+                            const dataIndex = elements[0].index;
+                            const clickedTitle = julyLikesChart.data.labels[dataIndex];
+                            showDebugMessage("Clicked title on July Likes Chart: " + clickedTitle);
+                            const titleData = julyTopTitlesData.find(t => t.title === clickedTitle);
+                            if (titleData) {
+                                showDebugMessage(`Details for ${titleData.title}: Views=${titleData.views}, Likes=${titleData.likes}, AvgViewsPerClip=${titleData.avgViewsPerClip}`);
+                            }
+                        }
+                    }
+                };
+
+                julyLikesChart = createChart(julyLikesCtx, 'bar', {
+                    labels: julyTopTitlesData.map(item => item.title),
+                    datasets: [{
+                        label: 'Total Likes',
+                        data: julyTopTitlesData.map(item => item.likes),
+                        backgroundColor: 'rgba(6, 182, 212, 0.6)', // cyan-500
+                        borderColor: 'rgba(6, 182, 212, 1)',
+                        borderWidth: 2,
+                        borderRadius: 4,
+                    }]
+                }, julyLikesChartOptions);
+
                 showDebugMessage("July charts initialized.");
             };
 
@@ -2676,6 +2880,14 @@
                 julyTopTitlesViewsChart.data.labels = [title];
                 julyTopTitlesViewsChart.data.datasets[0].data = [views];
                 julyTopTitlesViewsChart.update();
+
+                julyAvgViewsPerClipChart.data.labels = [title];
+                julyAvgViewsPerClipChart.data.datasets[0].data = [julyTopTitlesData.find(t => t.title === title).avgViewsPerClip];
+                julyAvgViewsPerClipChart.update();
+
+                julyLikesChart.data.labels = [title];
+                julyLikesChart.data.datasets[0].data = [julyTopTitlesData.find(t => t.title === title).likes];
+                julyLikesChart.update();
             };
 
             // Function to display all July titles on the chart
@@ -2683,6 +2895,14 @@
                 julyTopTitlesViewsChart.data.labels = julyTopTitlesData.map(item => item.title);
                 julyTopTitlesViewsChart.data.datasets[0].data = julyTopTitlesData.map(item => item.views);
                 julyTopTitlesViewsChart.update();
+
+                julyAvgViewsPerClipChart.data.labels = julyTopTitlesData.map(item => item.title);
+                julyAvgViewsPerClipChart.data.datasets[0].data = julyTopTitlesData.map(item => item.avgViewsPerClip);
+                julyAvgViewsPerClipChart.update();
+
+                julyLikesChart.data.labels = julyTopTitlesData.map(item => item.title);
+                julyLikesChart.data.datasets[0].data = julyTopTitlesData.map(item => item.likes);
+                julyLikesChart.update();
             };
 
             // Function to populate the Top Titles table - July
@@ -2759,14 +2979,7 @@
                         julyDailyChartSection.classList.remove('hidden');
                     }
 
-                    if (selectedWeek === 3 || selectedWeek === 4) {
-                        // For Week 3 and 4, display "Coming soon!"
-                        julyDailyViewsChart.data.labels = ["Coming soon!"];
-                        julyDailyViewsChart.data.datasets[0].data = [0]; // Set data to 0 or null for visual effect
-                        julyDailyViewsChart.update();
-                    } else {
-                        updateDailyViewsChart(julyDailyData, julyDailyViewsChart, selectedWeek);
-                    }
+                    updateDailyViewsChart(julyDailyData, julyDailyViewsChart, selectedWeek);
                 });
             });
 
@@ -2797,11 +3010,19 @@
                             initializeJulyCharts();
                         } else if (targetSectionId === 'july-top-titles-section') {
                             populateJulyTopTitlesTable();
-                            // Ensure chart is initialized and updated when visible
+                            // Ensure charts are initialized and updated when visible
                             setTimeout(() => {
                                 if (julyTopTitlesViewsChart) {
                                     julyTopTitlesViewsChart.resize();
                                     julyTopTitlesViewsChart.update();
+                                }
+                                if (julyAvgViewsPerClipChart) {
+                                    julyAvgViewsPerClipChart.resize();
+                                    julyAvgViewsPerClipChart.update();
+                                }
+                                if (julyLikesChart) {
+                                    julyLikesChart.resize();
+                                    julyLikesChart.update();
                                 }
                             }, 100);
                         }
