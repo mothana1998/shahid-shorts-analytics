@@ -129,6 +129,8 @@
         .kpi-card.total-profiles p:first-child { color: #0a9396; }
         .kpi-card.total-clips p:first-child { color: #ee9b00; }
         .kpi-card.total-views p:first-child { color: #ae2012; }
+        .kpi-card.total-watched-clicks p:first-child { color: #4f46e5; } /* indigo-600 */
+
 
         .recommendation-card {
             background-color: white;
@@ -730,18 +732,22 @@
                     <!-- Overall KPIs -->
                     <section class="mb-8 md:mb-12">
                         <h2 class="clip-performance-section-title">Overall Performance Metrics</h2>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                             <div class="kpi-card total-profiles">
-                                <p id="total-profiles">40</p>
+                                <p id="total-profiles">45</p>
                                 <p>Total Profiles</p>
                             </div>
                             <div class="kpi-card total-clips">
-                                <p id="total-clips">544</p>
+                                <p id="total-clips">1380</p>
                                 <p>Total Clips</p>
                             </div>
                             <div class="kpi-card total-views">
-                                <p id="total-views">1.38M+</p>
+                                <p id="total-views">3.5M</p>
                                 <p>Total Views</p>
+                            </div>
+                             <div class="kpi-card total-watched-clicks">
+                                <p id="total-watched-clicks">10.1K</p>
+                                <p>Total Watched Clicks</p>
                             </div>
                         </div>
                     </section>
@@ -1026,7 +1032,7 @@
                     { title: "مواجهة سيبنان و سيران ❤️", views: 6582 },
                     { title: "اول ليلة لسيبنان و سيران ❤️", views: 14468 },
                     { title: "سيبنان بده يبعد مع سيران 💔", views: 7119 },
-                    { title: "فريد بيتذكر الماضي �", views: 7529 },
+                    { title: "فريد بيتذكر الماضي ", views: 7529 },
                     { title: "الضغط كبير عليها 😥 #شاهد #دراما #فريد", views: 5307 },
                     { title: "فرحة المولود الجديد 👶", views: 4469 },
                     { title: "فريد كسر قلبها 💔", views: 3883 },
@@ -1366,10 +1372,10 @@
                 item.avgViews = item.clips > 0 ? item.totalViews / item.clips : 0;
             });
 
-            const updatedTotalProfiles = 40;
-            const updatedTotalClips = 544;
-            // Sum total views from the provided thirdPartyJulyProfileData
-            const calculatedTotalViews = thirdPartyJulyProfileData.reduce((sum, item) => sum + item.totalViews, 0);
+            const updatedTotalProfiles = 45;
+            const updatedTotalClips = 1380;
+            const updatedTotalViews = 3500000; // 3.5M
+            const updatedTotalWatchedClicks = 10100; // 10.1K
 
 
             // July Daily Data - UPDATED WITH NEW DATA FROM IMAGE
@@ -1425,9 +1431,9 @@
             // Helper function to format large numbers
             function formatViews(views) {
                 if (views >= 1000000) {
-                    return (views / 1000000).toFixed(2) + 'M+';
+                    return (views / 1000000).toFixed(1) + 'M';
                 } else if (views >= 1000) {
-                    return (views / 1000).toFixed(1) + 'K+';
+                    return (views / 1000).toFixed(1) + 'K';
                 }
                 return views.toLocaleString();
             }
@@ -1570,6 +1576,7 @@
                     
                     const recommendations = document.querySelectorAll('.accordion-item');
                     recommendations.forEach(rec => {
+                        rec.classList.remove('highlight'); // Remove highlight from all
                         const recDays = rec.dataset.day.split(',');
                         if (recDays.includes(targetDayFull)) {
                             rec.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -2063,7 +2070,8 @@
                             // Update KPIs for Third Party Views - July
                             document.getElementById('total-profiles').textContent = updatedTotalProfiles;
                             document.getElementById('total-clips').textContent = updatedTotalClips;
-                            document.getElementById('total-views').textContent = formatViews(calculatedTotalViews); // Use the formatViews function
+                            document.getElementById('total-views').textContent = formatViews(updatedTotalViews); // Use the formatViews function
+                            document.getElementById('total-watched-clicks').textContent = formatViews(updatedTotalWatchedClicks); // New KPI
 
                             // Increased timeout to give the browser more time to render elements
                             setTimeout(() => { 
@@ -2142,7 +2150,8 @@
                             // Update KPIs for Third Party Views - July
                             document.getElementById('total-profiles').textContent = updatedTotalProfiles;
                             document.getElementById('total-clips').textContent = updatedTotalClips;
-                            document.getElementById('total-views').textContent = formatViews(calculatedTotalViews); // Use the formatViews function
+                            document.getElementById('total-views').textContent = formatViews(updatedTotalViews); // Use the formatViews function
+                            document.getElementById('total-watched-clicks').textContent = formatViews(updatedTotalWatchedClicks); // New KPI
 
                             setTimeout(() => { 
                                 initializeThirdPartyJulyCharts();
@@ -2330,10 +2339,6 @@
                 // The user's request is to make the "top 10 profiles by total views" section *look like that*.
                 // This implies the chart in the image should be the one in the "Top 10 Profiles by Total Views" section.
                 // So, I should create a new chart instance for `topTotalViewsChart` and remove the `totalViewsChartInstance` from the `Viewership Trends` section, or clarify its purpose.
-
-                // Let's assume the user wants the chart from the image to replace the first chart in the "Viewership Trends" section.
-                // This means the canvas with id `totalViewsChart` should be used for the chart from the image.
-                // And the section "Top 10 Profiles by Total Views" should contain this chart.
 
                 // Re-evaluating: The user's screenshot shows "Top 10 Profiles by Total Views" *within* the "Third Party Views - July 2025" page.
                 // My current HTML has a `totalViewsChart` and `avgViewsChart` under "Viewership Trends".
@@ -3176,4 +3181,3 @@
     </script>
 </body>
 </html>
-�
