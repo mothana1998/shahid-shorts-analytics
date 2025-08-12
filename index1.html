@@ -1,531 +1,517 @@
-import { useState, useEffect, useMemo } from 'react';
-import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer,
-  RadialBarChart, RadialBar, PolarAngleAxis, Cell
-} from 'recharts';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clips & Profiles Analytics Dashboard</title>
 
-// NOTE: The data below is a placeholder because the provided image was not readable.
-// Please provide the 1333 rows of data in a clear format (e.g., CSV, plain text),
-// and this array will be updated with your actual clip information.
-const allData = [
-  { title: "Layla", profiles: 108, total_views: 1283406, total_watched_clicked: 19508, total_likes: 3955, total_comments: 781, total_shares: 138 },
-  { title: "Feresd Season 3", profiles: 39, total_views: 325314, total_watched_clicked: 5005, total_likes: 848, total_comments: 64, total_shares: 26 },
-  { title: "Zawia Wahda La Td&S Season 1", profiles: 30, total_views: 135782, total_watched_clicked: 997, total_likes: 362, total_comments: 39, total_shares: 14 },
-  { title: "Al Ameel", profiles: 39, total_views: 114719, total_watched_clicked: 1373, total_likes: 202, total_comments: 24, total_shares: 13 },
-  { title: "Qalam Rasas Season 1", profiles: 19, total_views: 113806, total_watched_clicked: 804, total_likes: 241, total_comments: 19, total_shares: 14 },
-  { title: "Min Biurr Al Haram El.. Season 1", profiles: 52, total_views: 107690, total_watched_clicked: 760, total_likes: 342, total_comments: 29, total_shares: 14 },
-  { title: "Kollow Iyal Qarya", profiles: 32, total_views: 90011, total_watched_clicked: 462, total_likes: 168, total_comments: 22, total_shares: 13 },
-  { title: "Waq Aab Season 1", profiles: 15, total_views: 88055, total_watched_clicked: 520, total_likes: 139, total_comments: 6, total_shares: 11 },
-  { title: "Al Qadar", profiles: 44, total_views: 86075, total_watched_clicked: 600, total_likes: 256, total_comments: 4, total_shares: 13 },
-  { title: "Dananat Al Thanawi", profiles: 38, total_views: 74535, total_watched_clicked: 682, total_likes: 298, total_comments: 62, total_shares: 6 },
-  { title: "Mama Ghaeneena Season 1", profiles: 26, total_views: 63489, total_watched_clicked: 450, total_likes: 213, total_comments: 19, total_shares: 6 },
-  { title: "Lil Mawl", profiles: 35, total_views: 62196, total_watched_clicked: 405, total_likes: 180, total_comments: 7, total_shares: 8 },
-  { title: "Big Time Podcast Season 1", profiles: 42, total_views: 62187, total_watched_clicked: 193, total_likes: 118, total_comments: 12, total_shares: 3 },
-  { title: "Kermal Al Walad", profiles: 25, total_views: 59883, total_watched_clicked: 370, total_likes: 96, total_comments: 10, total_shares: 9 },
-  { title: "Al Khaen", profiles: 37, total_views: 58617, total_watched_clicked: 405, total_likes: 162, total_comments: 13, total_shares: 2 },
-  { title: "Shatti Ya Beirut", profiles: 47, total_views: 55048, total_watched_clicked: 563, total_likes: 103, total_comments: 2, total_shares: 2 },
-  { title: "My Grandfather's Museum Season 1", profiles: 21, total_views: 49999, total_watched_clicked: 341, total_likes: 114, total_comments: 9, total_shares: 7 },
-  { title: "Melh Wa Samra Season 1", profiles: 44, total_views: 47811, total_watched_clicked: 251, total_likes: 174, total_comments: 10, total_shares: 6 },
-  { title: "Sikkat Safar Season 1", profiles: 33, total_views: 47427, total_watched_clicked: 417, total_likes: 136, total_comments: 21, total_shares: 2 },
-  { title: "Beyt Al Ankaboot Season 1", profiles: 42, total_views: 45511, total_watched_clicked: 292, total_likes: 361, total_comments: 17, total_shares: 5 },
-  { title: "Awdat Khalati Season 1", profiles: 43, total_views: 44889, total_watched_clicked: 237, total_likes: 128, total_comments: 1, total_shares: 8 },
-  { title: "Ahla Ma Tash Season 1", profiles: 28, total_views: 44221, total_watched_clicked: 279, total_likes: 75, total_comments: 2, total_shares: 5 },
-  { title: "Qasr El Omda", profiles: 38, total_views: 42536, total_watched_clicked: 435, total_likes: 138, total_comments: 5, total_shares: 8 },
-  { title: "Al Khotba Baa Season 1", profiles: 33, total_views: 41253, total_watched_clicked: 415, total_likes: 92, total_comments: 13, total_shares: 8 },
-  { title: "The Assassins", profiles: 42, total_views: 38489, total_watched_clicked: 202, total_likes: 120, total_comments: 3, total_shares: 5 },
-  { title: "Mofaraq Toroq Season 1", profiles: 41, total_views: 38199, total_watched_clicked: 247, total_likes: 86, total_comments: 5, total_shares: 4 },
-  { title: "Al Eawa Season 1", profiles: 29, total_views: 38182, total_watched_clicked: 297, total_likes: 150, total_comments: 7, total_shares: 11 },
-  { title: "Salon Zahra Season 2", profiles: 19, total_views: 34328, total_watched_clicked: 301, total_likes: 95, total_comments: 12, total_shares: 5 },
-  { title: "Amr Ikhlas Season 3", profiles: 33, total_views: 34044, total_watched_clicked: 335, total_likes: 178, total_comments: 35, total_shares: 3 },
-  { title: "Al Meeraath Season 2022", profiles: 38, total_views: 33642, total_watched_clicked: 177, total_likes: 65, total_comments: 3, total_shares: 4 },
-  { title: "Al La'ban' Level Al Wahsh", profiles: 45, total_views: 29988, total_watched_clicked: 199, total_likes: 75, total_comments: 12, total_shares: 1 },
-  { title: "Khwatty Ghanaty Season 1", profiles: 15, total_views: 29283, total_watched_clicked: 135, total_likes: 85, total_comments: 13, total_shares: 3 },
-  { title: "MotorShow Documentaries", profiles: 3, total_views: 18342, total_watched_clicked: 76, total_likes: 28, total_comments: 1, total_shares: 4 },
-  { title: "Al Haybaa", profiles: 14, total_views: 15729, total_watched_clicked: 274, total_likes: 70, total_comments: 2, total_shares: 5 },
-  { title: "Bab Al Hara", profiles: 20, total_views: 14881, total_watched_clicked: 138, total_likes: 53, total_comments: 2, total_shares: 2 },
-  { title: "Ragel We Set Settat Season 1", profiles: 30, total_views: 13708, total_watched_clicked: 154, total_likes: 33, total_comments: 0, total_shares: 1 },
-  { title: "Wlad Bada'a Season 1", profiles: 32, total_views: 13158, total_watched_clicked: 82, total_likes: 26, total_comments: 1, total_shares: 0 },
-  { title: "Top Chef Season 8", profiles: 5, total_views: 11421, total_watched_clicked: 118, total_likes: 30, total_comments: 7, total_shares: 1 },
-  { title: "Horooj", profiles: 13, total_views: 11400, total_watched_clicked: 113, total_likes: 44, total_comments: 3, total_shares: 2 },
-  { title: "The Master", profiles: 12, total_views: 9590, total_watched_clicked: 94, total_likes: 27, total_comments: 1, total_shares: 1 },
-  { title: "Bim Al Sharika Al Amaniya Li Moka", profiles: 5, total_views: 4657, total_watched_clicked: 64, total_likes: 17, total_comments: 0, total_shares: 0 },
-  { title: "Taj", profiles: 5, total_views: 2992, total_watched_clicked: 11, total_likes: 7, total_comments: 0, total_shares: 0 },
-  { title: "Tasht Al Awda Season 19", profiles: 16, total_views: 2108, total_watched_clicked: 14, total_likes: 19, total_comments: 0, total_shares: 0 },
-  { title: "El Atawfa", profiles: 3, total_views: 1805, total_watched_clicked: 7, total_likes: 7, total_comments: 0, total_shares: 0 },
-  { title: "Ala Ma Tash Season 1", profiles: 3, total_views: 542, total_watched_clicked: 7, total_likes: 6, total_comments: 0, total_shares: 0 }
-];
+    <!-- Load the Tailwind CSS library for a modern, responsive design -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-const COLORS = ['#059669', '#10B981', '#34D399', '#6EE7B7', '#A7F3D0'];
+    <!-- Load the Chart.js library to create dynamic charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-// Reformat data for chart labels
-const chartData = allData.map(item => ({
-  ...item,
-  name: item.title, // Use 'name' for recharts
-}));
-
-// Custom Card components to replace shadcn/ui
-const Card = ({ children, className = '' }) => (
-  <div className={`rounded-xl shadow-lg p-6 bg-white border border-gray-200 ${className}`}>
-    {children}
-  </div>
-);
-
-const CardHeader = ({ children, className = '' }) => (
-  <div className={`flex flex-row items-center justify-between pb-4 border-b border-gray-200 mb-4 ${className}`}>
-    {children}
-  </div>
-);
-
-const CardTitle = ({ children, className = '' }) => (
-  <h3 className={`text-lg font-bold text-gray-900 ${className}`}>
-    {children}
-  </h3>
-);
-
-const CardContent = ({ children, className = '' }) => (
-  <div className={`w-full ${className}`}>
-    {children}
-  </div>
-);
-
-const StatsCard = ({ title, value, icon, onClick }) => (
-    <div
-        className="bg-white p-6 rounded-xl shadow-md flex items-center justify-between border border-gray-200 cursor-pointer transition-all duration-300 hover:shadow-xl"
-        onClick={onClick}
-    >
-        <div>
-            <h3 className="text-sm font-semibold text-gray-500 uppercase">{title}</h3>
-            <p className="mt-1 text-2xl font-bold text-gray-900">{value}</p>
-        </div>
-        <div className="text-emerald-600">{icon}</div>
-    </div>
-);
-
-const App = () => {
-  const [totals, setTotals] = useState({
-    totalClips: 0,
-    totalProfiles: 0,
-    totalViews: 0,
-    totalWatchedClicked: 0
-  });
-
-  const [charts, setCharts] = useState({
-    top10ProfilesViews: [],
-    top10TitlesWatchedClicked: [],
-  });
-
-  const [insights, setInsights] = useState([]);
-  const [showViewsModal, setShowViewsModal] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortConfig, setSortConfig] = useState({ key: 'total_views', direction: 'descending' });
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-
-  useEffect(() => {
-    // Calculate total metrics from the parsed data
-    const totalClips = allData.reduce((acc, curr) => acc + curr.profiles, 0);
-    const totalProfiles = allData.length;
-    const totalViews = allData.reduce((acc, curr) => acc + curr.total_views, 0);
-    const totalWatchedClicked = allData.reduce((acc, curr) => acc + curr.total_watched_clicked, 0);
-    setTotals({ totalClips, totalProfiles, totalViews, totalWatchedClicked });
-
-    // Prepare data for charts
-    const sortedByViews = [...chartData].sort((a, b) => b.total_views - a.total_views);
-    const top10ProfilesViews = sortedByViews.slice(0, 10);
-
-    const sortedByWatchedClicked = [...chartData].sort((a, b) => b.total_watched_clicked - a.total_watched_clicked);
-    const top10TitlesWatchedClicked = sortedByWatchedClicked.slice(0, 10);
-
-    const dataWithMetrics = chartData.map(item => ({
-        ...item,
-        avg_views_per_profile: item.profiles > 0 ? item.total_views / item.profiles : 0,
-        engagement_rate: item.total_views > 0 ? (item.total_watched_clicked / item.total_views) * 100 : 0,
-        name: item.title,
-    }));
-
-    const sortedByAvgViews = [...dataWithMetrics].sort((a, b) => b.avg_views_per_profile - a.avg_views_per_profile);
-    const top10ProfilesAvgViews = sortedByAvgViews.slice(0, 10);
-
-    const sortedByEngagementRate = [...dataWithMetrics].sort((a, b) => b.engagement_rate - a.engagement_rate);
-    const top5ByEngagement = sortedByEngagementRate.filter(item => item.total_views > 1000).slice(0, 5); // Filter for meaningful data
-
-    setCharts({
-      top10ProfilesViews,
-      top10TitlesWatchedClicked,
-    });
-
-    // Generate more detailed insights
-    const topPerformer = top10ProfilesViews[0];
-    const topEngagement = top5ByEngagement[0];
-    const highestViewPerProfile = top10ProfilesAvgViews[0];
-
-    const totalEngagementRate = (totalWatchedClicked / totalViews) * 100;
-
-    const generatedInsights = [
-      `Dominant Performance: The show "${topPerformer.title}" is the undisputed leader in raw numbers, with an outstanding ${topPerformer.total_views.toLocaleString()} total views and ${topPerformer.total_watched_clicked.toLocaleString()} watched clicks. This indicates a high level of overall popularity.`,
-      `High-Impact Content: "Layla" also leads in average views per profile, with ${highestViewPerProfile.avg_views_per_profile.toFixed(0)} views per clip. This suggests its individual pieces of content are highly effective at attracting viewers.`,
-      `Strongest Engagement: While not the most viewed, "${topEngagement.title}" shows the strongest user connection with an impressive engagement rate of ${topEngagement.engagement_rate.toFixed(2)}% (Watched Clicks per View). This is significantly higher than the overall average of ${totalEngagementRate.toFixed(2)}%, suggesting a very dedicated audience.`,
-      `Long-Tail Content: Many shows with fewer total views, like "The Master" and "Horooj", also show high engagement rates. This indicates that while their reach is smaller, their content is resonating deeply with their niche audience.`,
-      `Actionable Data: Focusing on titles with high engagement rates, even with lower view counts, could reveal opportunities for cross-promotion or new content strategies to grow these highly-connected audiences.`,
-    ];
-    setInsights(generatedInsights);
-
-  }, []);
-
-  const sortedData = useMemo(() => {
-    let sortableItems = [...allData];
-
-    // Filter based on search query
-    if (searchQuery) {
-        sortableItems = sortableItems.filter(item =>
-            Object.values(item).some(value =>
-                String(value).toLowerCase().includes(searchQuery.toLowerCase())
-            )
-        );
-    }
-
-    // Sort based on sort config
-    if (sortConfig.key) {
-      sortableItems.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? -1 : 1;
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? 1 : -1;
-        }
-        return 0;
-      });
-    }
-    return sortableItems;
-  }, [allData, searchQuery, sortConfig]);
-  
-  // Pagination logic
-  const totalPages = Math.ceil(sortedData.length / itemsPerPage);
-  const currentData = sortedData.slice(
-      (currentPage - 1) * itemsPerPage,
-      currentPage * itemsPerPage
-  );
-
-  const requestSort = (key) => {
-    let direction = 'ascending';
-    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending';
-    }
-    setSortConfig({ key, direction });
-    setCurrentPage(1); // Reset to first page on new sort
-  };
-
-  const getSortIcon = (key) => {
-    if (sortConfig.key !== key) {
-        return null; // or a default icon
-    }
-    return sortConfig.direction === 'ascending' ? '▲' : '▼';
-  };
-
-  const formatNumber = (num) => {
-    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
-    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
-    return num;
-  };
-
-  const handleViewsClick = () => {
-    setShowViewsModal(true);
-  };
-
-  const headers = [
-    { key: 'title', label: 'Title' },
-    { key: 'profiles', label: 'Profiles' },
-    { key: 'total_views', label: 'Views' },
-    { key: 'total_watched_clicked', label: 'Watched Clicks' },
-    { key: 'total_likes', label: 'Likes' },
-    { key: 'total_comments', label: 'Comments' },
-    { key: 'total_shares', label: 'Shares' },
-  ];
-
-  const handlePageChange = (newPage) => {
-      if (newPage >= 1 && newPage <= totalPages) {
-          setCurrentPage(newPage);
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
       }
-  };
-
-  return (
-    <div className="bg-gray-50 min-h-screen p-4 sm:p-8 font-sans antialiased text-gray-800">
-      <script src="https://cdn.tailwindcss.com"></script>
-      <div className="container mx-auto max-w-7xl">
-        <header className="mb-8">
+      /* Custom styles for the cards and layout */
+      .card {
+        @apply bg-white rounded-xl shadow-lg p-6 border border-gray-200;
+      }
+      .card-header {
+        @apply flex flex-row items-center justify-between pb-4 mb-4 border-b border-gray-200;
+      }
+      .card-title {
+        @apply text-lg font-bold text-gray-900;
+      }
+      .stats-card {
+        @apply bg-white p-6 rounded-xl shadow-md flex items-center justify-between border border-gray-200;
+      }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased min-h-screen p-4 sm:p-8">
+    <div class="container mx-auto max-w-7xl">
+        <header class="mb-8">
             <img
                 src="https://placehold.co/1200x200/059669/ffffff?text=Data+Visualization+Dashboard"
                 alt="A professional data visualization banner"
-                className="w-full h-48 object-cover rounded-xl shadow-lg"
+                class="w-full h-48 object-cover rounded-xl shadow-lg"
             />
-            <div className="mt-8 text-center">
-                <h1 className="text-4xl font-extrabold text-gray-900">
+            <div class="mt-8 text-center">
+                <h1 class="text-4xl font-extrabold text-gray-900">
                     Clips & Profiles Analytics
                 </h1>
-                <p className="mt-2 text-lg text-gray-500">
+                <p class="mt-2 text-lg text-gray-500">
                     Comprehensive overview of content performance
                 </p>
             </div>
         </header>
 
-        {/* Key Metrics Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <StatsCard
-            title="Total Clips"
-            value={totals.totalClips.toLocaleString()}
-            icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 18a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h4l2 3h4a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2z" /></svg>}
-          />
-          <StatsCard
-            title="Total Profiles"
-            value={totals.totalProfiles.toLocaleString()}
-            icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" /></svg>}
-          />
-          <StatsCard
-            title="Total Views"
-            value={formatNumber(totals.totalViews)}
-            icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" /><circle cx="12" cy="12" r="3" /></svg>}
-            onClick={handleViewsClick}
-          />
-          <StatsCard
-            title="Watched Clicks"
-            value={totals.totalWatchedClicked.toLocaleString()}
-            icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>}
-          />
+        <!-- Key Metrics Section -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <div class="stats-card">
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase">Total Clips</h3>
+                    <p class="mt-1 text-2xl font-bold text-gray-900">1,333</p>
+                </div>
+                <div class="text-emerald-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h4l2 3h4a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2z" /></svg>
+                </div>
+            </div>
+            <div class="stats-card">
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase">Total Profiles</h3>
+                    <p class="mt-1 text-2xl font-bold text-gray-900">45</p>
+                </div>
+                <div class="text-emerald-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+                </div>
+            </div>
+            <div class="stats-card">
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase">Total Views</h3>
+                    <p class="mt-1 text-2xl font-bold text-gray-900">3.3M</p>
+                </div>
+                <div class="text-emerald-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" /><circle cx="12" cy="12" r="3" /></svg>
+                </div>
+            </div>
+            <div class="stats-card">
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase">Watched Clicks</h3>
+                    <p class="mt-1 text-2xl font-bold text-gray-900">38,325</p>
+                </div>
+                <div class="text-emerald-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                </div>
+            </div>
         </div>
 
-        {/* Insights & Total Views Chart Section (stacked) */}
-        <div className="grid grid-cols-1 gap-6 mb-12">
-          {/* Insights Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Key Insights</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ul className="list-disc list-inside space-y-4 text-gray-700">
-                {insights.map((insight, index) => (
-                  <li key={index} className="text-sm">
-                    {insight}
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-          {/* Total Views Chart */}
-          <Card className="flex flex-col justify-center items-center">
-            <CardHeader>
-              <CardTitle>Total Views Distribution</CardTitle>
-            </CardHeader>
-            <CardContent className="h-80 flex items-center justify-center">
-              <ResponsiveContainer width="70%" height="100%">
-                <RadialBarChart innerRadius="70%" outerRadius="90%" data={[{ name: "Total Views", value: totals.totalViews / 1000000, fill: "#059669" }]} startAngle={90} endAngle={-270}>
-                  <PolarAngleAxis type="number" domain={[0, 1.3]} tick={false} />
-                  <RadialBar background dataKey="value" />
-                  <Tooltip formatter={(value) => [`${(value * 1000000).toLocaleString()}`, 'Total Views']} />
-                  <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="text-4xl font-bold fill-current text-gray-900">
-                    {formatNumber(totals.totalViews)}
-                  </text>
-                </RadialBarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+            <!-- Top 10 Total Views Chart -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Top 10 Profiles by Total Views</h2>
+                </div>
+                <canvas id="topViewsChart"></canvas>
+            </div>
+            <!-- Average Views Per Clip Chart -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Average Views Per Clip</h2>
+                </div>
+                <canvas id="avgViewsChart"></canvas>
+            </div>
+            <!-- Top 10 Watched Clicks Chart -->
+            <div class="card lg:col-span-2">
+                <div class="card-header">
+                    <h2 class="card-title">Top 10 Profiles by Watched Clicks</h2>
+                </div>
+                <canvas id="watchedClicksChart"></canvas>
+            </div>
         </div>
 
-        {/* Tables & Bar Charts Section (stacked) */}
-        <div className="grid grid-cols-1 gap-6 mb-12">
-          {/* Top 10 Profiles by Total Views Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Top 10 Profiles by Total Views</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Views</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {charts.top10ProfilesViews.map((item, index) => (
-                      <tr key={index}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{index + 1}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.title}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">{item.total_views.toLocaleString()}</td>
-                      </tr>
-                    ))}
-                  </tbody>
+        <!-- Tables Section - back to back -->
+        <!-- Top 10 Profiles by Total Views Table -->
+        <div class="card mb-6">
+            <div class="card-header">
+                <h2 class="card-title">Top 10 Profiles by Total Views</h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Clips</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Views</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Watched Clicks</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <!-- Top 10 data from the original list -->
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">1</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Leyla</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">108</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">1,283,406</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">19,508</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">2</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Fareed Season 3</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">39</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">325,314</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">5,005</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">3</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Zawja Waheda La Takfi Season 1</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">30</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">135,782</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">997</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">4</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Al Ameel</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">39</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">114,719</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">1,373</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">5</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Qalam Rasas Season 1</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">19</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">113,806</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">804</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">6</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Min Share’ Al Haram Ela... Season 1</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">52</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">107,690</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">760</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">7</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Kollona Iyal Qrayya</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">32</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">90,011</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">462</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">8</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Haq Arab Season 1</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">15</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">88,055</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">520</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">9</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Al Qadar</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">44</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">86,075</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">600</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">10</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">Banat Al Thanawi</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">38</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">74,535</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">682</td>
+                        </tr>
+                    </tbody>
                 </table>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+        </div>
 
-          {/* Top 10 Profiles by Total Views Bar Chart */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Top 10 Profiles by Total Views</CardTitle>
-            </CardHeader>
-            <CardContent className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={charts.top10ProfilesViews} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                  <XAxis dataKey="name" interval={0} angle={-45} textAnchor="end" height={80} style={{ fontSize: '10px', fill: '#6B7280' }} />
-                  <YAxis style={{ fill: '#6B7280' }} />
-                  <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }} itemStyle={{ color: '#4B5563' }} formatter={(value) => value.toLocaleString()} />
-                  <Legend />
-                  <Bar dataKey="total_views" name="Total Views">
-                    {charts.top10ProfilesViews.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+        <!-- New location for Bottom 10 Profiles by Total Views Chart -->
+        <div class="card mb-6">
+            <div class="card-header">
+                <h2 class="card-title">Bottom 10 Profiles by Total Views</h2>
+            </div>
+            <canvas id="bottomViewsChart"></canvas>
+        </div>
 
-          {/* Top 10 Watched Clicks Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Top 10 Titles by Watched Clicks</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Watched Clicks</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {charts.top10TitlesWatchedClicked.map((item, index) => (
-                      <tr key={index}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{index + 1}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.title}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">{item.total_watched_clicked.toLocaleString()}</td>
-                      </tr>
-                    ))}
-                  </tbody>
+        <!-- Bottom 10 Profiles by Total Views Table -->
+        <div class="card mb-12">
+            <div class="card-header">
+                <h2 class="card-title">Bottom 10 Profiles by Total Views</h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Clips</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Views</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Watched Clicks</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <!-- Updated data for the bottom 10 profiles -->
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">1</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Ragel We Set Settat Season 1</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">30</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">13,708</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">154</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">2</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Wlad Badee'a Season 1</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">32</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">13,158</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">82</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">3</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Top Chef Season 8</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">5</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">11,421</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">118</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">4</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Horouj</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">13</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">11,400</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">113</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">5</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">The Master</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">12</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">9,590</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">94</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">6</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Gamgoum Wa Bimbim: Al Sharika Al Almaniya Li Mokafahat Al Khawareq</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">5</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">4,657</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">64</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">7</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Taj</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">5</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">2,992</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">11</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">8</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Tash: Al Awda Season 19</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">16</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">2,108</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">14</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">9</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">El Atawla</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">3</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">1,805</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">48</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">10</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">Aa Amal Season 1</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">3</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">542</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-right">7</td>
+                        </tr>
+                    </tbody>
                 </table>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Top 10 Profiles by Watched Clicked Bar Chart */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Top 10 Watched Clicks</CardTitle>
-            </CardHeader>
-            <CardContent className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={charts.top10TitlesWatchedClicked} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                  <XAxis dataKey="name" interval={0} angle={-45} textAnchor="end" height={80} style={{ fontSize: '10px', fill: '#6B7280' }} />
-                  <YAxis style={{ fill: '#6B7280' }} />
-                  <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }} itemStyle={{ color: '#4B5563' }} formatter={(value) => value.toLocaleString()} />
-                  <Legend />
-                  <Bar dataKey="total_watched_clicked" name="Watched Clicks">
-                    {charts.top10TitlesWatchedClicked.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+            </div>
         </div>
-      </div>
 
-      {/* Total Views Data Modal */}
-      {showViewsModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
-          <div className="relative p-8 w-11/12 md:w-3/4 lg:w-2/3 max-h-4/5 bg-white rounded-xl shadow-lg overflow-y-auto">
-            <button
-              onClick={() => setShowViewsModal(false)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-900 transition-colors"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-            <h2 className="text-2xl font-bold mb-4 text-gray-900">Total Views Data</h2>
+        <!-- New card for Insights and Analysis -->
+        <div class="card mb-12">
+            <h2 class="text-xl font-bold text-gray-900 border-b border-gray-200 pb-4 mb-4">Strategy and Insights</h2>
 
-            <div className="mb-4">
-              <input
-                type="text"
-                placeholder="Search..."
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-colors"
-                value={searchQuery}
-                onChange={(e) => {
-                    setSearchQuery(e.target.value);
-                    setCurrentPage(1); // Reset to first page on search
-                }}
-              />
-            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mt-6 mb-2">The Big Picture</h3>
+            <p class="text-sm text-gray-600 mb-4">
+                "Layla" is an absolute beast. It's so far ahead of everything else that it's in a league of its own for views and clicks. The other top titles are doing okay, but there's a huge cliff between the top 10 and the bottom 10. The stuff at the bottom just isn't getting seen or clicked, so we need to figure out why. We should focus on what makes the big hits work and stop wasting time on the flops.
+            </p>
 
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 text-sm">
-                <thead className="bg-gray-50">
-                  <tr>
-                    {headers.map((header) => (
-                      <th
-                        key={header.key}
-                        className={`px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer transition-colors duration-200 hover:text-gray-800 ${
-                            ['profiles', 'total_views', 'total_watched_clicked', 'total_likes', 'total_comments', 'total_shares'].includes(header.key) ? 'text-right' : 'text-left'
-                        }`}
-                        onClick={() => requestSort(header.key)}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="text-left">{header.label}</span>
-                          <span className="ml-1 text-gray-400">
-                            {getSortIcon(header.key)}
-                          </span>
-                        </div>
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {currentData.map((item, index) => (
-                    <tr key={index}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.title}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">{item.profiles.toLocaleString()}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">{item.total_views.toLocaleString()}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">{item.total_watched_clicked.toLocaleString()}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">{item.total_likes.toLocaleString()}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">{item.total_comments.toLocaleString()}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">{item.total_shares.toLocaleString()}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            
-            {/* Pagination Controls */}
-            <div className="mt-4 flex justify-between items-center">
-                <button
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-md shadow-md hover:bg-emerald-700 disabled:bg-gray-400 transition-colors"
-                >
-                    Previous
-                </button>
-                <span className="text-sm text-gray-700">
-                    Page {currentPage} of {totalPages}
-                </span>
-                <button
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className="px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-md shadow-md hover:bg-emerald-700 disabled:bg-gray-400 transition-colors"
-                >
-                    Next
-                </button>
-            </div>
-          </div>
+            <h3 class="text-lg font-semibold text-gray-800 mt-6 mb-2">What's Working (The Top Titles)</h3>
+            <ul class="list-disc list-inside text-sm text-gray-600 ml-4">
+                <li class="mb-2">
+                    Layla is Insane: With over 1.28 million views and 19,508 clicks, "Layla" is a massive success. This one title is driving a ton of our traffic. We need to study it to understand what's connecting with people.
+                </li>
+                <li class="mb-2">
+                    Views vs. Clicks are Weird: Some titles like "Fareed Season 3" get a lot of views, but their clicks aren't as high as "Layla's" when you compare them. This means people are watching the clips, but "Layla" is doing a better job of making them want to watch the whole thing.
+                </li>
+                <li class="mb-2">
+                    More Clips Don't Always Mean More Views: "Min Share’ Al Haram Ela... Season 1" has 52 clips, but titles with fewer clips like "Fareed Season 3" have way more views. This proves it's not about how many clips you make, but how good they are.
+                </li>
+            </ul>
+
+            <h3 class="text-lg font-semibold text-gray-800 mt-6 mb-2">What's Not Working (The Bottom Titles)</h3>
+            <p class="text-sm text-gray-600 mb-2">
+                The bottom 10 is in rough shape.
+            </p>
+            <ul class="list-disc list-inside text-sm text-gray-600 ml-4">
+                <li class="mb-2">
+                    Nobody's Watching: The views drop off a cliff. The last place title, "Aa Amal Season 1," only has 542 views. That's a huge problem.
+                </li>
+                <li class="mb-2">
+                    Nobody's Clicking: Engagement is a joke. "Aa Amal Season 1" has only 7 clicks. The content isn't grabbing anyone enough to make them want to see more.
+                </li>
+                <li class="mb-2">
+                    We're Wasting Time: Titles like "Wlad Badee'a Season 1" have 32 clips but very few views. The effort to make those clips is being wasted because nobody is watching them.
+                </li>
+            </ul>
+
+            <h3 class="text-lg font-semibold text-gray-800 mt-6 mb-2">My Suggestions</h3>
+            <p class="text-sm text-gray-600 mb-2">
+                Here's what we should do next:
+            </p>
+            <ol class="list-decimal list-inside text-sm text-gray-600 ml-4">
+                <li class="mb-2">
+                    Figure out what makes "Layla" so good. Let's break down its best clips. What are the key moments? Can we copy that for other shows? This is our biggest opportunity.
+                </li>
+                <li class="mb-2">
+                    Stop making so many clips. For new content, let's make fewer, better clips. We should test a few different kinds of clips to see which ones get the most clicks before we go all in.
+                </li>
+                <li class="mb-2">
+                    Promote the clips that suck. The low-performing titles aren't getting seen. We need to try new ways to promote them, maybe on social media or by showing them next to our popular content.
+                </li>
+                <li class="mb-2">
+                    Keep an eye on the numbers. Let's start tracking this stuff in real-time. If a new title is a flop early on, we should know right away so we can change our strategy instead of just making more clips that no one watches.
+                </li>
+            </ol>
+            <p class="text-sm text-gray-600 mt-4">
+                We need to be smarter about our content, learn from our big wins, and stop throwing clips at the wall to see what sticks.
+            </p>
         </div>
-      )}
     </div>
-  );
-};
 
-export default App;
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Data for charts
+            const topProfilesData = [
+                { title: 'Leyla', clips: 108, views: 1283406, watchedClicks: 19508 },
+                { title: 'Fareed Season 3', clips: 39, views: 325314, watchedClicks: 5005 },
+                { title: 'Zawja Waheda La Takfi Season 1', clips: 30, views: 135782, watchedClicks: 997 },
+                { title: 'Al Ameel', clips: 39, views: 114719, watchedClicks: 1373 },
+                { title: 'Qalam Rasas Season 1', clips: 19, views: 113806, watchedClicks: 804 },
+                { title: 'Min Share’ Al Haram Ela... Season 1', clips: 52, views: 107690, watchedClicks: 760 },
+                { title: 'Kollona Iyal Qrayya', clips: 32, views: 90011, watchedClicks: 462 },
+                { title: 'Haq Arab Season 1', clips: 15, views: 88055, watchedClicks: 520 },
+                { title: 'Al Qadar', clips: 44, views: 86075, watchedClicks: 600 },
+                { title: 'Banat Al Thanawi', clips: 38, views: 74535, watchedClicks: 682 },
+            ];
+
+            const bottomProfilesData = [
+                { title: "Ragel We Set Settat Season 1", clips: 30, views: 13708, watchedClicks: 154 },
+                { title: "Wlad Badee'a Season 1", clips: 32, views: 13158, watchedClicks: 82 },
+                { title: "Top Chef Season 8", clips: 5, views: 11421, watchedClicks: 118 },
+                { title: "Horouj", clips: 13, views: 11400, watchedClicks: 113 },
+                { title: "The Master", clips: 12, views: 9590, watchedClicks: 94 },
+                { title: "Gamgoum Wa Bimbim: Al Sharika Al Almaniya Li Mokafahat Al Khawareq", clips: 5, views: 4657, watchedClicks: 64 },
+                { title: "Taj", clips: 5, views: 2992, watchedClicks: 11 },
+                { title: "Tash: Al Awda Season 19", clips: 16, views: 2108, watchedClicks: 14 },
+                { title: "El Atawla", clips: 3, views: 1805, watchedClicks: 48 },
+                { title: "Aa Amal Season 1", clips: 3, views: 542, watchedClicks: 7 },
+            ];
+
+            // Chart 1: Top 10 Profiles by Total Views
+            const topViewsData = {
+                labels: topProfilesData.map(p => p.title),
+                datasets: [{
+                    label: 'Total Views',
+                    data: topProfilesData.map(p => p.views),
+                    backgroundColor: 'rgba(79, 70, 229, 0.8)',
+                    borderColor: 'rgb(79, 70, 229)',
+                    borderWidth: 1
+                }]
+            };
+            
+            // New Chart: Bottom 10 Profiles by Total Views
+            const bottomViewsData = {
+                labels: bottomProfilesData.map(p => p.title),
+                datasets: [{
+                    label: 'Total Views',
+                    data: bottomProfilesData.map(p => p.views),
+                    backgroundColor: 'rgba(239, 68, 68, 0.8)', // Using a red color for the bottom profiles
+                    borderColor: 'rgb(239, 68, 68)',
+                    borderWidth: 1
+                }]
+            };
+
+            // Chart 2: Average Views Per Clip
+            const avgViewsData = {
+                labels: topProfilesData.map(p => p.title),
+                datasets: [{
+                    label: 'Average Views per Clip',
+                    data: topProfilesData.map(p => Math.round(p.views / p.clips)),
+                    backgroundColor: 'rgba(5, 150, 105, 0.8)',
+                    borderColor: 'rgb(5, 150, 105)',
+                    borderWidth: 1
+                }]
+            };
+
+            // Chart 3: Top 10 Profiles by Watched Clicks
+            const watchedClicksData = {
+                labels: topProfilesData.map(p => p.title),
+                datasets: [{
+                    label: 'Watched Clicks',
+                    data: topProfilesData.map(p => p.watchedClicks),
+                    backgroundColor: 'rgba(245, 158, 11, 0.8)',
+                    borderColor: 'rgb(245, 158, 11)',
+                    borderWidth: 1
+                }]
+            };
+
+            // Common chart configuration for vertical bar charts
+            const verticalBarChartConfig = (data) => ({
+                type: 'bar',
+                data: data,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                        title: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y.toLocaleString();
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value, index, values) {
+                                    if (value >= 1000) {
+                                        return (value / 1000).toLocaleString() + 'k';
+                                    }
+                                    return value.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                },
+            });
+
+            // Render the charts with checks to prevent the error
+            const topViewsCtx = document.getElementById('topViewsChart');
+            if (topViewsCtx) {
+                new Chart(topViewsCtx, verticalBarChartConfig(topViewsData));
+            }
+            
+            const bottomViewsCtx = document.getElementById('bottomViewsChart');
+            if (bottomViewsCtx) {
+                new Chart(bottomViewsCtx, verticalBarChartConfig(bottomViewsData));
+            }
+
+            const avgViewsCtx = document.getElementById('avgViewsChart');
+            if (avgViewsCtx) {
+                new Chart(avgViewsCtx, verticalBarChartConfig(avgViewsData));
+            }
+
+            const watchedClicksCtx = document.getElementById('watchedClicksChart');
+            if (watchedClicksCtx) {
+                new Chart(watchedClicksCtx, verticalBarChartConfig(watchedClicksData));
+            }
+        });
+    </script>
+</body>
+</html>
