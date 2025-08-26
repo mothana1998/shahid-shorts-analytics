@@ -198,7 +198,14 @@
             color: #1a237e;
         }
         
-        .insights-container p {
+        .insights-container ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin: 0;
+        }
+        
+        .insights-container li {
+            margin-bottom: 10px;
             line-height: 1.6;
         }
 
@@ -455,7 +462,9 @@
         
         <div class="insights-container">
             <h2>Insights</h2>
-            <p id="insights-text">Upload an Excel file to generate insights.</p>
+            <div id="insights-text">
+                <p>Upload an Excel file to generate insights.</p>
+            </div>
         </div>
 
         <div class="controls-container">
@@ -810,23 +819,27 @@
     }
     
     /**
-     * Renders the auto-generated insights.
+     * Renders the auto-generated insights as a bulleted list.
      * @param {Array<Object>} data The filtered and sorted data.
      */
     function renderInsights(data) {
+        const insightsContainer = document.getElementById('insights-text');
+        insightsContainer.innerHTML = ''; // Clear previous insights
+        
         if (data.length === 0) {
-            document.getElementById('insights-text').textContent = "Not enough data to generate insights.";
+            insightsContainer.innerHTML = `<p>Not enough data to generate insights.</p>`;
             return;
         }
-        
-        const sortedByViews = [...data].sort((a,b) => b.total_views - a.total_views);
-        const sortedByAvgConversion = [...data].sort((a,b) => b.avg_per_view_conversion - a.avg_per_view_conversion);
-        
-        const top5Views = sortedByViews.slice(0, 5).map(p => p.title).join(', ');
-        const top5AvgConversion = sortedByAvgConversion.slice(0, 5).map(p => p.title).join(', ');
-        const lowest5AvgConversion = sortedByAvgConversion.slice(-5).map(p => p.title).reverse().join(', ');
 
-        // 80/20 Rule
+        const sortedByViews = [...data].sort((a, b) => b.total_views - a.total_views);
+        const sortedByAvgConversion = [...data].sort((a, b) => b.avg_per_view_conversion - a.avg_per_view_conversion);
+        const sortedByLikes = [...data].sort((a, b) => b.total_likes - a.total_likes);
+
+        const topViewsTitle = sortedByViews[0] ? `<b>${sortedByViews[0].title}</b> with ${formatNumber(sortedByViews[0].total_views)} views` : 'N/A';
+        const topConversionTitle = sortedByAvgConversion[0] ? `<b>${sortedByAvgConversion[0].title}</b> with an average conversion of ${sortedByAvgConversion[0].avg_per_view_conversion.toFixed(3)}` : 'N/A';
+        const topLikesTitle = sortedByLikes[0] ? `<b>${sortedByLikes[0].title}</b> with ${formatNumber(sortedByLikes[0].total_likes)} likes` : 'N/A';
+        const lowestConversionTitles = sortedByAvgConversion.slice(-5).reverse().map(p => p.title).join(', ');
+
         const totalViews = sortedByViews.reduce((sum, p) => sum + p.total_views, 0);
         let cumulativeViews = 0;
         let topXCount = 0;
@@ -838,14 +851,17 @@
             }
         }
         
-        const insightText = `
-            The top 5 titles by total views are: ${top5Views}.
-            The top 5 titles by average per view (conversion) are: ${top5AvgConversion}.
-            The lowest 5 titles by average per view are: ${lowest5AvgConversion}.
-            Approximately ${topXCount} titles, or ${((topXCount / aggregatedData.length) * 100).toFixed(0)}% of all titles, account for 80% of all views.
+        const insightsHtml = `
+            <ul>
+                <li>The most viewed title is ${topViewsTitle}.</li>
+                <li>The title with the highest conversion rate (Watched Clicks per View) is ${topConversionTitle}.</li>
+                <li>The most liked title is ${topLikesTitle}.</li>
+                <li>Titles with the lowest conversion rates include: ${lowestConversionTitles}. Consider analyzing these to see why they don't engage viewers effectively.</li>
+                <li>According to the 80/20 rule, approximately <b>${topXCount} titles</b>, or <b>${((topXCount / aggregatedData.length) * 100).toFixed(0)}%</b> of all titles, account for 80% of all total views.</li>
+            </ul>
         `;
         
-        document.getElementById('insights-text').textContent = insightText.trim().replace(/\s+/g, ' ');
+        insightsContainer.innerHTML = insightsHtml;
     }
 
     /**
