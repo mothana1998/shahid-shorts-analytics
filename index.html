@@ -444,12 +444,12 @@
                 <p id="kpi-views">0</p>
             </div>
             <div class="kpi-card">
-                <h3>Total Watched Clicks</h3>
-                <p id="kpi-clicks">0</p>
+                <h3>Avg Views per Clip</h3>
+                <p id="kpi-avg-views-per-clip">0</p>
             </div>
             <div class="kpi-card">
-                <h3>Overall Avg/View</h3>
-                <p id="kpi-avg-per-view">0.000</p>
+                <h3>Overall Avg/View (Conversion)</h3>
+                <p id="kpi-avg-per-view-conversion">0.000</p>
             </div>
         </div>
         
@@ -468,13 +468,14 @@
             <label for="max-views">Max Views:</label>
             <input type="number" id="max-views" value="999999999">
             
-            <label for="min-avg-per-view">Min Avg/View:</label>
+            <label for="min-avg-per-view">Min Avg/View (Conversion):</label>
             <input type="number" id="min-avg-per-view" value="0" step="0.001">
             
             <label for="sort-by">Sort by:</label>
             <select id="sort-by">
                 <option value="total_views">Total Views</option>
-                <option value="avg_per_view">Avg/View</option>
+                <option value="avg_views_per_clip">Avg Views/Clip</option>
+                <option value="avg_per_view_conversion">Avg/View (Conversion)</option>
                 <option value="total_likes">Total Likes</option>
                 <option value="total_watched_clicks">Total Watched Clicks</option>
             </select>
@@ -520,7 +521,8 @@
                         <th data-column="total_views">Total Views</th>
                         <th data-column="total_likes">Total Likes</th>
                         <th data-column="total_watched_clicks">Total Watched Clicks</th>
-                        <th data-column="avg_per_view">Avg/View</th>
+                        <th data-column="avg_views_per_clip">Avg Views/Clip</th>
+                        <th data-column="avg_per_view_conversion">Avg/View (Conversion)</th>
                     </tr>
                 </thead>
                 <tbody id="table-body">
@@ -565,15 +567,17 @@
 <script>
     // Sample data to load on page initialization
     const sampleData = [
-        {"Titles": "Titles", "ArabicTitle": "محتوى عربي", "Media Played": 15000, "Likes": 500, "Watched Clicked": 250},
-        {"Titles": "Titles", "ArabicTitle": "محتوى جديد", "Media Played": 22000, "Likes": 800, "Watched Clicked": 400},
-        {"Titles": "Clips Hub", "ArabicTitle": "قناة شورتس", "Media Played": 35000, "Likes": 1200, "Watched Clicked": 700},
-        {"Titles": "Clips Hub", "ArabicTitle": "مركز المقاطع", "Media Played": 18000, "Likes": 600, "Watched Clicked": 300},
-        {"Titles": "Clips Hub", "ArabicTitle": "مقاطع يومية", "Media Played": 45000, "Likes": 1500, "Watched Clicked": 900},
-        {"Titles": "Viral Shorts", "ArabicTitle": "شورتس فيروسية", "Media Played": 75000, "Likes": 2500, "Watched Clicked": 1500},
-        {"Titles": "Titles", "ArabicTitle": "المزيد من الشورتس", "Media Played": 5000, "Likes": 100, "Watched Clicked": 50},
-        {"Titles": "Cool Vids", "ArabicTitle": "فيديوهات رائعة", "Media Played": 800, "Likes": 10, "Watched Clicked": 10},
-        {"Titles": "Cool Vids", "ArabicTitle": "فيديو قصير", "Media Played": 1200, "Likes": 50, "Watched Clicked": 20}
+        {"Titles": "Holm Esref", "ArabicTitle": "محتوى عربي 1", "Media Played": "150000", "Likes": 1500, "Watched Clicked": 15000},
+        {"Titles": "Holm Esref", "ArabicTitle": "محتوى عربي 2", "Media Played": "174892", "Likes": 1748, "Watched Clicked": 17489},
+        {"Titles": "Titles", "ArabicTitle": "محتوى عربي", "Media Played": "15K", "Likes": 500, "Watched Clicked": 250},
+        {"Titles": "Titles", "ArabicTitle": "محتوى جديد", "Media Played": "22,000", "Likes": 800, "Watched Clicked": 400},
+        {"Titles": "Clips Hub", "ArabicTitle": "قناة شورتس", "Media Played": "35K", "Likes": 1200, "Watched Clicked": 700},
+        {"Titles": "Clips Hub", "ArabicTitle": "مركز المقاطع", "Media Played": "18,000", "Likes": 600, "Watched Clicked": 300},
+        {"Titles": "Clips Hub", "ArabicTitle": "مقاطع يومية", "Media Played": "45K", "Likes": 1500, "Watched Clicked": 900},
+        {"Titles": "Viral Shorts", "ArabicTitle": "شورتس فيروسية", "Media Played": "75,000", "Likes": 2500, "Watched Clicked": 1500},
+        {"Titles": "Titles", "ArabicTitle": "المزيد من الشورتس", "Media Played": "5,000", "Likes": 100, "Watched Clicked": 50},
+        {"Titles": "Cool Vids", "ArabicTitle": "فيديوهات رائعة", "Media Played": "800", "Likes": 10, "Watched Clicked": 10},
+        {"Titles": "Cool Vids", "ArabicTitle": "فيديو قصير", "Media Played": "1.2K", "Likes": 50, "Watched Clicked": 20}
     ];
 
     let allClipsData = [];
@@ -613,6 +617,39 @@
     });
 
     /**
+     * Helper function to safely parse a string or number value into a float.
+     * It handles commas and common suffixes like K, M, and B.
+     * @param {*} value The value to parse.
+     * @returns {number} The parsed number, or 0 if parsing fails.
+     */
+    function cleanNumber(value) {
+        if (typeof value === 'number') {
+            return value;
+        }
+        if (typeof value !== 'string') {
+            return 0;
+        }
+
+        let cleaned = value.replace(/,/g, '');
+        let multiplier = 1;
+
+        if (cleaned.toUpperCase().endsWith('K')) {
+            multiplier = 1000;
+            cleaned = cleaned.slice(0, -1);
+        } else if (cleaned.toUpperCase().endsWith('M')) {
+            multiplier = 1000000;
+            cleaned = cleaned.slice(0, -1);
+        } else if (cleaned.toUpperCase().endsWith('B')) {
+            multiplier = 1000000000;
+            cleaned = cleaned.slice(0, -1);
+        }
+
+        const parsed = parseFloat(cleaned);
+        return isNaN(parsed) ? 0 : parsed * multiplier;
+    }
+
+
+    /**
      * Handles file upload and parses the Excel data.
      * @param {Event} event The file change event.
      */
@@ -639,7 +676,12 @@
                 
                 // Handle empty data case
                 if (combinedData.length === 0) {
-                     alert("No data found in 'Dovies' or 'FCCE' sheets. Please check your Excel file.");
+                     // Using a simple message box instead of alert()
+                    const messageBox = document.createElement('div');
+                    messageBox.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);padding:20px;background:#fff;border-radius:10px;box-shadow:0 0 10px rgba(0,0,0,0.5);z-index:9999;';
+                    messageBox.textContent = "No data found in 'Dovies' or 'FCCE' sheets. Please check your Excel file.";
+                    document.body.appendChild(messageBox);
+                    setTimeout(() => messageBox.remove(), 2000);
                      return;
                 }
 
@@ -649,7 +691,12 @@
             reader.readAsArrayBuffer(file);
         } catch (error) {
             console.error('Error reading or parsing file:', error);
-            alert('Error processing file. Please ensure it is a valid .xlsx file.');
+             // Using a simple message box instead of alert()
+            const messageBox = document.createElement('div');
+            messageBox.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);padding:20px;background:#fff;border-radius:10px;box-shadow:0 0 10px rgba(0,0,0,0.5);z-index:9999;';
+            messageBox.textContent = 'Error processing file. Please ensure it is a valid .xlsx file.';
+            document.body.appendChild(messageBox);
+            setTimeout(() => messageBox.remove(), 2000);
         }
     }
 
@@ -685,15 +732,16 @@
             }
             const title = titlesMap.get(titleName);
             title.clips += 1;
-            title.total_views += parseInt(clip['Media Played']) || 0;
-            title.total_likes += parseInt(clip['Likes']) || 0;
-            title.total_watched_clicks += parseInt(clip['Watched Clicked']) || 0;
+            title.total_views += cleanNumber(clip['Media Played']);
+            title.total_likes += cleanNumber(clip['Likes']);
+            title.total_watched_clicks += cleanNumber(clip['Watched Clicked']);
             title.clips_list.push(clip);
         });
 
         const aggregatedTitles = Array.from(titlesMap.values());
         aggregatedTitles.forEach(title => {
-            title.avg_per_view = (title.total_views > 0) ? (title.total_watched_clicks / title.total_views) : 0;
+            title.avg_views_per_clip = (title.clips > 0) ? (title.total_views / title.clips) : 0;
+            title.avg_per_view_conversion = (title.total_views > 0) ? (title.total_watched_clicks / title.total_views) : 0;
         });
 
         return aggregatedTitles;
@@ -713,7 +761,7 @@
         let filteredData = aggregatedData.filter(title => {
             const titleName = title.title || '';
             const titleViews = title.total_views || 0;
-            const titleAvg = title.avg_per_view || 0;
+            const titleAvg = title.avg_per_view_conversion || 0;
             return titleName.toLowerCase().includes(searchTerm) &&
                    titleViews >= minViews &&
                    titleViews <= maxViews &&
@@ -724,8 +772,10 @@
         filteredData.sort((a, b) => {
             if (sortBy === 'total_views') {
                 return b.total_views - a.total_views;
-            } else if (sortBy === 'avg_per_view') {
-                return b.avg_per_view - a.avg_per_view;
+            } else if (sortBy === 'avg_per_view_conversion') {
+                return b.avg_per_view_conversion - a.avg_per_view_conversion;
+            } else if (sortBy === 'avg_views_per_clip') {
+                return b.avg_views_per_clip - a.avg_views_per_clip;
             } else if (sortBy === 'total_likes') {
                 return b.total_likes - a.total_likes;
             } else if (sortBy === 'total_watched_clicks') {
@@ -749,13 +799,14 @@
         const totalClips = allClipsData.length;
         const totalViews = aggregatedData.reduce((sum, p) => sum + p.total_views, 0);
         const totalClicks = aggregatedData.reduce((sum, p) => sum + p.total_watched_clicks, 0);
-        const overallAvgPerView = (totalViews > 0) ? (totalClicks / totalViews) : 0;
+        const overallAvgPerViewConversion = (totalViews > 0) ? (totalClicks / totalViews) : 0;
+        const overallAvgViewsPerClip = (totalClips > 0) ? (totalViews / totalClips) : 0;
 
         document.getElementById('kpi-titles').textContent = formatNumber(totalTitles);
         document.getElementById('kpi-clips').textContent = formatNumber(totalClips);
         document.getElementById('kpi-views').textContent = formatNumber(totalViews);
-        document.getElementById('kpi-clicks').textContent = formatNumber(totalClicks);
-        document.getElementById('kpi-avg-per-view').textContent = overallAvgPerView.toFixed(3);
+        document.getElementById('kpi-avg-views-per-clip').textContent = formatNumber(Math.round(overallAvgViewsPerClip));
+        document.getElementById('kpi-avg-per-view-conversion').textContent = overallAvgPerViewConversion.toFixed(3);
     }
     
     /**
@@ -769,11 +820,11 @@
         }
         
         const sortedByViews = [...data].sort((a,b) => b.total_views - a.total_views);
-        const sortedByAvg = [...data].sort((a,b) => b.avg_per_view - a.avg_per_view);
+        const sortedByAvgConversion = [...data].sort((a,b) => b.avg_per_view_conversion - a.avg_per_view_conversion);
         
         const top5Views = sortedByViews.slice(0, 5).map(p => p.title).join(', ');
-        const top5Avg = sortedByAvg.slice(0, 5).map(p => p.title).join(', ');
-        const lowest5Avg = sortedByAvg.slice(-5).map(p => p.title).reverse().join(', ');
+        const top5AvgConversion = sortedByAvgConversion.slice(0, 5).map(p => p.title).join(', ');
+        const lowest5AvgConversion = sortedByAvgConversion.slice(-5).map(p => p.title).reverse().join(', ');
 
         // 80/20 Rule
         const totalViews = sortedByViews.reduce((sum, p) => sum + p.total_views, 0);
@@ -789,8 +840,8 @@
         
         const insightText = `
             The top 5 titles by total views are: ${top5Views}.
-            The top 5 titles by average per view (conversion) are: ${top5Avg}.
-            The lowest 5 titles by average per view are: ${lowest5Avg}.
+            The top 5 titles by average per view (conversion) are: ${top5AvgConversion}.
+            The lowest 5 titles by average per view are: ${lowest5AvgConversion}.
             Approximately ${topXCount} titles, or ${((topXCount / aggregatedData.length) * 100).toFixed(0)}% of all titles, account for 80% of all views.
         `;
         
@@ -804,7 +855,7 @@
     function renderCharts(data) {
         const labels = data.map(p => p.title);
         const views = data.map(p => p.total_views);
-        const avgs = data.map(p => p.avg_per_view);
+        const avgViewsPerClip = data.map(p => p.avg_views_per_clip);
         const clicks = data.map(p => p.total_watched_clicks);
         const likes = data.map(p => p.total_likes);
 
@@ -831,7 +882,7 @@
             }
         });
 
-        // Bar Chart: Titles by Avg per View
+        // Bar Chart: Titles by Avg Views per Clip
         if (charts.avgPerViewChart) charts.avgPerViewChart.destroy();
         const avgsCtx = document.getElementById('avgPerViewChart').getContext('2d');
         charts.avgPerViewChart = new Chart(avgsCtx, {
@@ -839,8 +890,8 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Avg per View (Conversion)',
-                    data: avgs,
+                    label: 'Avg Views per Clip',
+                    data: avgViewsPerClip,
                     backgroundColor: 'rgba(63, 81, 181, 0.7)',
                     borderColor: 'rgba(63, 81, 181, 1)',
                     borderWidth: 1
@@ -849,8 +900,8 @@
             options: {
                 responsive: true, maintainAspectRatio: false,
                 indexAxis: 'y', // Set to horizontal
-                plugins: { title: { display: true, text: `Top ${data.length} Titles by Avg/View (Conversion)` } },
-                scales: { x: { beginAtZero: true, title: { display: true, text: 'Avg/View' } }, y: { title: { display: true, text: 'Title' } } }
+                plugins: { title: { display: true, text: `Top ${data.length} Titles by Avg Views per Clip` } },
+                scales: { x: { beginAtZero: true, title: { display: true, text: 'Avg Views per Clip' } }, y: { title: { display: true, text: 'Title' } } }
             }
         });
 
@@ -864,7 +915,7 @@
             views: p.total_views,
             clicks: p.total_watched_clicks,
             likes: p.total_likes,
-            avg: p.avg_per_view
+            avg: p.avg_per_view_conversion
         }));
         charts.scatterChart = new Chart(scatterCtx, {
             type: 'scatter',
@@ -944,123 +995,99 @@
 
         pageData.forEach(title => {
             const row = document.createElement('tr');
-            row.setAttribute('data-title', title.title);
             row.innerHTML = `
-                <td>${title.title}</td>
+                <td><a href="#" class="drilldown-link" data-title="${title.title}">${title.title}</a></td>
                 <td>${formatNumber(title.clips)}</td>
                 <td>${formatNumber(title.total_views)}</td>
                 <td>${formatNumber(title.total_likes)}</td>
                 <td>${formatNumber(title.total_watched_clicks)}</td>
-                <td>${title.avg_per_view.toFixed(3)}</td>
+                <td>${formatNumber(Math.round(title.avg_views_per_clip))}</td>
+                <td>${title.avg_per_view_conversion.toFixed(3)}</td>
             `;
             tableBody.appendChild(row);
         });
 
-        renderPagination(data.length, data);
-    }
-    
-    /**
-     * Renders pagination controls.
-     * @param {number} totalItems The total number of items.
-     * @param {Array<Object>} data The full filtered dataset.
-     */
-    function renderPagination(totalItems, data) {
-        const totalPages = Math.ceil(totalItems / pageSize);
+        // Render pagination controls
+        const totalPages = Math.ceil(data.length / pageSize);
         const paginationControls = document.getElementById('pagination-controls');
         paginationControls.innerHTML = '';
-
-        if (totalPages <= 1) return;
-
-        const prevBtn = document.createElement('button');
-        prevBtn.textContent = 'Previous';
-        prevBtn.disabled = currentPage === 1;
-        prevBtn.addEventListener('click', () => { currentPage--; renderTable(data); });
-        paginationControls.appendChild(prevBtn);
-
-        const pageInfo = document.createElement('span');
-        pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
-        pageInfo.style.margin = '0 10px';
-        paginationControls.appendChild(pageInfo);
-
-        const nextBtn = document.createElement('button');
-        nextBtn.textContent = 'Next';
-        nextBtn.disabled = currentPage === totalPages;
-        nextBtn.addEventListener('click', () => { currentPage++; renderTable(data); });
-        paginationControls.appendChild(nextBtn);
+        if (totalPages > 1) {
+            for (let i = 1; i <= totalPages; i++) {
+                const button = document.createElement('button');
+                button.textContent = i;
+                button.className = i === currentPage ? 'active' : '';
+                button.onclick = () => {
+                    currentPage = i;
+                    renderTable(data);
+                };
+                paginationControls.appendChild(button);
+            }
+        }
     }
-    
+
     /**
-     * Handles table header sorting and row drill-down.
-     * @param {Event} event The click event.
+     * Handles table header sorting and row drilldown.
+     * @param {Event} event The click event on the table.
      */
     function handleTableSortOrDrilldown(event) {
         const target = event.target;
         if (target.tagName === 'TH') {
             const column = target.getAttribute('data-column');
-            handleTableSort(column, target);
-        } else if (target.tagName === 'TD' && target.closest('tr')) {
-            const row = target.closest('tr');
-            const titleName = row.getAttribute('data-title');
-            if (titleName) {
-                showDrilldown(titleName);
+            if (column) {
+                const currentSort = target.classList.contains('asc') ? 'asc' : target.classList.contains('desc') ? 'desc' : '';
+                
+                // Clear all sort classes
+                document.querySelectorAll('#profile-table th').forEach(th => th.classList.remove('asc', 'desc'));
+                
+                let sortDirection = 'asc';
+                if (currentSort === 'asc') {
+                    sortDirection = 'desc';
+                    target.classList.add('desc');
+                } else {
+                    target.classList.add('asc');
+                }
+                
+                const sortedData = [...aggregatedData].sort((a, b) => {
+                    const aVal = a[column];
+                    const bVal = b[column];
+                    if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
+                    if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
+                    return 0;
+                });
+                
+                aggregatedData = sortedData;
+                applyFilters();
             }
+        } else if (target.classList.contains('drilldown-link')) {
+            event.preventDefault();
+            const titleName = target.getAttribute('data-title');
+            showDrilldown(titleName);
         }
     }
-    
-    /**
-     * Handles table sorting.
-     * @param {string} column The column to sort by.
-     * @param {HTMLElement} header The table header element.
-     */
-    function handleTableSort(column, header) {
-        const currentSortOrder = header.classList.contains('asc') ? 'desc' : 'asc';
-        const allHeaders = document.querySelectorAll('#profile-table th');
-        allHeaders.forEach(h => h.classList.remove('asc', 'desc'));
-        header.classList.add(currentSortOrder);
 
-        aggregatedData.sort((a, b) => {
-            let valA = a[column];
-            let valB = b[column];
-            if (column === 'title') {
-                valA = String(valA).toLowerCase();
-                valB = String(valB).toLowerCase();
-            }
-            if (currentSortOrder === 'asc') {
-                if (valA < valB) return -1;
-                if (valA > valB) return 1;
-                return 0;
-            } else {
-                if (valA < valB) return 1;
-                if (valA > valB) return -1;
-                return 0;
-            }
-        });
-        applyFilters();
-    }
-    
     /**
-     * Shows the drill-down modal with clip details for a specific title.
-     * @param {string} titleName The name of the title to display.
+     * Displays a modal with detailed clips for a given title.
+     * @param {string} titleName The name of the title to show details for.
      */
     function showDrilldown(titleName) {
-        const titleData = aggregatedData.find(p => p.title === titleName);
+        const titleData = aggregatedData.find(t => t.title === titleName);
         if (!titleData) return;
-        
-        document.getElementById('drilldown-profile-title').textContent = `${titleData.title}'s Clips`;
-        const tableBody = document.getElementById('drilldown-table-body');
-        tableBody.innerHTML = '';
-        
+
+        document.getElementById('drilldown-profile-title').textContent = `Details for ${titleName}`;
+        const drilldownTableBody = document.getElementById('drilldown-table-body');
+        drilldownTableBody.innerHTML = '';
+
         titleData.clips_list.forEach(clip => {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${clip.ArabicTitle || 'N/A'}</td>
-                <td>${formatNumber(clip['Media Played'])}</td>
-                <td>${formatNumber(clip['Likes'])}</td>
-                <td>${formatNumber(clip['Watched Clicked'])}</td>
+                <td>${formatNumber(cleanNumber(clip['Media Played']))}</td>
+                <td>${formatNumber(cleanNumber(clip['Likes']))}</td>
+                <td>${formatNumber(cleanNumber(clip['Watched Clicked']))}</td>
             `;
-            tableBody.appendChild(row);
+            drilldownTableBody.appendChild(row);
         });
-        
+
         document.getElementById('drilldown-modal').style.display = 'flex';
     }
 
@@ -1071,165 +1098,183 @@
         const optionsContainer = document.getElementById('comparison-options');
         optionsContainer.style.display = optionsContainer.style.display === 'block' ? 'none' : 'block';
     }
-    
+
     /**
-     * Renders the comparison multi-select options.
+     * Renders the options for the title comparison multi-select.
      */
     function renderComparisonOptions() {
         const optionsContainer = document.getElementById('comparison-options');
         optionsContainer.innerHTML = '';
         aggregatedData.forEach(title => {
             const label = document.createElement('label');
-            const input = document.createElement('input');
-            input.type = 'checkbox';
-            input.value = title.title;
-            input.checked = selectedTitles.includes(title.title);
-            label.appendChild(input);
-            label.appendChild(document.createTextNode(title.title));
+            label.innerHTML = `<input type="checkbox" value="${title.title}"> ${title.title}`;
             optionsContainer.appendChild(label);
         });
+        document.getElementById('comparison-panel').style.display = 'none';
+        selectedTitles = [];
+        document.getElementById('comparison-select-box').querySelector('span').textContent = 'Compare Titles';
     }
 
     /**
-     * Handles selection changes in the comparison multi-select.
+     * Handles the change event for the comparison multi-select checkboxes.
      */
-    function handleComparisonSelect() {
+    function handleComparisonSelect(event) {
         selectedTitles = Array.from(document.querySelectorAll('#comparison-options input[type="checkbox"]:checked')).map(cb => cb.value);
-        renderComparisonPanel();
+        
+        const selectBoxSpan = document.getElementById('comparison-select-box').querySelector('span');
+        if (selectedTitles.length > 0) {
+            selectBoxSpan.textContent = `Comparing (${selectedTitles.length})`;
+            renderComparisonPanel();
+        } else {
+            selectBoxSpan.textContent = 'Compare Titles';
+            document.getElementById('comparison-panel').style.display = 'none';
+        }
     }
-    
+
     /**
-     * Renders the side-by-side comparison panel.
+     * Renders the comparison panel with selected titles.
      */
     function renderComparisonPanel() {
-        const panel = document.getElementById('comparison-panel');
-        const cardsContainer = document.getElementById('comparison-cards');
-        cardsContainer.innerHTML = '';
+        const comparisonCardsContainer = document.getElementById('comparison-cards');
+        comparisonCardsContainer.innerHTML = '';
 
-        if (selectedTitles.length < 2) {
-            panel.style.display = 'none';
+        if (selectedTitles.length === 0) {
+            document.getElementById('comparison-panel').style.display = 'none';
             return;
         }
 
-        panel.style.display = 'block';
+        document.getElementById('comparison-panel').style.display = 'block';
 
-        const comparisonData = selectedTitles.map(title => aggregatedData.find(d => d.title === title));
-        
-        const metrics = ['Clips', 'Total Views', 'Total Likes', 'Total Watched Clicks', 'Avg/View'];
-        const keys = ['clips', 'total_views', 'total_likes', 'total_watched_clicks', 'avg_per_view'];
+        const selectedData = selectedTitles.map(title => aggregatedData.find(d => d.title === title)).filter(Boolean);
+        if (selectedData.length === 0) {
+            document.getElementById('comparison-panel').style.display = 'none';
+            return;
+        }
 
-        comparisonData.forEach(compTitle => {
+        // Find the best values for each metric for better comparison
+        const maxViews = Math.max(...selectedData.map(d => d.total_views));
+        const maxLikes = Math.max(...selectedData.map(d => d.total_likes));
+        const maxClicks = Math.max(...selectedData.map(d => d.total_watched_clicks));
+        const maxAvgViews = Math.max(...selectedData.map(d => d.avg_views_per_clip));
+        const maxAvgConversion = Math.max(...selectedData.map(d => d.avg_per_view_conversion));
+
+        selectedData.forEach(title => {
             const card = document.createElement('div');
-            card.classList.add('comparison-card');
-            card.innerHTML = `<h4>${compTitle.title}</h4>`;
-
-            metrics.forEach((metric, i) => {
-                const key = keys[i];
-                let value = compTitle[key];
-                if (key === 'avg_per_view') value = value.toFixed(3);
-                
-                let isBetter = true;
-                for (let otherTitle of comparisonData) {
-                    if (compTitle.title === otherTitle.title) continue;
-                    let otherValue = otherTitle[key];
-                    if (key === 'avg_per_view') {
-                        if (value < otherValue) isBetter = false;
-                    } else {
-                        if (value < otherValue) isBetter = false;
-                    }
-                }
-
-                card.innerHTML += `
-                    <div class="comparison-metric">
-                        <span>${metric}:</span>
-                        <span class="${isBetter ? 'better-metric' : ''}">${formatNumber(value)}</span>
-                    </div>
-                `;
-            });
-
-            cardsContainer.appendChild(card);
+            card.className = 'comparison-card';
+            card.innerHTML = `
+                <h4>${title.title}</h4>
+                <div class="comparison-metric">
+                    <span>Total Views:</span>
+                    <span class="${title.total_views === maxViews ? 'better-metric' : ''}">${formatNumber(title.total_views)}</span>
+                </div>
+                <div class="comparison-metric">
+                    <span>Total Likes:</span>
+                    <span class="${title.total_likes === maxLikes ? 'better-metric' : ''}">${formatNumber(title.total_likes)}</span>
+                </div>
+                <div class="comparison-metric">
+                    <span>Total Watched Clicks:</span>
+                    <span class="${title.total_watched_clicks === maxClicks ? 'better-metric' : ''}">${formatNumber(title.total_watched_clicks)}</span>
+                </div>
+                <div class="comparison-metric">
+                    <span>Avg Views/Clip:</span>
+                    <span class="${title.avg_views_per_clip === maxAvgViews ? 'better-metric' : ''}">${formatNumber(Math.round(title.avg_views_per_clip))}</span>
+                </div>
+                <div class="comparison-metric">
+                    <span>Avg/View Conversion:</span>
+                    <span class="${title.avg_per_view_conversion === maxAvgConversion ? 'better-metric' : ''}">${title.avg_per_view_conversion.toFixed(3)}</span>
+                </div>
+            `;
+            comparisonCardsContainer.appendChild(card);
         });
     }
 
     /**
-     * Formats a number with thousand separators.
+     * Formats a number for better readability (e.g., 1234567 -> 1.23M).
      * @param {number} num The number to format.
      * @returns {string} The formatted string.
      */
     function formatNumber(num) {
-        if (typeof num !== 'number') return num;
-        return new Intl.NumberFormat().format(num);
+        if (num === null || num === undefined) return '0';
+        num = Number(num);
+        if (num >= 1000000000) return (num / 1000000000).toFixed(1) + 'B';
+        if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+        if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+        return num.toString();
     }
 
     /**
-     * Exports the filtered table data to a CSV file.
+     * Exports the visible table data to a CSV file.
      */
     function exportTableToCsv() {
         const table = document.getElementById('profile-table');
-        let csvContent = "data:text/csv;charset=utf-8,";
-        
-        const headers = Array.from(table.querySelectorAll('thead th')).map(th => `"${th.textContent.trim()}"`);
-        csvContent += headers.join(',') + '\n';
-        
-        const rows = table.querySelectorAll('tbody tr');
+        let csv = [];
+        const rows = table.querySelectorAll('tr');
+
         rows.forEach(row => {
-            const rowData = Array.from(row.querySelectorAll('td')).map(td => {
-                let text = td.textContent.trim();
-                if (text.includes(',')) {
-                    text = `"${text}"`;
+            const rowData = Array.from(row.querySelectorAll('th, td')).map(cell => {
+                let text = cell.innerText;
+                // Clean up text from drilldown link
+                if (cell.querySelector('.drilldown-link')) {
+                    text = cell.querySelector('.drilldown-link').textContent;
                 }
-                return text;
+                return `"${text.replace(/"/g, '""')}"`;
             });
-            csvContent += rowData.join(',') + '\n';
+            csv.push(rowData.join(','));
         });
 
+        const csvContent = "data:text/csv;charset=utf-8," + csv.join("\n");
         const encodedUri = encodeURI(csvContent);
-        const link = document.createElement('a');
-        link.setAttribute('href', encodedUri);
-        link.setAttribute('download', 'shorts_performance_table.csv');
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "shorts_performance_data.csv");
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
     }
     
     /**
-     * Exports the current charts as a single PNG image.
+     * Exports all charts to a single PNG file.
      */
     async function exportChartsToPng() {
-        const chartContainers = document.querySelectorAll('.chart-box');
-        const canvases = Array.from(chartContainers).map(c => c.querySelector('canvas'));
-        
-        if (canvases.length === 0) {
-            // Using a simple message box instead of alert()
-            const messageBox = document.createElement('div');
-            messageBox.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);padding:20px;background:#fff;border-radius:10px;box-shadow:0 0 10px rgba(0,0,0,0.5);z-index:9999;';
-            messageBox.textContent = "No charts to export.";
-            document.body.appendChild(messageBox);
-            setTimeout(() => messageBox.remove(), 2000);
-            return;
-        }
+        const dashboard = document.querySelector('.dashboard-container');
+        const originalBg = dashboard.style.backgroundColor;
+        dashboard.style.backgroundColor = 'white'; // Make background white for better PNG output
+        const chartsToExport = document.querySelectorAll('.chart-box canvas');
+        const chartImages = await Promise.all(Array.from(chartsToExport).map(canvas => {
+            return new Promise(resolve => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.src = canvas.toDataURL('image/png');
+            });
+        }));
 
         const combinedCanvas = document.createElement('canvas');
-        const ctx = combinedCanvas.getContext('2d');
-        const totalWidth = canvases.reduce((sum, c) => sum + c.width, 0) + (canvases.length - 1) * 20;
-        const maxHeight = Math.max(...canvases.map(c => c.height));
-        
-        combinedCanvas.width = totalWidth;
-        combinedCanvas.height = maxHeight;
-        
-        let xOffset = 0;
-        canvases.forEach(canvas => {
-            ctx.drawImage(canvas, xOffset, 0);
-            xOffset += canvas.width + 20;
+        const combinedCtx = combinedCanvas.getContext('2d');
+        const padding = 20;
+        const totalHeight = chartImages.reduce((sum, img) => sum + img.height + padding, 0);
+        const maxWidth = Math.max(...chartImages.map(img => img.width));
+
+        combinedCanvas.width = maxWidth + padding * 2;
+        combinedCanvas.height = totalHeight;
+        combinedCtx.fillStyle = 'white';
+        combinedCtx.fillRect(0, 0, combinedCanvas.width, combinedCanvas.height);
+
+        let yOffset = padding;
+        chartImages.forEach(img => {
+            combinedCtx.drawImage(img, padding, yOffset);
+            yOffset += img.height + padding;
         });
 
         const link = document.createElement('a');
-        link.download = 'shorts_performance_charts.png';
         link.href = combinedCanvas.toDataURL('image/png');
+        link.download = 'shorts_performance_charts.png';
+        document.body.appendChild(link);
         link.click();
-    }
-    
-</script>
+        document.body.removeChild(link);
 
+        dashboard.style.backgroundColor = originalBg; // Restore original background
+    }
+
+</script>
 </body>
 </html>
