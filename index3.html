@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T-Shirt Paradise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            @apply bg-gray-100 text-gray-800;
+        }
+        .message-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .message-box.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            height: 100%;
+            width: 350px;
+            max-width: 90%;
+            z-index: 50;
+            transition: right 0.3s ease-in-out;
+            @apply bg-white shadow-lg p-6 overflow-y-auto;
+        }
+        .cart-sidebar.open {
+            right: 0;
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 60;
+            padding: 1rem;
+        }
+        .modal-content {
+            @apply bg-white p-6 rounded-lg shadow-xl w-full max-w-2xl transform scale-95 opacity-0 transition-all duration-300;
+        }
+        .modal.open .modal-content {
+            transform: scale-100;
+            opacity: 1;
+        }
+        .close-button {
+            cursor: pointer;
+            @apply p-2 rounded-full hover:bg-gray-200 transition-colors;
+        }
+        /* Custom scrollbar for better aesthetics */
+        .cart-sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .cart-sidebar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .cart-sidebar::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .cart-sidebar::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Message Box -->
+    <div id="messageBox" class="message-box bg-green-500 text-white font-semibold rounded-lg shadow-lg p-4">
+        Item added to cart!
+    </div>
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-40">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-gray-900">T-Shirt Paradise</a>
+            <nav class="hidden md:flex space-x-6">
+                <a href="#products" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">Shop</a>
+                <a href="#contact" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">Contact</a>
+            </nav>
+            <div class="flex items-center space-x-4">
+                <button id="cart-button" class="relative p-2 rounded-full hover:bg-gray-200 transition-colors">
+                    <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.182 1.705.707 1.705H17m0 0a2 2 0 100 4a2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    <span id="cart-count" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+
+        <!-- Hero Section -->
+        <section class="bg-gradient-to-r from-teal-500 to-blue-500 text-white rounded-lg shadow-lg p-10 mb-12 text-center">
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">Your Style, Your Statement.</h1>
+            <p class="text-lg md:text-xl mb-6 max-w-2xl mx-auto">Shop our collection of unique, high-quality t-shirts that speak to you.</p>
+            <button class="bg-white text-blue-600 hover:bg-gray-200 transition-colors py-3 px-8 rounded-full font-bold shadow-lg text-lg" onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'});">Shop Now</button>
+        </section>
+
+        <!-- Product Grid Section -->
+        <section id="products" class="py-8">
+            <h2 class="text-3xl font-bold text-center mb-8">Our T-Shirts</h2>
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                <!-- Products will be rendered here by JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Product Detail Modal -->
+    <div id="product-modal" class="modal">
+        <div id="modal-content" class="modal-content">
+            <div class="flex justify-end">
+                <button id="close-modal-btn" class="close-button">
+                    <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="aspect-w-1 aspect-h-1 overflow-hidden rounded-lg">
+                    <img id="modal-image" class="w-full h-full object-cover">
+                </div>
+                <div class="p-4">
+                    <h3 id="modal-name" class="text-3xl font-bold mb-2"></h3>
+                    <p id="modal-price" class="text-2xl font-semibold text-blue-600 mb-4"></p>
+                    <p id="modal-description" class="text-gray-600 mb-6"></p>
+                    <div class="mb-6">
+                        <label for="size-select" class="block text-sm font-medium text-gray-700 mb-2">Select Size</label>
+                        <select id="size-select" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                            <option value="S">Small</option>
+                            <option value="M">Medium</option>
+                            <option value="L">Large</option>
+                            <option value="XL">Extra Large</option>
+                        </select>
+                    </div>
+                    <button id="add-to-cart-btn" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg shadow-md hover:bg-blue-700 transition-colors">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div id="cart-sidebar" class="cart-sidebar">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold">Your Cart</h2>
+            <button id="close-cart-btn" class="close-button">
+                <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        <div id="cart-items" class="space-y-4 mb-6">
+            <!-- Cart items will be rendered here -->
+        </div>
+        <div id="cart-total" class="text-xl font-bold flex justify-between items-center border-t border-gray-200 pt-4">
+            <span>Total:</span>
+            <span>$0.00</span>
+        </div>
+        <button class="w-full bg-green-500 text-white font-bold py-3 rounded-lg mt-4 shadow-md hover:bg-green-600 transition-colors">Checkout</button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2023 T-Shirt Paradise. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const products = [
+                {
+                    id: 1,
+                    name: "Cosmic Poster Tee",
+                    price: 35.00,
+                    description: "Features a stunning poster print of a cosmic galaxy. A must-have for space enthusiasts.",
+                    image: "https://placehold.co/600x600/1e2b4f/ffffff?text=Cosmic+Poster+Tee"
+                },
+                {
+                    id: 2,
+                    name: "Mountain Photo Tee",
+                    price: 38.00,
+                    description: "A beautiful, serene photo of a snow-capped mountain range printed on a comfortable tee.",
+                    image: "https://placehold.co/600x600/a3b18a/344e41?text=Mountain+Photo+Tee"
+                },
+                {
+                    id: 3,
+                    name: "Cityscape Print Tee",
+                    price: 32.00,
+                    description: "A striking black-and-white print of a vibrant city skyline. Urban style at its best.",
+                    image: "https://placehold.co/600x600/3d405b/f2cc8f?text=Cityscape+Print+Tee"
+                },
+                {
+                    id: 4,
+                    name: "Abstract Art Tee",
+                    price: 40.00,
+                    description: "Stand out with a unique t-shirt featuring a colorful abstract art print. Each one is a masterpiece.",
+                    image: "https://placehold.co/600x600/e0b1cb/7b2cbf?text=Abstract+Art+Tee"
+                },
+                {
+                    id: 5,
+                    name: "Vintage Car Photo Tee",
+                    price: 36.00,
+                    description: "A nod to the past with a vintage car photo. Perfect for classic car lovers.",
+                    image: "https://placehold.co/600x600/fec89a/b5838d?text=Vintage+Car+Tee"
+                },
+                {
+                    id: 6,
+                    name: "Neon Sci-Fi Poster Tee",
+                    price: 39.00,
+                    description: "A futuristic poster design with vibrant neon colors. Take a step into the future of fashion.",
+                    image: "https://placehold.co/600x600/5e365b/86b3a0?text=Neon+Sci-Fi+Tee"
+                }
+            ];
+
+            let cart = [];
+
+            const productGrid = document.getElementById('product-grid');
+            const cartButton = document.getElementById('cart-button');
+            const cartSidebar = document.getElementById('cart-sidebar');
+            const closeCartBtn = document.getElementById('close-cart-btn');
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartCountSpan = document.getElementById('cart-count');
+            const cartTotalSpan = document.getElementById('cart-total');
+            const productModal = document.getElementById('product-modal');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            const modalImage = document.getElementById('modal-image');
+            const modalName = document.getElementById('modal-name');
+            const modalPrice = document.getElementById('modal-price');
+            const modalDescription = document.getElementById('modal-description');
+            const sizeSelect = document.getElementById('size-select');
+            const addToCartBtn = document.getElementById('add-to-cart-btn');
+            const messageBox = document.getElementById('messageBox');
+
+            // --- UI Rendering Functions ---
+
+            function renderProducts() {
+                productGrid.innerHTML = '';
+                products.forEach(product => {
+                    const productCard = document.createElement('div');
+                    productCard.className = "bg-white rounded-lg shadow-lg p-6 flex flex-col items-center text-center cursor-pointer hover:shadow-xl transition-shadow duration-300";
+                    productCard.innerHTML = `
+                        <img src="${product.image}" onerror="this.src='https://placehold.co/600x600/e0e0e0/555555?text=Image+Not+Found'" alt="${product.name}" class="rounded-md w-full h-auto mb-4">
+                        <h3 class="text-xl font-semibold mb-2">${product.name}</h3>
+                        <p class="text-blue-600 font-bold text-lg">$${product.price.toFixed(2)}</p>
+                    `;
+                    productCard.addEventListener('click', () => openProductModal(product));
+                    productGrid.appendChild(productCard);
+                });
+            }
+
+            function updateCartUI() {
+                cartItemsContainer.innerHTML = '';
+                let total = 0;
+                if (cart.length === 0) {
+                    cartItemsContainer.innerHTML = '<p class="text-gray-500 text-center">Your cart is empty.</p>';
+                } else {
+                    cart.forEach(item => {
+                        const cartItem = document.createElement('div');
+                        cartItem.className = "flex items-center space-x-4";
+                        cartItem.innerHTML = `
+                            <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-md">
+                            <div class="flex-grow">
+                                <h4 class="font-semibold text-lg">${item.name}</h4>
+                                <p class="text-sm text-gray-500">Size: ${item.size}</p>
+                            </div>
+                            <span class="font-bold text-blue-600">$${item.price.toFixed(2)}</span>
+                        `;
+                        cartItemsContainer.appendChild(cartItem);
+                        total += item.price;
+                    });
+                }
+                cartCountSpan.textContent = cart.length;
+                cartTotalSpan.textContent = `$${total.toFixed(2)}`;
+            }
+
+            function showMessage(message, type = 'success') {
+                messageBox.textContent = message;
+                messageBox.className = `message-box show bg-${type === 'success' ? 'green' : 'red'}-500 text-white font-semibold rounded-lg shadow-lg p-4`;
+                setTimeout(() => {
+                    messageBox.className = messageBox.className.replace(' show', '');
+                }, 3000);
+            }
+
+            // --- Modal and Cart Handlers ---
+
+            function openProductModal(product) {
+                modalImage.src = product.image;
+                modalName.textContent = product.name;
+                modalPrice.textContent = `$${product.price.toFixed(2)}`;
+                modalDescription.textContent = product.description;
+                addToCartBtn.dataset.productId = product.id;
+                productModal.classList.add('open');
+                productModal.style.display = 'flex';
+            }
+
+            function closeProductModal() {
+                productModal.classList.remove('open');
+                setTimeout(() => {
+                    productModal.style.display = 'none';
+                }, 300);
+            }
+
+            function openCartSidebar() {
+                cartSidebar.classList.add('open');
+            }
+
+            function closeCartSidebar() {
+                cartSidebar.classList.remove('open');
+            }
+
+            // --- Event Listeners ---
+
+            cartButton.addEventListener('click', openCartSidebar);
+            closeCartBtn.addEventListener('click', closeCartSidebar);
+            closeModalBtn.addEventListener('click', closeProductModal);
+            window.addEventListener('click', (event) => {
+                if (event.target === productModal) {
+                    closeProductModal();
+                }
+            });
+
+            addToCartBtn.addEventListener('click', () => {
+                const productId = parseInt(addToCartBtn.dataset.productId);
+                const selectedSize = sizeSelect.value;
+                const productToAdd = products.find(p => p.id === productId);
+
+                if (productToAdd) {
+                    const newItem = {
+                        ...productToAdd,
+                        size: selectedSize,
+                        uniqueId: `${productId}-${selectedSize}`
+                    };
+                    cart.push(newItem);
+                    updateCartUI();
+                    closeProductModal();
+                    showMessage(`${productToAdd.name} (Size: ${selectedSize}) added to cart.`);
+                }
+            });
+
+            // Initial render
+            renderProducts();
+            updateCartUI();
+        });
+    </script>
+</body>
+</html>
