@@ -3,364 +3,885 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>T-Shirt Paradise</title>
+    <title>Micro-Drama App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            @apply bg-gray-100 text-gray-800;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-        .message-box {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 100;
-            transition: opacity 0.3s ease-in-out;
-            opacity: 0;
-            pointer-events: none;
-        }
-        .message-box.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .cart-sidebar {
-            position: fixed;
-            top: 0;
-            right: -100%;
-            height: 100%;
-            width: 350px;
-            max-width: 90%;
-            z-index: 50;
-            transition: right 0.3s ease-in-out;
-            @apply bg-white shadow-lg p-6 overflow-y-auto;
-        }
-        .cart-sidebar.open {
-            right: 0;
-        }
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 60;
-            padding: 1rem;
-        }
-        .modal-content {
-            @apply bg-white p-6 rounded-lg shadow-xl w-full max-w-2xl transform scale-95 opacity-0 transition-all duration-300;
-        }
-        .modal.open .modal-content {
-            transform: scale-100;
-            opacity: 1;
-        }
-        .close-button {
-            cursor: pointer;
-            @apply p-2 rounded-full hover:bg-gray-200 transition-colors;
-        }
-        /* Custom scrollbar for better aesthetics */
-        .cart-sidebar::-webkit-scrollbar {
+        /* Custom scrollbar for better UX */
+        ::-webkit-scrollbar {
             width: 8px;
         }
-
-        .cart-sidebar::-webkit-scrollbar-track {
-            background: #f1f1f1;
+        ::-webkit-scrollbar-track {
+            background: #262626;
         }
-
-        .cart-sidebar::-webkit-scrollbar-thumb {
-            background: #888;
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563;
             border-radius: 4px;
         }
-
-        .cart-sidebar::-webkit-scrollbar-thumb:hover {
-            background: #555;
+        .loading-spinner {
+            border-top-color: #f87171;
+            -webkit-animation: spinner-border 0.75s linear infinite;
+            animation: spinner-border 0.75s linear infinite;
+        }
+        @-webkit-keyframes spinner-border {
+            to { -webkit-transform: rotate(360deg); }
+        }
+        @keyframes spinner-border {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body class="bg-zinc-950 text-white min-h-screen">
+    <div id="root"></div>
 
-    <!-- Message Box -->
-    <div id="messageBox" class="message-box bg-green-500 text-white font-semibold rounded-lg shadow-lg p-4">
-        Item added to cart!
-    </div>
+    <script type="module">
+        // Helper function to convert base64 to ArrayBuffer (for potential audio use)
+        const base64ToArrayBuffer = (base64) => {
+            const binaryString = atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        };
 
-    <!-- Header -->
-    <header class="bg-white shadow-sm sticky top-0 z-40">
-        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <a href="#" class="text-2xl font-bold text-gray-900">T-Shirt Paradise</a>
-            <nav class="hidden md:flex space-x-6">
-                <a href="#products" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">Shop</a>
-                <a href="#contact" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">Contact</a>
-            </nav>
-            <div class="flex items-center space-x-4">
-                <button id="cart-button" class="relative p-2 rounded-full hover:bg-gray-200 transition-colors">
-                    <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.182 1.705.707 1.705H17m0 0a2 2 0 100 4a2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                    </svg>
-                    <span id="cart-count" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">0</span>
-                </button>
-            </div>
-        </div>
-    </header>
+        // Helper function to convert PCM audio data to WAV blob (for potential audio use)
+        const pcmToWav = (pcmData, sampleRate) => {
+            const numChannels = 1;
+            const sampleRateValue = sampleRate;
+            const bitsPerSample = 16;
+            const byteRate = (sampleRateValue * numChannels * bitsPerSample) / 8;
+            const blockAlign = (numChannels * bitsPerSample) / 8;
+            const dataSize = pcmData.length * 2; // 16-bit PCM
 
-    <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8">
+            const buffer = new ArrayBuffer(44 + dataSize);
+            const view = new DataView(buffer);
+            let offset = 0;
 
-        <!-- Hero Section -->
-        <section class="bg-gradient-to-r from-teal-500 to-blue-500 text-white rounded-lg shadow-lg p-10 mb-12 text-center">
-            <h1 class="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">Your Style, Your Statement.</h1>
-            <p class="text-lg md:text-xl mb-6 max-w-2xl mx-auto">Shop our collection of unique, high-quality t-shirts that speak to you.</p>
-            <button class="bg-white text-blue-600 hover:bg-gray-200 transition-colors py-3 px-8 rounded-full font-bold shadow-lg text-lg" onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'});">Shop Now</button>
-        </section>
+            // RIFF header
+            view.setUint32(offset, 0x52494646, false); // "RIFF"
+            offset += 4;
+            view.setUint32(offset, 36 + dataSize, true); // file size
+            offset += 4;
+            view.setUint32(offset, 0x57415645, false); // "WAVE"
+            offset += 4;
 
-        <!-- Product Grid Section -->
-        <section id="products" class="py-8">
-            <h2 class="text-3xl font-bold text-center mb-8">Our T-Shirts</h2>
-            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                <!-- Products will be rendered here by JavaScript -->
-            </div>
-        </section>
-    </main>
+            // fmt sub-chunk
+            view.setUint32(offset, 0x666d7420, false); // "fmt "
+            offset += 4;
+            view.setUint32(offset, 16, true); // sub-chunk size
+            offset += 4;
+            view.setUint16(offset, 1, true); // audio format (PCM)
+            offset += 2;
+            view.setUint16(offset, numChannels, true); // number of channels
+            offset += 2;
+            view.setUint32(offset, sampleRateValue, true); // sample rate
+            offset += 4;
+            view.setUint32(offset, byteRate, true); // byte rate
+            offset += 4;
+            view.setUint16(offset, blockAlign, true); // block align
+            offset += 2;
+            view.setUint16(offset, bitsPerSample, true); // bits per sample
+            offset += 2;
 
-    <!-- Product Detail Modal -->
-    <div id="product-modal" class="modal">
-        <div id="modal-content" class="modal-content">
-            <div class="flex justify-end">
-                <button id="close-modal-btn" class="close-button">
-                    <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
-            <div class="grid md:grid-cols-2 gap-8 items-center">
-                <div class="aspect-w-1 aspect-h-1 overflow-hidden rounded-lg">
-                    <img id="modal-image" class="w-full h-full object-cover">
-                </div>
-                <div class="p-4">
-                    <h3 id="modal-name" class="text-3xl font-bold mb-2"></h3>
-                    <p id="modal-price" class="text-2xl font-semibold text-blue-600 mb-4"></p>
-                    <p id="modal-description" class="text-gray-600 mb-6"></p>
-                    <div class="mb-6">
-                        <label for="size-select" class="block text-sm font-medium text-gray-700 mb-2">Select Size</label>
-                        <select id="size-select" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                            <option value="S">Small</option>
-                            <option value="M">Medium</option>
-                            <option value="L">Large</option>
-                            <option value="XL">Extra Large</option>
-                        </select>
-                    </div>
-                    <button id="add-to-cart-btn" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg shadow-md hover:bg-blue-700 transition-colors">Add to Cart</button>
-                </div>
-            </div>
-        </div>
-    </div>
+            // data sub-chunk
+            view.setUint32(offset, 0x64617461, false); // "data"
+            offset += 4;
+            view.setUint32(offset, dataSize, true); // data size
+            offset += 4;
 
-    <!-- Cart Sidebar -->
-    <div id="cart-sidebar" class="cart-sidebar">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold">Your Cart</h2>
-            <button id="close-cart-btn" class="close-button">
-                <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-        </div>
-        <div id="cart-items" class="space-y-4 mb-6">
-            <!-- Cart items will be rendered here -->
-        </div>
-        <div id="cart-total" class="text-xl font-bold flex justify-between items-center border-t border-gray-200 pt-4">
-            <span>Total:</span>
-            <span>$0.00</span>
-        </div>
-        <button class="w-full bg-green-500 text-white font-bold py-3 rounded-lg mt-4 shadow-md hover:bg-green-600 transition-colors">Checkout</button>
-    </div>
+            // write PCM data
+            for (let i = 0; i < pcmData.length; i++) {
+                view.setInt16(offset, pcmData[i], true);
+                offset += 2;
+            }
+            return new Blob([view], { type: 'audio/wav' });
+        };
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8">
-        <div class="container mx-auto px-4 text-center">
-            <p>&copy; 2023 T-Shirt Paradise. All rights reserved.</p>
-        </div>
-    </footer>
+        // --- MOCK DATA AND STATE MANAGEMENT ---
+        const seriesData = [
+            {
+                id: 'series-1',
+                title: 'Echoes of the Void',
+                genre: 'Sci-Fi, Drama',
+                totalShorts: 15,
+                shorts: Array.from({ length: 15 }, (_, i) => ({
+                    id: `short-1-${i}`,
+                    videoUrl: 'http://commondatestorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                    duration: 60,
+                    likes: Math.floor(Math.random() * 1000),
+                    comments: Math.floor(Math.random() * 50),
+                    shares: Math.floor(Math.random() * 20),
+                })),
+            },
+            {
+                id: 'series-2',
+                title: 'The Unspoken Promise',
+                genre: 'Romance, Mystery',
+                totalShorts: 12,
+                shorts: Array.from({ length: 12 }, (_, i) => ({
+                    id: `short-2-${i}`,
+                    videoUrl: 'http://commondatestorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                    duration: 45,
+                    likes: Math.floor(Math.random() * 1200),
+                    comments: Math.floor(Math.random() * 75),
+                    shares: Math.floor(Math.random() * 30),
+                })),
+            },
+            {
+                id: 'series-3',
+                title: 'City of Whispers',
+                genre: 'Thriller, Crime',
+                totalShorts: 18,
+                shorts: Array.from({ length: 18 }, (_, i) => ({
+                    id: `short-3-${i}`,
+                    videoUrl: 'http://commondatestorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                    duration: 90,
+                    likes: Math.floor(Math.random() * 800),
+                    comments: Math.floor(Math.random() * 40),
+                    shares: Math.floor(Math.random() * 15),
+                })),
+            },
+            {
+                id: 'series-4',
+                title: 'The Final Descent',
+                genre: 'Adventure, Thriller',
+                totalShorts: 14,
+                shorts: Array.from({ length: 14 }, (_, i) => ({
+                    id: `short-4-${i}`,
+                    videoUrl: 'http://commondatestorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                    duration: 75,
+                    likes: Math.floor(Math.random() * 1500),
+                    comments: Math.floor(Math.random() * 90),
+                    shares: Math.floor(Math.random() * 45),
+                })),
+            },
+            {
+                id: 'series-5',
+                title: 'The Last Whisper',
+                genre: 'Psychological Thriller, Mystery',
+                totalShorts: 16,
+                shorts: Array.from({ length: 16 }, (_, i) => ({
+                    id: `short-5-${i}`,
+                    videoUrl: 'http://commondatestorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                    duration: 80,
+                    likes: Math.floor(Math.random() * 1100),
+                    comments: Math.floor(Math.random() * 60),
+                    shares: Math.floor(Math.random() * 25),
+                })),
+            },
+            {
+                id: 'series-6',
+                title: 'Dust and Echoes',
+                genre: 'Post-Apocalyptic, Drama',
+                totalShorts: 20,
+                shorts: Array.from({ length: 20 }, (_, i) => ({
+                    id: `short-6-${i}`,
+                    videoUrl: 'http://commondatestorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                    duration: 65,
+                    likes: Math.floor(Math.random() * 950),
+                    comments: Math.floor(Math.random() * 55),
+                    shares: Math.floor(Math.random() * 35),
+                })),
+            },
+            {
+                id: 'series-7',
+                title: 'Aetherium\'s Call',
+                genre: 'Fantasy, Adventure',
+                totalShorts: 17,
+                shorts: Array.from({ length: 17 }, (_, i) => ({
+                    id: `short-7-${i}`,
+                    videoUrl: 'http://commondatestorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                    duration: 50,
+                    likes: Math.floor(Math.random() * 1300),
+                    comments: Math.floor(Math.random() * 85),
+                    shares: Math.floor(Math.random() * 40),
+                })),
+            },
+            {
+                id: 'series-8',
+                title: 'Crimson Silk',
+                genre: 'Historical, Romance',
+                totalShorts: 13,
+                shorts: Array.from({ length: 13 }, (_, i) => ({
+                    id: `short-8-${i}`,
+                    videoUrl: 'http://commondatestorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                    duration: 55,
+                    likes: Math.floor(Math.random() * 1400),
+                    comments: Math.floor(Math.random() * 95),
+                    shares: Math.floor(Math.random() * 50),
+                })),
+            },
+            {
+                id: 'series-9',
+                title: 'The Chronos Gambit',
+                genre: 'Time Travel, Sci-Fi',
+                totalShorts: 18,
+                shorts: Array.from({ length: 18 }, (_, i) => ({
+                    id: `short-9-${i}`,
+                    videoUrl: 'http://commondatestorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                    duration: 70,
+                    likes: Math.floor(Math.random() * 1600),
+                    comments: Math.floor(Math.random() * 110),
+                    shares: Math.floor(Math.random() * 60),
+                })),
+            },
+            {
+                id: 'series-10',
+                title: 'Beneath the Surface',
+                genre: 'Environmental, Drama',
+                totalShorts: 14,
+                shorts: Array.from({ length: 14 }, (_, i) => ({
+                    id: `short-10-${i}`,
+                    videoUrl: 'http://commondatestorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                    duration: 85,
+                    likes: Math.floor(Math.random() * 900),
+                    comments: Math.floor(Math.random() * 50),
+                    shares: Math.floor(Math.random() * 20),
+                })),
+            },
+            {
+                id: 'series-11',
+                title: 'The Starlight Heist',
+                genre: 'Crime, Fantasy',
+                totalShorts: 16,
+                shorts: Array.from({ length: 16 }, (_, i) => ({
+                    id: `short-11-${i}`,
+                    videoUrl: 'http://commondatestorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                    duration: 60,
+                    likes: Math.floor(Math.random() * 1500),
+                    comments: Math.floor(Math.random() * 80),
+                    shares: Math.floor(Math.random() * 35),
+                })),
+            },
+            {
+                id: 'series-12',
+                title: 'Whispers of the Past',
+                genre: 'Historical, Paranormal',
+                totalShorts: 19,
+                shorts: Array.from({ length: 19 }, (_, i) => ({
+                    id: `short-12-${i}`,
+                    videoUrl: 'http://commondatestorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                    duration: 75,
+                    likes: Math.floor(Math.random() * 1100),
+                    comments: Math.floor(Math.random() * 70),
+                    shares: Math.floor(Math.random() * 40),
+                })),
+            },
+            {
+                id: 'series-13',
+                title: 'Neon Serenade',
+                genre: 'Cyberpunk, Romance',
+                totalShorts: 15,
+                shorts: Array.from({ length: 15 }, (_, i) => ({
+                    id: `short-13-${i}`,
+                    videoUrl: 'http://commondatestorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                    duration: 55,
+                    likes: Math.floor(Math.random() * 1800),
+                    comments: Math.floor(Math.random() * 100),
+                    shares: Math.floor(Math.random() * 50),
+                })),
+            },
+            {
+                id: 'series-14',
+                title: 'The Silent Witness',
+                genre: 'Legal, Thriller',
+                totalShorts: 17,
+                shorts: Array.from({ length: 17 }, (_, i) => ({
+                    id: `short-14-${i}`,
+                    videoUrl: 'http://commondatestorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                    duration: 65,
+                    likes: Math.floor(Math.random() * 1300),
+                    comments: Math.floor(Math.random() * 75),
+                    shares: Math.floor(Math.random() * 30),
+                })),
+            },
+            {
+                id: 'series-15',
+                title: 'Lost in the Aurora',
+                genre: 'Survival, Adventure',
+                totalShorts: 20,
+                shorts: Array.from({ length: 20 }, (_, i) => ({
+                    id: `short-15-${i}`,
+                    videoUrl: 'http://commondatestorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                    duration: 90,
+                    likes: Math.floor(Math.random() * 1000),
+                    comments: Math.floor(Math.random() * 60),
+                    shares: Math.floor(Math.random() * 25),
+                })),
+            },
+            {
+                id: 'series-16',
+                title: 'Glass House Secrets',
+                genre: 'Family Drama, Mystery',
+                totalShorts: 14,
+                shorts: Array.from({ length: 14 }, (_, i) => ({
+                    id: `short-16-${i}`,
+                    videoUrl: 'http://commondatestorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                    duration: 80,
+                    likes: Math.floor(Math.random() * 1200),
+                    comments: Math.floor(Math.random() * 90),
+                    shares: Math.floor(Math.random() * 45),
+                })),
+            },
+        ];
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        let state = {
+            view: 'series', // 'series', 'shortsList', or 'shortsViewer'
+            activeSeries: null,
+            activeShortIndex: 0,
+            lastWatched: null,
+            unlockedShorts: new Set(),
+            posters: {},
+            isLoadingPosters: true,
+            showCommentModal: false,
+            commentText: '',
+            aiAnalysis: null,
+            isAnalyzing: false,
+        };
 
-            const products = [
-                {
-                    id: 1,
-                    name: "Cosmic Poster Tee",
-                    price: 35.00,
-                    description: "Features a stunning poster print of a cosmic galaxy. A must-have for space enthusiasts.",
-                    image: "https://placehold.co/600x600/1e2b4f/ffffff?text=Cosmic+Poster+Tee"
-                },
-                {
-                    id: 2,
-                    name: "Mountain Photo Tee",
-                    price: 38.00,
-                    description: "A beautiful, serene photo of a snow-capped mountain range printed on a comfortable tee.",
-                    image: "https://placehold.co/600x600/a3b18a/344e41?text=Mountain+Photo+Tee"
-                },
-                {
-                    id: 3,
-                    name: "Cityscape Print Tee",
-                    price: 32.00,
-                    description: "A striking black-and-white print of a vibrant city skyline. Urban style at its best.",
-                    image: "https://placehold.co/600x600/3d405b/f2cc8f?text=Cityscape+Print+Tee"
-                },
-                {
-                    id: 4,
-                    name: "Abstract Art Tee",
-                    price: 40.00,
-                    description: "Stand out with a unique t-shirt featuring a colorful abstract art print. Each one is a masterpiece.",
-                    image: "https://placehold.co/600x600/e0b1cb/7b2cbf?text=Abstract+Art+Tee"
-                },
-                {
-                    id: 5,
-                    name: "Vintage Car Photo Tee",
-                    price: 36.00,
-                    description: "A nod to the past with a vintage car photo. Perfect for classic car lovers.",
-                    image: "https://placehold.co/600x600/fec89a/b5838d?text=Vintage+Car+Tee"
-                },
-                {
-                    id: 6,
-                    name: "Neon Sci-Fi Poster Tee",
-                    price: 39.00,
-                    description: "A futuristic poster design with vibrant neon colors. Take a step into the future of fashion.",
-                    image: "https://placehold.co/600x600/5e365b/86b3a0?text=Neon+Sci-Fi+Tee"
+        const updateState = (newState) => {
+            state = { ...state, ...newState };
+            render();
+        };
+
+        const getLastWatched = () => {
+            try {
+                const lastWatched = localStorage.getItem('lastWatched');
+                return lastWatched ? JSON.parse(lastWatched) : null;
+            } catch (e) {
+                console.error('Failed to get last watched from localStorage', e);
+                return null;
+            }
+        };
+
+        const setLastWatched = (seriesId, shortIndex) => {
+            try {
+                localStorage.setItem('lastWatched', JSON.stringify({ seriesId, shortIndex }));
+            } catch (e) {
+                console.error('Failed to set last watched in localStorage', e);
+            }
+        };
+
+        const getUnlockedShortsFromLocalStorage = (seriesId) => {
+            try {
+                const unlocked = localStorage.getItem(`unlocked-${seriesId}`);
+                return unlocked ? new Set(JSON.parse(unlocked)) : new Set([0]);
+            } catch (e) {
+                console.error('Failed to get unlocked shorts from localStorage', e);
+                return new Set([0]);
+            }
+        };
+
+        const setUnlockedShortsInLocalStorage = (seriesId, unlockedShorts) => {
+            try {
+                localStorage.setItem(`unlocked-${seriesId}`, JSON.stringify(Array.from(unlockedShorts)));
+            } catch (e) {
+                console.error('Failed to set unlocked shorts in localStorage', e);
+            }
+        };
+
+        // --- API & DATA FETCHING ---
+        const generatePosters = async () => {
+            const generatedPosters = {};
+            const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict";
+
+            const promises = seriesData.map(async (series) => {
+                const prompt = `A dramatic movie poster for a micro-drama series titled "${series.title}" in the genre of ${series.genre}. High-quality, cinematic style, vertical format.`;
+                const payload = { instances: { prompt: prompt }, parameters: { "sampleCount": 1 } };
+
+                let retryCount = 0;
+                const maxRetries = 3;
+                const initialDelay = 1000;
+
+                const makeApiCall = async () => {
+                    try {
+                        const response = await fetch(API_URL, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+
+                        const result = await response.json();
+                        if (result.predictions && result.predictions.length > 0 && result.predictions[0].bytesBase64Encoded) {
+                            generatedPosters[series.id] = `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
+                        } else {
+                            throw new Error("Image generation failed.");
+                        }
+                    } catch (e) {
+                        console.error(`API call failed for ${series.title}:`, e);
+                        if (retryCount < maxRetries) {
+                            retryCount++;
+                            const delay = initialDelay * Math.pow(2, retryCount);
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                            return makeApiCall();
+                        } else {
+                            console.error(`Failed to generate image for ${series.title} after multiple retries.`);
+                            generatedPosters[series.id] = `https://placehold.co/600x800/27272a/fafafa?text=${encodeURIComponent(series.title)}`;
+                        }
+                    }
+                };
+                return makeApiCall();
+            });
+
+            await Promise.all(promises);
+            updateState({ posters: generatedPosters, isLoadingPosters: false });
+        };
+
+        // --- EVENT HANDLERS ---
+        const handleSelectSeries = (seriesId, initialShortIndex = 0) => {
+            const selectedSeries = seriesData.find(s => s.id === seriesId);
+            const unlocked = getUnlockedShortsFromLocalStorage(seriesId);
+            updateState({
+                activeSeries: selectedSeries,
+                unlockedShorts: unlocked,
+                activeShortIndex: initialShortIndex,
+                view: 'shortsList'
+            });
+        };
+
+        const handleSelectShort = (shortIndex) => {
+            updateState({ activeShortIndex: shortIndex, view: 'shortsViewer' });
+        };
+
+        const handleUnlockNextShort = (completedIndex) => {
+            if (state.activeSeries) {
+                const nextIndex = completedIndex + 1;
+                const newUnlockedShorts = new Set(state.unlockedShorts);
+                if (nextIndex < state.activeSeries.totalShorts && !newUnlockedShorts.has(nextIndex)) {
+                    newUnlockedShorts.add(nextIndex);
+                    updateState({ unlockedShorts: newUnlockedShorts });
+                    setUnlockedShortsInLocalStorage(state.activeSeries.id, newUnlockedShorts);
                 }
-            ];
+            }
+        };
 
-            let cart = [];
+        const handleExitViewer = () => {
+            updateState({ view: 'shortsList', lastWatched: getLastWatched() });
+        };
 
-            const productGrid = document.getElementById('product-grid');
-            const cartButton = document.getElementById('cart-button');
-            const cartSidebar = document.getElementById('cart-sidebar');
-            const closeCartBtn = document.getElementById('close-cart-btn');
-            const cartItemsContainer = document.getElementById('cart-items');
-            const cartCountSpan = document.getElementById('cart-count');
-            const cartTotalSpan = document.getElementById('cart-total');
-            const productModal = document.getElementById('product-modal');
-            const closeModalBtn = document.getElementById('close-modal-btn');
-            const modalImage = document.getElementById('modal-image');
-            const modalName = document.getElementById('modal-name');
-            const modalPrice = document.getElementById('modal-price');
-            const modalDescription = document.getElementById('modal-description');
-            const sizeSelect = document.getElementById('size-select');
-            const addToCartBtn = document.getElementById('add-to-cart-btn');
-            const messageBox = document.getElementById('messageBox');
+        const handleBackFromList = () => {
+            updateState({ view: 'series', activeSeries: null, lastWatched: getLastWatched() });
+        };
 
-            // --- UI Rendering Functions ---
+        const togglePlayback = (videoElement) => {
+            if (videoElement) {
+                if (videoElement.paused) {
+                    videoElement.play();
+                } else {
+                    videoElement.pause();
+                }
+            }
+        };
 
-            function renderProducts() {
-                productGrid.innerHTML = '';
-                products.forEach(product => {
-                    const productCard = document.createElement('div');
-                    productCard.className = "bg-white rounded-lg shadow-lg p-6 flex flex-col items-center text-center cursor-pointer hover:shadow-xl transition-shadow duration-300";
-                    productCard.innerHTML = `
-                        <img src="${product.image}" onerror="this.src='https://placehold.co/600x600/e0e0e0/555555?text=Image+Not+Found'" alt="${product.name}" class="rounded-md w-full h-auto mb-4">
-                        <h3 class="text-xl font-semibold mb-2">${product.name}</h3>
-                        <p class="text-blue-600 font-bold text-lg">$${product.price.toFixed(2)}</p>
-                    `;
-                    productCard.addEventListener('click', () => openProductModal(product));
-                    productGrid.appendChild(productCard);
+        const handleAnalyzeComment = async () => {
+            if (!state.commentText.trim()) return;
+
+            updateState({ isAnalyzing: true, aiAnalysis: null });
+            const userQuery = `Analyze the sentiment of the following comment: "${state.commentText}". Provide a simple, one-sentence summary of the tone (e.g., "This is a positive comment.", "This comment expresses frustration." or "This is a neutral comment.").`;
+            const systemPrompt = "You are a professional sentiment analysis AI. Your task is to analyze user comments and provide a concise, single-sentence summary of the tone.";
+
+            const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent";
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
                 });
+                const result = await response.json();
+                const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || "Could not analyze comment.";
+                updateState({ aiAnalysis: text, isAnalyzing: false });
+            } catch (error) {
+                console.error('Error analyzing comment:', error);
+                updateState({ aiAnalysis: "Analysis failed. Please try again.", isAnalyzing: false });
+            }
+        };
+
+        // --- COMPONENT RENDERING FUNCTIONS ---
+        const renderLoading = () => {
+            return `
+                <div class="flex flex-col items-center justify-center min-h-screen bg-zinc-950 text-white">
+                    <div class="h-12 w-12 rounded-full border-4 border-gray-700 loading-spinner"></div>
+                    <p class="mt-4 text-sm text-zinc-400">Loading series posters...</p>
+                </div>
+            `;
+        };
+
+        const renderSeriesOverview = () => {
+            const { lastWatched, posters, isLoadingPosters } = state;
+            return `
+                <div class="w-full min-h-screen p-4 sm:p-8 bg-zinc-950 text-white font-sans flex flex-col items-center">
+                    <header class="w-full max-w-5xl py-6 flex flex-col items-center">
+                        <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-center">
+                            Sequential Micro-Dramas
+                        </h1>
+                        <p class="text-center text-zinc-400 mt-2 text-sm sm:text-base">
+                            Vertically-shot short episodes. Bingeable stories.
+                        </p>
+                    </header>
+                    
+                    ${lastWatched ? `
+                        <div class="w-full max-w-5xl mb-8">
+                            <h2 class="text-xl sm:text-2xl font-semibold mb-4">
+                                <span class="text-pink-500">Continue Watching</span>
+                            </h2>
+                            <div
+                                class="w-full bg-zinc-800 p-4 rounded-xl flex flex-col sm:flex-row items-center cursor-pointer transition-transform duration-300 hover:scale-[1.01]"
+                                onclick="handleSelectSeries('${lastWatched.seriesId}', ${lastWatched.shortIndex})"
+                            >
+                                ${isLoadingPosters ? `
+                                    <div class="w-20 h-24 rounded-lg bg-zinc-700 animate-pulse flex items-center justify-center mr-4 mb-4 sm:mb-0">
+                                        <svg class="animate-spin h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                    </div>
+                                ` : `
+                                    <img src="${posters[lastWatched.seriesId]}" alt="Last watched series poster" class="w-20 h-24 rounded-lg object-cover mr-4 mb-4 sm:mb-0" />
+                                `}
+                                <div class="flex-1 text-center sm:text-left">
+                                    <h3 class="text-lg font-semibold">${seriesData.find(s => s.id === lastWatched.seriesId)?.title}</h3>
+                                    <p class="text-sm text-zinc-400 mt-1">
+                                        Episode ${lastWatched.shortIndex + 1} of ${seriesData.find(s => s.id === lastWatched.seriesId)?.totalShorts}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <div class="w-full max-w-5xl">
+                        <h2 class="text-xl sm:text-2xl font-semibold mb-4">
+                            All Series
+                        </h2>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
+                            ${seriesData.map(series => `
+                                <div class="group rounded-xl overflow-hidden shadow-lg transition-transform duration-300 hover:scale-[1.03] active:scale-95 bg-zinc-800">
+                                    <div class="w-full h-auto bg-zinc-800 aspect-[9/16] relative flex items-center justify-center">
+                                        ${isLoadingPosters ? `
+                                            <div class="absolute inset-0 flex items-center justify-center bg-zinc-700 animate-pulse">
+                                                <svg class="animate-spin h-10 w-10 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                            </div>
+                                        ` : `
+                                            <img src="${state.posters[series.id]}" alt="${series.title}" class="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-85 cursor-pointer" onclick="handleSelectSeries('${series.id}')" />
+                                        `}
+                                    </div>
+                                    <div class="p-3 text-center">
+                                        <h3 class="text-sm sm:text-base font-semibold truncate">${series.title}</h3>
+                                        <p class="text-xs text-zinc-400 mt-1">${series.genre}</p>
+                                        <p class="text-xs text-zinc-500 mt-1 mb-2">
+                                            ${series.totalShorts} parts
+                                        </p>
+                                        <div class="flex justify-center space-x-2">
+                                            <button
+                                                onclick="handleSelectSeries('${series.id}')"
+                                                class="flex-1 px-2 py-1 text-xs font-semibold rounded-full bg-pink-500 text-white hover:bg-pink-600 transition-colors"
+                                            >
+                                                View Series
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        const renderShortsList = () => {
+            const { activeSeries, unlockedShorts, posters, isLoadingPosters } = state;
+            if (!activeSeries) return '';
+
+            return `
+                <div class="w-full min-h-screen p-4 sm:p-8 bg-zinc-950 text-white font-sans flex flex-col items-center">
+                    <header class="w-full max-w-5xl py-6 flex items-center justify-between">
+                        <button onclick="handleBackFromList()" class="p-2 rounded-full bg-zinc-800 bg-opacity-70 backdrop-blur-sm transition-all hover:bg-opacity-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-center flex-1">${activeSeries.title}</h1>
+                    </header>
+
+                    <div class="w-full max-w-5xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mt-4">
+                        ${activeSeries.shorts.map((short, index) => {
+                            const isUnlocked = unlockedShorts.has(index);
+                            const isLastWatched = getLastWatched() && getLastWatched().seriesId === activeSeries.id && getLastWatched().shortIndex === index;
+                            const isComingSoon = index === activeSeries.totalShorts - 1 && !isUnlocked;
+                            const cursorClass = isUnlocked ? 'cursor-pointer' : 'cursor-not-allowed';
+                            const opacityClass = isUnlocked ? '' : 'opacity-50';
+
+                            return `
+                                <div
+                                    class="relative group rounded-xl overflow-hidden shadow-lg transition-transform duration-300 transform-gpu ${isUnlocked ? 'hover:scale-[1.03] active:scale-95' : ''} ${cursorClass}"
+                                    onclick="${isUnlocked ? `handleSelectShort(${index})` : ''}"
+                                >
+                                    <div class="w-full h-auto bg-zinc-800 aspect-[9/16] relative flex items-center justify-center">
+                                        ${isLoadingPosters ? `
+                                            <div class="absolute inset-0 flex items-center justify-center bg-zinc-700 animate-pulse">
+                                                <svg class="animate-spin h-10 w-10 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                            </div>
+                                        ` : `
+                                            <img src="${state.posters[activeSeries.id]}" alt="Poster for ${activeSeries.title}" class="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-85 ${opacityClass}" />
+                                        `}
+                                        ${!isUnlocked ? `
+                                            <div class="absolute inset-0 flex items-center justify-center bg-zinc-900 bg-opacity-70">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 11.5V11a3 3 0 016 0v.5m-6 0h6m-6 0H5" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 11V7a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2h2z" />
+                                                </svg>
+                                            </div>
+                                        ` : ''}
+                                        ${isLastWatched && isUnlocked ? `
+                                            <div class="absolute bottom-2 left-2 px-2 py-1 bg-pink-500 rounded-full text-xs font-semibold">
+                                                Last Watched
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                    <div class="p-3 text-center">
+                                        <h3 class="text-sm sm:text-base font-semibold truncate text-white">
+                                            Part ${index + 1}
+                                        </h3>
+                                        <p class="text-xs text-zinc-400 mt-1">
+                                            ${short.duration}s
+                                        </p>
+                                        <div class="mt-2 text-xs font-medium">
+                                            ${isComingSoon ? `
+                                                <span class="text-zinc-500">
+                                                    Coming Soon
+                                                </span>
+                                            ` : isUnlocked ? `
+                                                <span class="text-green-400">
+                                                    Unlocked
+                                                </span>
+                                            ` : `
+                                                <span class="text-red-400">
+                                                    Locked
+                                                </span>
+                                            `}
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        };
+
+        const renderShortsViewer = () => {
+            const { activeSeries, activeShortIndex, showCommentModal, commentText, aiAnalysis, isAnalyzing } = state;
+            if (!activeSeries) return '';
+
+            const activeShort = activeSeries.shorts[activeShortIndex];
+            const isLastShort = activeShortIndex === activeSeries.shorts.length - 1;
+
+            return `
+                <div id="viewer" class="relative w-full h-screen flex flex-col justify-between items-center text-white bg-zinc-900 overflow-hidden">
+                    <!-- Short's video element -->
+                    <video
+                        id="short-video"
+                        class="absolute inset-0 z-0 w-full h-full object-cover"
+                        src="${activeShort.videoUrl}"
+                        autoplay
+                        loop
+                        muted
+                        playsinline
+                    ></video>
+
+                    <!-- UI Overlay -->
+                    <div class="relative z-10 w-full h-full flex flex-col justify-between items-center p-4">
+                        <!-- Top Controls -->
+                        <div class="w-full flex justify-between items-center">
+                            <button onclick="handleExitViewer()" class="p-2 rounded-full bg-zinc-800 bg-opacity-70 backdrop-blur-sm transition-all hover:bg-opacity-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </button>
+                            <div class="text-sm font-semibold text-zinc-300">
+                                ${activeShortIndex + 1} / ${activeSeries.shorts.length}
+                            </div>
+                        </div>
+                        
+                        <!-- Playback Controls -->
+                        <div class="flex-1 flex items-center justify-center">
+                            <button onclick="togglePlayback(document.getElementById('short-video'))" class="p-4 rounded-full bg-zinc-800 bg-opacity-70 backdrop-blur-sm transition-all hover:scale-110 active:scale-95">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.192 1.447h13.6a1 1 0 001.192-1.447l-7-14z" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Engagement Buttons -->
+                        <div class="w-full flex justify-around items-center space-x-4">
+                            <div class="flex flex-col items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white transition-transform hover:scale-125" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                </svg>
+                                <span class="text-xs font-semibold mt-1">${activeShort.likes}</span>
+                            </div>
+                            <button onclick="updateState({ showCommentModal: true, aiAnalysis: null, commentText: '' })" class="flex flex-col items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white transition-transform hover:scale-125" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                </svg>
+                                <span class="text-xs font-semibold mt-1">${activeShort.comments}</span>
+                            </button>
+                            <div class="flex flex-col items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white transition-transform hover:scale-125" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.882 13.486 9 13.714 9 14v1.298a2 2 0 00.325 1.135l2.427 3.235a1 1 0 001.597 0l2.427-3.235A2 2 0 0016 15.298V14c0-.286.118-.514.316-.658l2.91-2.289A2 2 0 0022 9.074V7h-4a2 2 0 00-2-2v-2a1 1 0 00-1-1H7a1 1 0 00-1 1v2a2 2 0 00-2 2H2v2.074a2 2 0 00.774 1.579l2.91 2.289z" />
+                                </svg>
+                                <span class="text-xs font-semibold mt-1">${activeShort.shares}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Comment Modal -->
+                    ${showCommentModal ? `
+                        <div class="fixed inset-0 z-20 flex items-center justify-center bg-zinc-950 bg-opacity-90 p-4">
+                            <div class="w-full max-w-lg bg-zinc-800 rounded-lg p-6 shadow-xl relative">
+                                <h3 class="text-xl font-semibold mb-4 text-white">Add a Comment</h3>
+                                <textarea
+                                    id="comment-textarea"
+                                    class="w-full bg-zinc-700 text-white rounded-lg p-3 resize-none focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all"
+                                    rows="4"
+                                    placeholder="Type your comment here..."
+                                >${commentText}</textarea>
+                                <div class="mt-4 flex flex-col items-end">
+                                    <button
+                                        onclick="handleAnalyzeComment()"
+                                        class="w-full px-4 py-2 text-sm font-bold rounded-full transition-colors ${isAnalyzing ? 'bg-zinc-600 text-zinc-400 cursor-not-allowed' : 'bg-pink-500 text-white hover:bg-pink-600'}"
+                                        ${isAnalyzing ? 'disabled' : ''}
+                                    >
+                                        ${isAnalyzing ? '✨Analyzing...' : '✨Analyze Comment✨'}
+                                    </button>
+                                    ${aiAnalysis ? `
+                                        <div class="mt-4 p-3 bg-zinc-700 rounded-lg w-full text-zinc-300">
+                                            <h4 class="font-semibold text-xs text-zinc-400 mb-1">AI Analysis:</h4>
+                                            <p class="text-sm">${aiAnalysis}</p>
+                                        </div>
+                                    ` : ''}
+                                    <button
+                                        onclick="updateState({ showCommentModal: false })"
+                                        class="mt-4 px-4 py-2 text-sm text-zinc-400 font-semibold hover:text-white"
+                                    >
+                                        Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        };
+
+        const render = () => {
+            const root = document.getElementById('root');
+            if (state.isLoadingPosters) {
+                root.innerHTML = renderLoading();
+            } else if (state.view === 'shortsViewer') {
+                root.innerHTML = renderShortsViewer();
+            } else if (state.view === 'shortsList') {
+                root.innerHTML = renderShortsList();
+            } else {
+                root.innerHTML = renderSeriesOverview();
             }
 
-            function updateCartUI() {
-                cartItemsContainer.innerHTML = '';
-                let total = 0;
-                if (cart.length === 0) {
-                    cartItemsContainer.innerHTML = '<p class="text-gray-500 text-center">Your cart is empty.</p>';
-                } else {
-                    cart.forEach(item => {
-                        const cartItem = document.createElement('div');
-                        cartItem.className = "flex items-center space-x-4";
-                        cartItem.innerHTML = `
-                            <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-md">
-                            <div class="flex-grow">
-                                <h4 class="font-semibold text-lg">${item.name}</h4>
-                                <p class="text-sm text-gray-500">Size: ${item.size}</p>
-                            </div>
-                            <span class="font-bold text-blue-600">$${item.price.toFixed(2)}</span>
-                        `;
-                        cartItemsContainer.appendChild(cartItem);
-                        total += item.price;
+            // Re-attach event listeners and video-specific logic after render
+            if (state.view === 'shortsViewer') {
+                const videoElement = document.getElementById('short-video');
+                const viewerElement = document.getElementById('viewer');
+                
+                // Video progress bar logic
+                const updateProgressBar = () => {
+                    const progress = (videoElement.currentTime / videoElement.duration) * 100;
+                    document.querySelector('.h-full.bg-pink-500').style.width = `${progress}%`;
+                };
+
+                const handleVideoEnded = () => {
+                    handleUnlockNextShort(state.activeShortIndex);
+                    if (state.activeShortIndex < state.activeSeries.shorts.length - 1) {
+                        updateState({ activeShortIndex: state.activeShortIndex + 1 });
+                    }
+                };
+
+                videoElement.addEventListener('timeupdate', updateProgressBar);
+                videoElement.addEventListener('ended', handleVideoEnded);
+
+                // Swipe/scroll navigation
+                let startY = 0;
+                const handleTouchStart = (e) => startY = e.touches[0].clientY;
+                const handleTouchEnd = (e) => {
+                    const deltaY = startY - e.changedTouches[0].clientY;
+                    if (Math.abs(deltaY) < 100) return;
+                    if (deltaY > 0 && state.activeShortIndex < state.activeSeries.shorts.length - 1) {
+                        updateState({ activeShortIndex: state.activeShortIndex + 1 });
+                    } else if (deltaY < 0 && state.activeShortIndex > 0) {
+                        updateState({ activeShortIndex: state.activeShortIndex - 1 });
+                    }
+                };
+                viewerElement.addEventListener('touchstart', handleTouchStart);
+                viewerElement.addEventListener('touchend', handleTouchEnd);
+                viewerElement.addEventListener('wheel', (e) => {
+                    if (Math.abs(e.deltaY) < 100) return;
+                    if (e.deltaY > 0 && state.activeShortIndex < state.activeSeries.shorts.length - 1) {
+                        updateState({ activeShortIndex: state.activeShortIndex + 1 });
+                    } else if (e.deltaY < 0 && state.activeShortIndex > 0) {
+                        updateState({ activeShortIndex: state.activeShortIndex - 1 });
+                    }
+                });
+
+                // Comment modal textarea update
+                if (document.getElementById('comment-textarea')) {
+                    document.getElementById('comment-textarea').addEventListener('input', (e) => {
+                        state.commentText = e.target.value;
                     });
                 }
-                cartCountSpan.textContent = cart.length;
-                cartTotalSpan.textContent = `$${total.toFixed(2)}`;
             }
+        };
 
-            function showMessage(message, type = 'success') {
-                messageBox.textContent = message;
-                messageBox.className = `message-box show bg-${type === 'success' ? 'green' : 'red'}-500 text-white font-semibold rounded-lg shadow-lg p-4`;
-                setTimeout(() => {
-                    messageBox.className = messageBox.className.replace(' show', '');
-                }, 3000);
-            }
+        // Initial setup on window load
+        window.onload = () => {
+            // Initial render of loading screen
+            render(); 
 
-            // --- Modal and Cart Handlers ---
+            // Start async data fetching
+            updateState({ lastWatched: getLastWatched() });
+            generatePosters();
+        };
 
-            function openProductModal(product) {
-                modalImage.src = product.image;
-                modalName.textContent = product.name;
-                modalPrice.textContent = `$${product.price.toFixed(2)}`;
-                modalDescription.textContent = product.description;
-                addToCartBtn.dataset.productId = product.id;
-                productModal.classList.add('open');
-                productModal.style.display = 'flex';
-            }
-
-            function closeProductModal() {
-                productModal.classList.remove('open');
-                setTimeout(() => {
-                    productModal.style.display = 'none';
-                }, 300);
-            }
-
-            function openCartSidebar() {
-                cartSidebar.classList.add('open');
-            }
-
-            function closeCartSidebar() {
-                cartSidebar.classList.remove('open');
-            }
-
-            // --- Event Listeners ---
-
-            cartButton.addEventListener('click', openCartSidebar);
-            closeCartBtn.addEventListener('click', closeCartSidebar);
-            closeModalBtn.addEventListener('click', closeProductModal);
-            window.addEventListener('click', (event) => {
-                if (event.target === productModal) {
-                    closeProductModal();
-                }
-            });
-
-            addToCartBtn.addEventListener('click', () => {
-                const productId = parseInt(addToCartBtn.dataset.productId);
-                const selectedSize = sizeSelect.value;
-                const productToAdd = products.find(p => p.id === productId);
-
-                if (productToAdd) {
-                    const newItem = {
-                        ...productToAdd,
-                        size: selectedSize,
-                        uniqueId: `${productId}-${selectedSize}`
-                    };
-                    cart.push(newItem);
-                    updateCartUI();
-                    closeProductModal();
-                    showMessage(`${productToAdd.name} (Size: ${selectedSize}) added to cart.`);
-                }
-            });
-
-            // Initial render
-            renderProducts();
-            updateCartUI();
-        });
+        // Expose functions to the global scope for onclick events
+        window.handleSelectSeries = handleSelectSeries;
+        window.handleSelectShort = handleSelectShort;
+        window.handleBackFromList = handleBackFromList;
+        window.handleExitViewer = handleExitViewer;
+        window.togglePlayback = togglePlayback;
+        window.handleAnalyzeComment = handleAnalyzeComment;
+        window.updateState = updateState;
     </script>
 </body>
 </html>
